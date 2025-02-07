@@ -67,3 +67,20 @@ Get-Help Backup-Registry
 Backup-Registry -rutaBackup 'C:\Users\djmin\Desktop'
 
 #Ilustracion105
+vim .\Backup-Registry.ps1
+Import-Module BackupRegistry -Force
+Backup-Registry -rutaBackup 'C:\Users\djmin\Desktop'
+
+#Ilustracion107
+ls 'C:\Users\djmin\Desktop'
+Get-Date
+ls 'C:\Users\djmin\Desktop'
+
+#Ilustracion108
+Get-ScheduledTask
+
+#Ilustracion109
+Unregister-ScheduledTask 'Ejecutar Backup del registro del sistema'
+
+#Ilustracion110
+Get-ScheduledTask
