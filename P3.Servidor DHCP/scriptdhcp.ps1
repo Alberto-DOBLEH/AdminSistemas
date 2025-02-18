@@ -43,7 +43,7 @@ $nombre = ""
 do{
     $nombre = Read-Host "Ingrese nombre para la red:  " 
     
-    if([string]::IsNullOrWhiteSpace($nombre)){
+    if( -not [string]::IsNullOrEmpty($nombre)){
         Write-Host "Dominio Valido" -ForegroundColor Green
         Break
     }else{
