@@ -5,7 +5,7 @@ Import-Module "C:\Users\Administrador\Desktop\SysAdmin\AdminSistemas\WinModulos\
 
 #Instalar OpenSSH
 Write-Host "Instalando OpenSSH" -ForegroundColor Green
-Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+#Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 
 #Verificar si OpenSSH está instalado
 Write-Host "Verificando si OpenSSH está instalado" -ForegroundColor Green
