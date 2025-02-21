@@ -2,10 +2,10 @@
 Write-Host "Importando modulo de validacion de IP" -ForegroundColor Green
 Import-Module "C:\Users\Administrador\Desktop\SysAdmin\AdminSistemas\WinModulos\validar_ipv4.psm1"
 
-
 #Instalar OpenSSH
 Write-Host "Instalando OpenSSH" -ForegroundColor Green
-#Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+Get-Module -ListAvailable -Name NetSecurity
 
 #Verificar si OpenSSH está instalado
 Write-Host "Verificando si OpenSSH está instalado" -ForegroundColor Green
