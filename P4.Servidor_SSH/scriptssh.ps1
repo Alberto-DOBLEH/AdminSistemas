@@ -50,5 +50,5 @@ New-LocalUser -Name $usuario -Password $password -FullName "$($usuario) SSH" -De
 
 #Agregar usuario a los grupos necesarios
 Write-Host "Agregando usuario a los grupos necesarios" -ForegroundColor Green
-Add-LocalGroupMember -Group "Users" -Member $usuario
+Add-LocalGroupMember -Group "Usuarios" -Member $usuario
 Add-LocalGroupMember -Group "Usuarios de OpenSSH" -Member $usuario
