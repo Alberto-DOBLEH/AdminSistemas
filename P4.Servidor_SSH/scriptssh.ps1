@@ -1,6 +1,6 @@
 #Importacion de modulos
 Write-Host "Importando modulo de validacion de IP" -ForegroundColor Green
-Import-Module "C:\Users\Administrador\Desktop\SysAdmin\AdminSistemas\WinModulos\validar_ipv4.psm1"
+Import-Module "C:\Users\Administrador\Desktop\SysAdmin\AdminSistemas\WinModulos\modulos.psm1"
 
 #Instalar OpenSSH
 Write-Host "Instalando OpenSSH" -ForegroundColor Green
@@ -24,7 +24,7 @@ New-NetFirewallRule -Name "SSH" -DisplayName 'OpenSSH Server' -Direction Inbound
 $ipserver = ""
 do {
     $ipserver = Read-Host "Ingrese la IP para el servidor SSH"
-} while (-not (validar_ipv4 $ipserver))
+} while (-not (validar_ipv4 -IP $ipserver))
 
 #Asignacion de IP Estatica al segundo adaptador de la red local
 Write-Host "Poniendo la IP estatica para el servidor SSH...." -ForegroundColor Green
