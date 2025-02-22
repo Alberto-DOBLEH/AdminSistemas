@@ -1,5 +1,5 @@
 validar_ipv4() {
-  local ip=$1
+  local ip="$1"
 
   # Verificar si la cadena está vacía
   if [[ -z "$ip" ]]; then
