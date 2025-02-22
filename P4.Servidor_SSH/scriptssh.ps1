@@ -46,7 +46,7 @@ do{
 $password = Read-Host -AsSecureString "Ingresa la contraseña"
 
 Write-Host "Creando usuario para SSH" -ForegroundColor Green
-New-LocalUser -Name $usuario -Password $password -FullName "$($usuario) SSH" -Description "Usuario para acceso SSH" -PasswordNeverExpires $true
+New-LocalUser -Name $usuario -Password $password -FullName "$($usuario) SSH" -Description "Usuario para acceso SSH" -PasswordNeverExpires
 
 #Agregar usuario a los grupos necesarios
 Write-Host "Agregando usuario a los grupos necesarios" -ForegroundColor Green
