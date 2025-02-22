@@ -67,12 +67,20 @@ echo "Verificando que el usuario fue creado..."
 cat /etc/passwd | grep $usuario
 
 #Asignando permisos para el usuario en el SSH
-ehcho "Asignando permisos para el usuario en el SSH..."
-echo "$usuario ALL=(ALL) ALL" >> /etc/sudoers
+echo "Asignando permisos para el usuario en el SSH..."
+path="/home/$usuario/.ssh"
+mkdir -p $path
+chmod 700 $path
+chown $usuario:$usuario $path
+
 
 #Ajustando Firewall para permitir SSH
 echo "Ajustando Firewall para permitir SSH..."
 ufw allow ssh
+
+#Iniciando el servicio SSH
+echo "Iniciando el servicio SSH..."
+systemctl start ssh
 
 #Verificar que este corriendo el SSH
 echo "Verificando que el servicio SSH este corriendo..."
