@@ -1,4 +1,5 @@
 #!/bin/bash
+source /home/albertodobleh/SysAdmin/AdminSistemas/LinModulos/modulos
 
 #Actualizar el sistema
 echo "Actualizando el sistema..."
