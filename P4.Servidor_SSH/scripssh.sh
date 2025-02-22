@@ -14,6 +14,7 @@ apt-get install openssh-server -y
 ipserver=""
 while :; do
     read -p "Ingrese la direccion del servidor: " ip
+    echo "$ipserver"
     if validar_ipv4 "$ipserver"; then
         echo "La IP es válida."
         break  # Sale del bucle si la IP es válida
