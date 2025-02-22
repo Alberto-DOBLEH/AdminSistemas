@@ -11,7 +11,7 @@ apt-get update -y
 apt-get upgrade -y
 
 #Instalar SSH
-echo .e "${verde}Instalando Servicio SSH...${reset}"
+echo -e "${verde}Instalando Servicio SSH...${reset}"
 apt-get install openssh-server -y
 
 #Solicitar la IP
@@ -19,10 +19,10 @@ ipserver=""
 while :; do
     read -p "Ingrese la direccion del servidor: " ipserver
     if validar_ipv4 "$ipserver"; then
-        echo "${verde}La IP es válida.${reset}"
+        echo -e "${verde}La IP es válida.${reset}"
         break
     else
-        echo "${rojo}IP inválida, inténtelo de nuevo.${reset}"
+        echo -e "${rojo}IP inválida, inténtelo de nuevo.${reset}"
     fi
 done
 
@@ -59,32 +59,32 @@ usuario=""
 while true; do
   read -p "Introduzca el nombre de usuario: " usuario
   if [[ -n "$usuario" ]]; then
-    echo "${verde}Usuario Valido${reset}"
+    echo -e "${verde}Usuario Valido${reset}"
     break
   fi
-  echo "${rojo}El usuario no puede estar vacio${reset}"
+  echo -e "${rojo}El usuario no puede estar vacio${reset}"
 done
 contrasena=""
 while true; do
   read -p "Introduzca la contrasena: " contrasena
   if [[ -n "$contrasena" ]]; then
-    echo "${verde}Contrasena Valida${reset}"
+    echo -e "${verde}Contrasena Valida${reset}"
     break
   fi
-  echo "${rojo}La contrasena no puede estar vacia${reset}"
+  echo -e "${rojo}La contrasena no puede estar vacia${reset}"
 done
 
 #Crear usuario
-echo "${verde}Creando usuario...${reset}"
+echo -e "${verde}Creando usuario...${reset}"
 useradd -m -d /home/$usuario -s /bin/bash $usuario
 echo "$usuario:$contrasena" | chpasswd
 
 #Verificar que el usuario fue creado
-echo "${verde}Verificando que el usuario fue creado...${reset}"
+echo -e "${verde}Verificando que el usuario fue creado...${reset}"
 cat /etc/passwd | grep $usuario
 
 #Asignando permisos para el usuario en el SSH
-echo "${verde}Asignando permisos para el usuario en el SSH...${reset}"
+echo -e "${verde}Asignando permisos para el usuario en el SSH...${reset}"
 path="/home/$usuario/.ssh"
 mkdir -p $path
 chmod 700 $path
