@@ -73,7 +73,6 @@ mkdir -p $path
 chmod 700 $path
 chown $usuario:$usuario $path
 
-
 #Ajustando Firewall para permitir SSH
 echo "Ajustando Firewall para permitir SSH..."
 ufw allow ssh
