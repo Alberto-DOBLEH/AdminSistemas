@@ -3,12 +3,12 @@ validar_ipv4() {
 
   # Verificar si la cadena está vacía
   if [[ -z "$ip" ]]; then
-    return false
+    return 1
   fi
 
   # Verificar el formato general de IPv4 (cuatro números separados por puntos)
   if [[ ! "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
-    return false
+    return 1
   fi
 
   # Separar los números en un array
@@ -16,15 +16,15 @@ validar_ipv4() {
 
   # Verificar que haya cuatro números
   if [[ ${#octetos[@]} -ne 4 ]]; then
-    return false
+    return 1
   fi
 
   # Verificar que cada número esté entre 0 y 255
   for octeto in "${octetos[@]}"; do
     if [[ ! "$octeto" =~ ^[0-9]+$ ]] || [[ "$octeto" -lt 0 ]] || [[ "$octeto" -gt 255 ]]; then
-      return false
+      return 1
     fi
   done
 
-  return true
+  return 0
 }
