@@ -32,3 +32,46 @@ validar_ipv4() {
 
   return 0
 }
+
+calcular_mascara_subred() {
+    local cidr=$1
+
+    # Inicializar la máscara de subred
+    local mascara=""
+
+    # Calcular la máscara de subred basada en el CIDR
+    for i in {1..32}; do
+        if [ $i -le $cidr ]; then
+            mascara+="1"
+        else
+            mascara+="0"
+        fi
+
+        # Agregar un punto cada 8 bits
+        if [ $((i % 8)) -eq 0 ] && [ $i -ne 32 ]; then
+            mascara+="."
+        fi
+    done
+
+    # Convertir la máscara binaria a formato decimal
+    local octetos=(${mascara//./ })
+    local mascara_decimal=""
+
+    for octeto in "${octetos[@]}"; do
+        mascara_decimal+=$((2#$octeto))
+        mascara_decimal+="."
+    done
+
+    #Retornar la máscara de subred
+    echo "${mascara_decimal%?}"
+}
+
+calcular_red_broadcast() {
+    local ip="$1"
+
+    # Extraer los primeros tres octetos de la IP
+    local base=$(echo "$ip" | awk -F. '{print $1"."$2"."$3}')
+
+    #Retornar los valores de la red y broadcast
+    printf "${base}.0|${base}.255"
+}
