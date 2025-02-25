@@ -47,3 +47,31 @@ function detalles_red {
 
     return@($subnetMask,$networkAddress)
 }
+function usuarios{
+
+    Write-Host "--Menu de usuarios--"
+    Write-Host "[1].- Crear usuario"
+    Write-Host "[2].- Eliminar usuario"
+    Write-Host "[3].- Cambiar de grupo usuario"
+    Write-Host "[4].- Salir"
+
+
+
+    $usuario = ""
+    do{
+        $usuario = Read-Host "Ingrese el usuario para el SSH" 
+        
+        if( -not [string]::IsNullOrEmpty($Usuario)){
+            Write-Host "Usuario Valido" -ForegroundColor Green
+            Break
+        }else{
+            Write-Host "El nombre no puede ser vacio" -ForegroundColor Red
+        }
+    }While($true)
+    
+    $password = Read-Host -AsSecureString "Ingresa la contraseña"
+    
+    Write-Host "Creando usuario para SSH" -ForegroundColor Green
+    New-LocalUser -Name $usuario -Password $password -FullName "$($usuario) SSH" -Description "Usuario para acceso SSH" -PasswordNeverExpires
+
+}
