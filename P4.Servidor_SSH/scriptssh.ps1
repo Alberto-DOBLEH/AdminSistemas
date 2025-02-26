@@ -1,6 +1,6 @@
 #Importacion de modulos
 Write-Host "Importando modulo de validacion de IP" -ForegroundColor Green
-Import-Module "C:\Users\Administrador\Desktop\SysAdmin\AdminSistemas\WinModulos\modulos.psm1"
+Import-Module "C:\Users\Administrador\SysAdmin\AdminSistemas\WinModulos\modulos.psm1"
 
 #Instalar OpenSSH
 Write-Host "Instalando OpenSSH" -ForegroundColor Green
