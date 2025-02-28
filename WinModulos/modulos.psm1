@@ -47,31 +47,54 @@ function detalles_red {
 
     return@($subnetMask,$networkAddress)
 }
-function usuarios{
 
-    Write-Host "--Menu de usuarios--"
-    Write-Host "[1].- Crear usuario"
-    Write-Host "[2].- Eliminar usuario"
-    Write-Host "[3].- Cambiar de grupo usuario"
-    Write-Host "[4].- Salir"
+#Validacion por textos vacios
+function validar_textos_nulos{
+    param {
+        [string]$texto
+    }
 
-
-
-    $usuario = ""
-    do{
-        $usuario = Read-Host "Ingrese el usuario para el SSH" 
-        
-        if( -not [string]::IsNullOrEmpty($Usuario)){
-            Write-Host "Usuario Valido" -ForegroundColor Green
-            Break
-        }else{
-            Write-Host "El nombre no puede ser vacio" -ForegroundColor Red
-        }
-    }While($true)
-    
-    $password = Read-Host -AsSecureString "Ingresa la contraseña"
-    
-    Write-Host "Creando usuario para SSH" -ForegroundColor Green
-    New-LocalUser -Name $usuario -Password $password -FullName "$($usuario) SSH" -Description "Usuario para acceso SSH" -PasswordNeverExpires
-
+    if( -not [string]::IsNullOrEmpty($texto)){
+        return $true
+    }else{
+        return $false
+    }
 }
+#Validacion de que el username no tenga espacios
+function validar_espacios {
+    param{
+        [string]$usuario
+    }
+
+    if( $usuario -match "\s"){
+        return $false
+    }else{
+        return $true
+    }
+}
+#validcacion de formato de contraseña
+function validar_contraseña {
+    param {
+        [string]$contraseña
+    }
+
+    if ($contraseña.Length -lt 8) {
+        return $false
+    }
+
+    if ($contraseña -notmatch "[A-Z]") {
+        return $false
+    }
+
+    if ($contraseña -notmatch "[0-9]") {
+        return $false
+    }
+
+    return $true
+}
+
+#Validacion de que el usuario ya existe
+
+#Validacion de que exista el grupo
+
+#Validacion de que 
