@@ -23,14 +23,20 @@ if ($null -ne $service) {
     #Creacion de carpeta raiz del FTP
     $ftpPath = "C:\FTP"
     New-Item -Path $ftpPath -ItemType Directory
+    New-WebVirtualDirectory -Site "FTP-Site" -Name "RaizFTP" -PhysicalPath $ftpPath
 
     #Creacion de carpetas obligatorias del FTP
     $reprobadosPath = "C:\FTP\reprobados"
-    $recursadoresPath = "C:\FTP\recursadores"
-    $generalPath = "C:\FTP\general"
     New-Item -Path $reprobadosPath -ItemType Directory
+    New-WebVirtualDirectory -Site "FTP-Site" -Name "Reprobados" -PhysicalPath $reprobadosPath
+
+    $recursadoresPath = "C:\FTP\recursadores"
     New-Item -Path $recursadoresPath -ItemType Directory
+    New-WebVirtualDirectory -Site "FTP-Site" -Name "Recursadores" -PhysicalPath $recursadoresPath
+
+    $generalPath = "C:\FTP\general"
     New-Item -Path $generalPath -ItemType Directory
+    New-WebVirtualDirectory -Site "FTP-Site" -Name "General" -PhysicalPath $generalPath -AllowAnonymous
 
     #Creacion de un sitio FTP
     New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath -Server localhost
@@ -42,7 +48,7 @@ if ($null -ne $service) {
 
     # Permitir acceso total a los usuarios en la carpeta general
     icacls $generalPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
-    icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r  # Permite acceso anónimo
+    icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r
 
     Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath IIS:\ 
     Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath IIS:\
@@ -63,9 +69,11 @@ do{
     Write-Host "¿Qué desea hacer?"
     Write-Host "[1].-Gestor de usuarios"
     Write-Host "[2].-Salir"
+    $opcion = Read-Host ">" 
 
     if($opcion -eq 1){
         gestor_usuarios
+        Restart-Service FTPSVC
     }
     if($opcion -eq 2){
         Write-Host "Saliendo..."
@@ -74,6 +82,5 @@ do{
     else{
         Write-Host "Opción no válida" -ForegroundColor Red
     }
+
 }while($opcion -ne 1 -and $opcion -ne 2)
-
-
