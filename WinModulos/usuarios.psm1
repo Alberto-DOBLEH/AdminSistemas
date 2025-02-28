@@ -42,23 +42,23 @@ function gestor_usuarios{
 
                     $password = ""
                     do{            
-                        $password = Read-Host "Ingresa la contraseña"
+                        $password = Read-Host "Ingresa la contrasena"
 
                         $vc1 = validar_textos_nulos -texto $password
                         if($vc1 -eq $false){
-                            Write-Host "Error: La contraseña no puede estar vacía" -ForegroundColor Red
+                            Write-Host "Error: La contrasena no puede estar vacía" -ForegroundColor Red
                             continue
                         }
                         
                         $vc2 = validar_espacios -usuario $password
                         if($vc2 -eq $false){
-                            Write-Host "Error: La contraseña no puede contener espacios" -ForegroundColor Red
+                            Write-Host "Error: La contrasena no puede contener espacios" -ForegroundColor Red
                             continue
                         }
 
-                        $vc3 = validar_contraseña -contraseña $password
+                        $vc3 = validar_contrasena -contrasena $password
                         if($vc3 -eq $false){
-                            Write-Host "Error: La contraseña debe tener al menos 8 caracteres, una letra mayúscula y un número" -ForegroundColor Red
+                            Write-Host "Error: La contrasena debe tener al menos 8 caracteres, una letra mayúscula y un número" -ForegroundColor Red
                             continue
                         }
 

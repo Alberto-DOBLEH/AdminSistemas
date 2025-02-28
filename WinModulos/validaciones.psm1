@@ -72,21 +72,21 @@ function validar_espacios {
         return $true
     }
 }
-#validcacion de formato de contraseña
-function validar_contraseña {
+#validcacion de formato de contrasena
+function validar_contrasena {
     param {
-        [string]$contraseña
+        [string]$contrasena
     }
 
-    if ($contraseña.Length -lt 8) {
+    if ($contrasena.Length -lt 8) {
         return $false
     }
 
-    if ($contraseña -notmatch "[A-Z]") {
+    if ($contrasena -notmatch "[A-Z]") {
         return $false
     }
 
-    if ($contraseña -notmatch "[0-9]") {
+    if ($contrasena -notmatch "[0-9]") {
         return $false
     }
 
