@@ -1,4 +1,4 @@
-Import-Module ./validaciones.psm1
+Import-Module .\validadores.psm1
 
 function gestor_usuarios{
     
