@@ -1,5 +1,5 @@
 #Importacion de modulos
-Import-Module ../WinModulos/validaciones.psm1
+Import-Module ../WinModulos/validadores.psm1
 Import-Module ../WinModulos/usuarios.psm1
 
 #Verificacion Inicial del servicio FTP 
