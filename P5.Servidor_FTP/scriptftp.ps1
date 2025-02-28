@@ -11,7 +11,7 @@ if ($null -ne $service) {
 } else {
     Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..."
    
-    #Instalacion de los servcios para el servidor FTP
+    #Instalacion de los servcios para el servidor FTPx
     Install-WindowsFeature Web-FTP-Server -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeManagementTools
     Import-Module WebAdministration
@@ -44,20 +44,36 @@ if ($null -ne $service) {
     icacls $generalPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
     icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r  # Permite acceso anónimo
 
-    # Verificar si se instaló correctamente
-    $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
-    if ($null -ne $service) {
-        Write-Host "El servicio FTP se instaló correctamente."
-    } else {
-        Write-Host "Error al instalar el servicio FTP."
-    }
+    Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath IIS:\ 
+    Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath IIS:\
+
+    # Reiniciar FTP para aplicar cambios
+    Restart-Service FTPSVC
+
+    #Mando llamar al gestor de usuarios
     gestor_usuarios
+
+    #Mostrar que esta corriendo el servicio
+    Get-Service -Name $serviceName
+
+    #Mensaje de finalizacion
+    Write-Host "Servidor FTP configurado correctamente" -ForegroundColor Green
 }
 do{
     Write-Host "¿Qué desea hacer?"
-    Write-Host "Gestor de usuarios"
-    Write-Host "Salir"
+    Write-Host "[1].-Gestor de usuarios"
+    Write-Host "[2].-Salir"
 
-}
+    if($opcion -eq 1){
+        gestor_usuarios
+    }
+    if($opcion -eq 2){
+        Write-Host "Saliendo..."
+        continue
+    }
+    else{
+        Write-Host "Opción no válida" -ForegroundColor Red
+    }
+}while($opcion -ne 1 -and $opcion -ne 2)
 
 
