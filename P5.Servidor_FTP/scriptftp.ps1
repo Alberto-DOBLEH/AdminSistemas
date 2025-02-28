@@ -1,39 +1,63 @@
-#Instalacion de los servcios para el servidor FTP
-Install-WindowsFeature Web-FTP-Server -IncludeManagementTools
-Install-WindowsFeature Web-Server -IncludeManagementTools
-Import-Module WebAdministration
+#Importacion de modulos
+Import-Module ../WinModulos/validaciones.psm1
+Import-Module ../WinModulos/usuarios.psm1
 
-#Creacion de carpeta de FTP
-$ftpPath = "C:\FTP"
-New-Item -Path $ftpPath -ItemType Directory
-$rootPath = "C:\FTP\root"
-New-Item -Path $rootPath -ItemType Directory
+#Verificacion Inicial del servicio FTP 
+$serviceName = "FTPSVC"
+$service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
 
-#Creacion de un sitio FTP
-New-webSite -Name "FTP" -Port 45 -PhysicalPath $rootPath -Server localhost
+if ($null -ne $service) {
+    Write-Host "El servicio FTP ya está instalado."
+} else {
+    Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..."
+   
+    #Instalacion de los servcios para el servidor FTP
+    Install-WindowsFeature Web-FTP-Server -IncludeManagementTools
+    Install-WindowsFeature Web-Server -IncludeManagementTools
+    Import-Module WebAdministration
 
-#Creacion de grupos de usuarios para FTP
-$ADSI = [ADSI]"WinNT://$env:ComputerName"
+    #Creacion de los grupos
+    New-LocalGroup -Name "reprobados" -Description "Grupo de reprobados"
+    New-LocalGroup -Name "recursadores" -Description "Grupo de recursadores"
 
-#Creacion de grupo de reprobados para FTP
-$FTPUserGroupName1 = "reprobados"
-$FTPUserGroup1 = $ADSI.Create("Group", "$FTPUserGroupName1")
-$FTPUserGroup1.SetInfo()
-$FTPUserGroup1.Description = "Miembros reprobados"
-$FTPUserGroup1.SetInfo()
+    #Creacion de carpeta raiz del FTP
+    $ftpPath = "C:\FTP"
+    New-Item -Path $ftpPath -ItemType Directory
 
-#Creacion de grupo de recursadores para FTP
-$FTPUserGroupName2 = "recursadores"
-$FTPUserGroup2 = $ADSI.Create("Group", "$FTPUserGroupName2")
-$FTPUserGroup2.SetInfo()
-$FTPUserGroup2.Description = "Miembros recursadores"
-$FTPUserGroup2.SetInfo()
+    #Creacion de carpetas obligatorias del FTP
+    $reprobadosPath = "C:\FTP\reprobados"
+    $recursadoresPath = "C:\FTP\recursadores"
+    $generalPath = "C:\FTP\general"
+    New-Item -Path $reprobadosPath -ItemType Directory
+    New-Item -Path $recursadoresPath -ItemType Directory
+    New-Item -Path $generalPath -ItemType Directory
 
-$FTPUserName = Read-Host "Ingrese el nombre de usuario para FTP"
-$FTPPassword = Read-Host -AsSecureString "Ingrese la contraseña para FTP"
-$CreateUserFTPUser = $ADSI.Create("User", "$FTPUserName")
-$CreateUserFTPUser.SetInfo()
-$CreateUserFTPUser.SetPassword("$FTPPassword")
-$CreateUserFTPUser.SetInfo()
+    #Creacion de un sitio FTP
+    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath -Server localhost
+
+    #Configuracion de los permisos de las carpetas
+    # Permitir acceso total a los grupos en sus carpetas
+    icacls $reprobadosPath /grant "reprobados :(OI)(CI)F" /inheritance:r
+    icacls $recursadoresPath /grant "recursadores :(OI)(CI)F" /inheritance:r
+
+    # Permitir acceso total a los usuarios en la carpeta general
+    icacls $generalPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
+    icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r  # Permite acceso anónimo
+
+    # Verificar si se instaló correctamente
+    $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+    if ($null -ne $service) {
+        Write-Host "El servicio FTP se instaló correctamente."
+    } else {
+        Write-Host "Error al instalar el servicio FTP."
+    }
+    gestor_usuarios
+}
+do{
+    Write-Host "¿Qué desea hacer?"
+    Write-Host "Gestor de usuarios"
+    Write-Host "Salir"
+
+}
 
 

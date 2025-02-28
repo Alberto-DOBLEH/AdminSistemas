@@ -94,7 +94,33 @@ function validar_contraseña {
 }
 
 #Validacion de que el usuario ya existe
+function validar_usuario_existente {
+    param (
+        [string]$usuario
+    )
+
+    try {
+        Get-ADUser -Filter "SamAccountName -eq '$usuario'" -ErrorAction Stop | Out-Null
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
 
 #Validacion de que exista el grupo
+function validar_grupo_existente {
+    param (
+        [string]$nombreGrupo
+    )
+
+    try {
+        Get-ADGroup -Filter "Name -eq '$nombreGrupo'" -ErrorAction Stop | Out-Null
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
 
 #Validacion de que 
