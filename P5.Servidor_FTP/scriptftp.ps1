@@ -16,30 +16,31 @@ if ($null -ne $service) {
     Install-WindowsFeature Web-Server -IncludeManagementTools
     Import-Module WebAdministration
 
+    #Creacion de un sitio FTP
+    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath -Server localhost
+
     #Creacion de los grupos
     New-LocalGroup -Name "reprobados" -Description "Grupo de reprobados"
     New-LocalGroup -Name "recursadores" -Description "Grupo de recursadores"
 
-    #Creacion de carpeta raiz del FTP
+    #Creacion de carpeta fisicas del FTP
     $ftpPath = "C:\FTP"
     New-Item -Path $ftpPath -ItemType Directory
-    New-WebVirtualDirectory -Site "FTP-Site" -Name "RaizFTP" -PhysicalPath $ftpPath
 
-    #Creacion de carpetas obligatorias del FTP
     $reprobadosPath = "C:\FTP\reprobados"
     New-Item -Path $reprobadosPath -ItemType Directory
-    New-WebVirtualDirectory -Site "FTP-Site" -Name "Reprobados" -PhysicalPath $reprobadosPath
 
     $recursadoresPath = "C:\FTP\recursadores"
     New-Item -Path $recursadoresPath -ItemType Directory
-    New-WebVirtualDirectory -Site "FTP-Site" -Name "Recursadores" -PhysicalPath $recursadoresPath
-
+    
     $generalPath = "C:\FTP\general"
     New-Item -Path $generalPath -ItemType Directory
-    New-WebVirtualDirectory -Site "FTP-Site" -Name "General" -PhysicalPath $generalPath -AllowAnonymous
 
-    #Creacion de un sitio FTP
-    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath -Server localhost
+    #Creacion de los directorios virtuales
+    New-WebVirtualDirectory -Site "FTP-Site" -Name "RaizFTP" -PhysicalPath $ftpPath    
+    New-WebVirtualDirectory -Site "FTP-Site" -Name "Reprobados" -PhysicalPath $reprobadosPath
+    New-WebVirtualDirectory -Site "FTP-Site" -Name "Recursadores" -PhysicalPath $recursadoresPath
+    New-WebVirtualDirectory -Site "FTP-Site" -Name "General" -PhysicalPath $generalPath -AllowAnonymous
 
     #Configuracion de los permisos de las carpetas
     # Permitir acceso total a los grupos en sus carpetas
@@ -64,6 +65,7 @@ if ($null -ne $service) {
 
     #Mensaje de finalizacion
     Write-Host "Servidor FTP configurado correctamente" -ForegroundColor Green
+    exit
 }
 do{
     Write-Host "¿Qué desea hacer?"
