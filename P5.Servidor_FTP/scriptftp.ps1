@@ -16,6 +16,7 @@ if ($null -ne $service) {
     Install-WindowsFeature Web-FTP-Server -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeManagementTools
     Import-Module WebAdministration
+    Update-Module WebAdministration
 
     #Creacion de los grupos
     Write-Host "Creando grupos necesarios para el servidor FTP..." -ForegroundColor Yellow
