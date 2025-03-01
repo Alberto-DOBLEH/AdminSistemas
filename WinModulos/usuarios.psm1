@@ -1,5 +1,4 @@
-. ./validadores.psm1
-
+Import-Module "$PSScriptRoot/validadores.psm1"
 function gestor_usuarios{
     
     do{
