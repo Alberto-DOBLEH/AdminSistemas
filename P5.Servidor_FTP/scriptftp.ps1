@@ -52,7 +52,7 @@ if ($null -ne $service) {
     New-WebVirtualDirectory -Site "FTP" -Name "Recursadores" -PhysicalPath $recursadoresPath
 
     #Directorio virtual para General
-    New-WebVirtualDirectory -Site "FTP" -Name "General" -PhysicalPath $generalPath -AllowAnonymous
+    New-WebVirtualDirectory -Site "FTP" -Name "General" -PhysicalPath $generalPath
     $virtualDirectory = Get-WebVirtualDirectory -Site "FTP" -Name "General"
     Set-WebConfigurationProperty -pspath "IIS:\Sites\$($virtualDirectory.Site)/$($virtualDirectory.Path)" -name "anonymousAuthentication.enabled" -value $true
 
