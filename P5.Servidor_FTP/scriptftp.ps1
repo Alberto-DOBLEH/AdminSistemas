@@ -11,36 +11,45 @@ if ($null -ne $service) {
 } else {
     Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..."
    
-    #Instalacion de los servcios para el servidor FTPx
+    #Instalacion de los servcios para el servidor FTP
+    Write-Host "Instalando servicios necesarios para el servidor FTP..." -ForegroundColor Yellow
     Install-WindowsFeature Web-FTP-Server -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeManagementTools
     Import-Module WebAdministration
 
-    #Creacion de un sitio FTP
-    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath -Server localhost
-
     #Creacion de los grupos
+    Write-Host "Creando grupos necesarios para el servidor FTP..." -ForegroundColor Yellow
     New-LocalGroup -Name "reprobados" -Description "Grupo de reprobados"
     New-LocalGroup -Name "recursadores" -Description "Grupo de recursadores"
 
     #Creacion de carpeta fisicas del FTP
+    Write-Host "Creando carpeta principal del FTP..." -ForegroundColor Yellow
     $ftpPath = "C:\FTP"
     New-Item -Path $ftpPath -ItemType Directory
 
+    Write-Host "Creando carpetas de reprobados" -ForegroundColor Yellow
     $reprobadosPath = "C:\FTP\reprobados"
     New-Item -Path $reprobadosPath -ItemType Directory
 
+    Write-Host "Creando carpetas de recursadores" -ForegroundColor Yellow
     $recursadoresPath = "C:\FTP\recursadores"
     New-Item -Path $recursadoresPath -ItemType Directory
     
+    Write-Host "Creando carpeta general" -ForegroundColor Yellow
     $generalPath = "C:\FTP\general"
     New-Item -Path $generalPath -ItemType Directory
 
+    #Creacion de un sitio FTP
+    Write-Host "Creando sitio FTP..." -ForegroundColor Yellow
+    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath -Server localhost
+
+
     #Creacion de los directorios virtuales
-    New-WebVirtualDirectory -Site "FTP-Site" -Name "RaizFTP" -PhysicalPath $ftpPath    
-    New-WebVirtualDirectory -Site "FTP-Site" -Name "Reprobados" -PhysicalPath $reprobadosPath
-    New-WebVirtualDirectory -Site "FTP-Site" -Name "Recursadores" -PhysicalPath $recursadoresPath
-    New-WebVirtualDirectory -Site "FTP-Site" -Name "General" -PhysicalPath $generalPath -AllowAnonymous
+    Write-Host "Creando directorios virtuales de cada carpeta..." -ForegroundColor Yellow
+    New-WebVirtualDirectory -Site "FTP" -Name "RaizFTP" -PhysicalPath $ftpPath    
+    New-WebVirtualDirectory -Site "FTP" -Name "Reprobados" -PhysicalPath $reprobadosPath
+    New-WebVirtualDirectory -Site "FTP" -Name "Recursadores" -PhysicalPath $recursadoresPath
+    New-WebVirtualDirectory -Site "FTP" -Name "General" -PhysicalPath $generalPath -AllowAnonymous
 
     #Configuracion de los permisos de las carpetas
     # Permitir acceso total a los grupos en sus carpetas
