@@ -41,7 +41,7 @@ if ($null -ne $service) {
 
     #Creacion de un sitio FTP
     Write-Host "Creando sitio FTP..." -ForegroundColor Yellow
-    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath -Server localhost
+    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath -Server WIN-KDHI103607G
 
 
     #Creacion de los directorios virtuales
