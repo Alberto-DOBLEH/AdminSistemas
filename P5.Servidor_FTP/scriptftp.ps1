@@ -65,7 +65,7 @@ if ($null -ne $service) {
     Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath IIS:\
 
     # Reiniciar FTP para aplicar cambios
-    Restart-Service FTPSVC
+    Restart-Service -Name FTPSVC
 
     #Mando llamar al gestor de usuarios
     gestor_usuarios

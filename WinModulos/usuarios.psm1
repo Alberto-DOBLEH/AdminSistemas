@@ -67,7 +67,8 @@ function gestor_usuarios{
 
                     Write-Host "Creando usuario....." -ForegroundColor Green
                     New-LocalUser -Name $usuario -Password (ConvertTo-SecureString -String $password -AsPlainText -Force) -FullName "$($usuario) SSH" -Description "Usuario " -PasswordNeverExpires 
-                    Add-LocalGroupMember -Group "Usuarios" -Member $usuario       
+                    Add-LocalGroupMember -Group "Usuarios" -Member $usuario
+                    Add-LocalGroupMember -Group "IIS_IUSRS" -Member $usuario       
                     Write-Host "Usuario creado correctamente" -ForegroundColor Green
 
                     #Creacion de carpeta personal
