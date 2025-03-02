@@ -53,7 +53,7 @@ function validar_textos_nulos{
     param {
         [string]$texto
     }
-
+    write-Host $texto
     if( -not [string]::IsNullOrEmpty($texto)){
         return $true
     }else{
@@ -65,7 +65,7 @@ function validar_espacios {
     param{
         [string]$usuario
     }
-
+    write-Host $usuario
     if( $usuario -match "\s"){
         return $false
     }else{
@@ -78,6 +78,7 @@ function validar_contrasena {
         [string]$contrasena
     }
 
+    write-Host $contrasena
     if ($contrasena.Length -lt 8) {
         return $false
     }
@@ -99,6 +100,7 @@ function validar_usuario_existente {
         [string]$usuario
     )
 
+    write-Host $usuario
     try {
         Get-ADUser -Filter "SamAccountName -eq '$usuario'" -ErrorAction Stop | Out-Null
         return $true
