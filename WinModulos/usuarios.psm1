@@ -65,7 +65,7 @@ function gestor_usuarios{
                     }While($vc1 -eq $false -or $vc2 -eq $false -or $vc3 -eq $false)
 
                     Write-Host "Creando usuario....." -ForegroundColor Green
-                    New-LocalUser -Name $usuario -Password (-AsSecureString $password) -FullName "$($usuario) SSH" -Description "Usuario " -PasswordNeverExpires 
+                    New-LocalUser -Name $usuario -Password (ConvertTo-SecureString -String $password -AsPlainText -Force) -FullName "$($usuario) SSH" -Description "Usuario " -PasswordNeverExpires 
                     Add-LocalGroupMember -Group "Usuarios" -Member $usuario       
                     Write-Host "Usuario creado correctamente" -ForegroundColor Green
 
@@ -99,16 +99,16 @@ function gestor_usuarios{
 
                     #Asignacion de permisos
                     # Configurar permisos para que SOLO el usuario y su grupo accedan a su carpeta
-                    icacls $userFolder /grant "$usuario :(OI)(CI)F" /inheritance:r
-                    icacls $userFolder /grant "$grp :(OI)(CI)F" /inheritance:r
+                    icacls $userpath /grant "$usuario :(OI)(CI)F" /inheritance:r
+                    icacls $userpath /grant "$grp :(OI)(CI)F" /inheritance:r
 
                     # Conceder acceso del usuario a la carpeta pública
-                    icacls "C:\FTP\Publico" /grant "$usuario :(OI)(CI)F" /inheritance:r
+                    icacls "C:\FTP\General" /grant "$usuario :(OI)(CI)F" /inheritance:r
 
                     # Configurar IIS para que el usuario FTP vea solo su carpeta personal
                     $ftpuserpath = "IIS:\Sites\FTP-Site\$usuario"
                     if (-not (Test-Path $ftpuserpath)) {
-                        New-WebVirtualDirectory -Site "FTP-Site" -Name $usuario -PhysicalPath $userpath
+                        New-WebVirtualDirectory -Site "FTP" -Name $usuario -PhysicalPath $userpath
                     }
                     do{
                         Write-Host "Desea crear otro usuario? "
