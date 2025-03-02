@@ -106,7 +106,7 @@ function gestor_usuarios{
                     icacls "C:\FTP\General" /grant "$usuario :(OI)(CI)F" /inheritance:r
 
                     # Configurar IIS para que el usuario FTP vea solo su carpeta personal
-                    $ftpuserpath = "IIS:\Sites\FTP-Site\$usuario"
+                    $ftpuserpath = "IIS:\Sites\FTP\$usuario"
                     if (-not (Test-Path $ftpuserpath)) {
                         New-WebVirtualDirectory -Site "FTP" -Name $usuario -PhysicalPath $userpath
                     }
