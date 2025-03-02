@@ -16,7 +16,7 @@ if ($null -ne $service) {
     Install-WindowsFeature Web-FTP-Server -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeManagementTools
     Import-Module WebAdministration
-    Update-Module WebAdministration
+
 
     #Creacion de los grupos
     Write-Host "Creando grupos necesarios para el servidor FTP..." -ForegroundColor Yellow
@@ -50,12 +50,8 @@ if ($null -ne $service) {
     New-WebVirtualDirectory -Site "FTP" -Name "RaizFTP" -PhysicalPath $ftpPath    
     New-WebVirtualDirectory -Site "FTP" -Name "Reprobados" -PhysicalPath $reprobadosPath
     New-WebVirtualDirectory -Site "FTP" -Name "Recursadores" -PhysicalPath $recursadoresPath
-
-    #Directorio virtual para General
     New-WebVirtualDirectory -Site "FTP" -Name "General" -PhysicalPath $generalPath
-    $virtualDirectory = Get-WebVirtualDirectory -Site "FTP" -Name "General"
-    Set-WebConfigurationProperty -pspath "IIS:\Sites\$($virtualDirectory.Site)/$($virtualDirectory.Path)" -name "anonymousAuthentication.enabled" -value $true
-
+    
     #Configuracion de los permisos de las carpetas
     # Permitir acceso total a los grupos en sus carpetas
     icacls $reprobadosPath /grant "reprobados :(OI)(CI)F" /inheritance:r
