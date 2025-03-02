@@ -50,9 +50,9 @@ function detalles_red {
 
 #Validacion por textos vacios
 function validar_textos_nulos{
-    param {
+    param (
         [string]$texto
-    }
+    )
     write-Host $texto
     if( -not [string]::IsNullOrEmpty($texto)){
         return $true
@@ -62,9 +62,10 @@ function validar_textos_nulos{
 }
 #Validacion de que el username no tenga espacios
 function validar_espacios {
-    param{
+    param(
         [string]$usuario
-    }
+    )
+
     write-Host $usuario
     if( $usuario -match "\s"){
         return $false
@@ -74,9 +75,9 @@ function validar_espacios {
 }
 #validcacion de formato de contrasena
 function validar_contrasena {
-    param {
+    param (
         [string]$contrasena
-    }
+    )
 
     write-Host $contrasena
     if ($contrasena.Length -lt 8) {
