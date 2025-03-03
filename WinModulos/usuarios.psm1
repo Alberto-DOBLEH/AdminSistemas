@@ -141,11 +141,11 @@ function gestor_usuarios{
                         }
 
                         $vu3 = validar_usuario_existente -usuario $usuario
-                        if($vu3 -eq $true){
+                        if($vu3 -eq $false){
                             Write-Host "Error: El usuario no existe" -ForegroundColor Red
                             continue
                         }
-                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $true)
+                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false)
 
                     try{
                         Write-Host "Eliminando usuario....." -ForegroundColor Green
