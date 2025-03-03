@@ -46,19 +46,24 @@ if ($null -ne $service) {
     New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath
 
     #Creacion de los directorios virtuales
-    Write-Host "Creando directorios virtuales de cada carpeta..." -ForegroundColor Yellow
-    New-WebVirtualDirectory -Site "FTP" -Name "RaizFTP" -PhysicalPath $ftpPath    
-    New-WebVirtualDirectory -Site "FTP" -Name "Reprobados" -PhysicalPath $reprobadosPath
-    New-WebVirtualDirectory -Site "FTP" -Name "Recursadores" -PhysicalPath $recursadoresPath
-    New-WebVirtualDirectory -Site "FTP" -Name "General" -PhysicalPath $generalPath
+    #Write-Host "Creando directorios virtuales de cada carpeta..." -ForegroundColor Yellow
+    #New-WebVirtualDirectory -Site "FTP" -Name "RaizFTP" -PhysicalPath $ftpPath    
+    #New-WebVirtualDirectory -Site "FTP" -Name "Reprobados" -PhysicalPath $reprobadosPath
+    #New-WebVirtualDirectory -Site "FTP" -Name "Recursadores" -PhysicalPath $recursadoresPath
+    #New-WebVirtualDirectory -Site "FTP" -Name "General" -PhysicalPath $generalPath
     
     #Configuracion de los permisos de las carpetas
     # Permitir acceso total a los grupos en sus carpetas
+    Write-Host "Asignando los permisos para los grupos de reprobados..." -ForegroundColor Yellow
     icacls $reprobadosPath /grant "reprobados:(OI)(CI)F" /inheritance:r
+
+    Write-Host "Asignando los permisos para los grupos de recursadores..." -ForegroundColor Yellow
     icacls $recursadoresPath /grant "recursadores:(OI)(CI)F" /inheritance:r
 
     # Permitir acceso total a los usuarios en la carpeta general
+    Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
     icacls $generalPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
+    Write-Host "Asignando los permisos para los anonimos en la carpeta publica..." -ForegroundColor Yellow
     icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r
 
     # Reemplaza "MiSitioFTP" con el nombre real de tu sitio FTP
@@ -66,6 +71,7 @@ if ($null -ne $service) {
 
     # Verifica si el sitio FTP existe
     if (Get-Website -Name $sitioFTP) {
+        Write-Host "Generando las autentificaciones basica y anonima." -ForegroundColor Yellow
         Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
         Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
         Add-WebConfigurationProperty -Filter "/system.ftpServer/messages" -PSPath "MACHINE/WEBROOT/APPHOST" -Name "bannerMessage" -Value "Bienvenido al servidor FTP"
@@ -77,14 +83,17 @@ if ($null -ne $service) {
     # Firewall rule
     Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
     New-NetFirewallRule -DisplayName "FTP" -Direction Inbound -LocalPort 21 -Protocol TCP -Action Allow
-    
-    # Reiniciar FTP para aplicar cambios
-    Restart-Service -Name FTPSVC
 
     #Mando llamar al gestor de usuarios
+    Write-Host "Mandando llamar la funcion del gestor de archivos..." -ForegroundColor Yellow
     gestor_usuarios
 
+    # Reiniciar FTP para aplicar cambios
+    Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
+    Restart-Service -Name FTPSVC
+
     #Mostrar que esta corriendo el servicio
+    Write-Host "Verificando si el servicio esta corriendo...." -ForegroundColor Yellow
     Get-Service -Name $serviceName
 
     #Mensaje de finalizacion
@@ -99,7 +108,7 @@ do{
 
     if($opcion -eq 1){
         gestor_usuarios
-        Restart-Service FTPSVC
+        Restart-Service -Name FTPSVC
     }
     if($opcion -eq 2){
         Write-Host "Saliendo..."
