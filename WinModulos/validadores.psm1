@@ -101,7 +101,12 @@ function validar_usuario_existente {
         [string]$usuario
     )
 
-    return (Get-ADUser -Filter "SamAccountName -eq '$usuario'" -ErrorAction SilentlyContinue) -ne $null
+    try {
+        Get-ADUser -Filter "SamAccountName -eq '$usuario'" -ErrorAction Stop | Out-Null
+        return $true
+    }catch {
+        return $false
+    }
 }
 
 #Validacion de que exista el grupo
