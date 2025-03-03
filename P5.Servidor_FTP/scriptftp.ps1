@@ -13,8 +13,9 @@ if ($null -ne $service) {
    
     #Instalacion de los servcios para el servidor FTP
     Write-Host "Instalando servicios necesarios para el servidor FTP..." -ForegroundColor Yellow
-    Install-WindowsFeature Web-FTP-Server -IncludeManagementTools
-    Install-WindowsFeature Web-Server -IncludeManagementTools
+    Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
+    Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
+    Install-WindowsFeature Web-Basic-Auth 
     Import-Module WebAdministration
 
 
