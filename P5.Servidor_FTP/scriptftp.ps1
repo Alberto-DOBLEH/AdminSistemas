@@ -45,7 +45,6 @@ if ($null -ne $service) {
     Write-Host "Creando sitio FTP..." -ForegroundColor Yellow
     New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath
 
-
     #Creacion de los directorios virtuales
     Write-Host "Creando directorios virtuales de cada carpeta..." -ForegroundColor Yellow
     New-WebVirtualDirectory -Site "FTP" -Name "RaizFTP" -PhysicalPath $ftpPath    
@@ -69,6 +68,7 @@ if ($null -ne $service) {
     if (Get-Website -Name $sitioFTP) {
         Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
         Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
+        Add-WebConfigurationProperty -Filter "/system.ftpServer/messages" -PSPath "MACHINE/WEBROOT/APPHOST" -Name "bannerMessage" -Value "Bienvenido al servidor FTP"
         Write-Host "Autenticación anónima y básica habilitada para el sitio FTP '$sitioFTP'."
     } else {
         Write-Host "El sitio FTP '$sitioFTP' no existe."
