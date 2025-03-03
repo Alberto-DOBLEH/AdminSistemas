@@ -67,8 +67,8 @@ if ($null -ne $service) {
 
     # Verifica si el sitio FTP existe
     if (Get-Website -Name $sitioFTP) {
-        Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
-        Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
+        Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
+        Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
         Write-Host "Autenticación anónima y básica habilitada para el sitio FTP '$sitioFTP'."
     } else {
         Write-Host "El sitio FTP '$sitioFTP' no existe."
