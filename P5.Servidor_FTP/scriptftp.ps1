@@ -54,8 +54,8 @@ if ($null -ne $service) {
     
     #Configuracion de los permisos de las carpetas
     # Permitir acceso total a los grupos en sus carpetas
-    icacls $reprobadosPath /grant "reprobados :(OI)(CI)F" /inheritance:r
-    icacls $recursadoresPath /grant "recursadores :(OI)(CI)F" /inheritance:r
+    icacls $reprobadosPath /grant "reprobados:(OI)(CI)F" /inheritance:r
+    icacls $recursadoresPath /grant "recursadores:(OI)(CI)F" /inheritance:r
 
     # Permitir acceso total a los usuarios en la carpeta general
     icacls $generalPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
@@ -64,6 +64,10 @@ if ($null -ne $service) {
     Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath IIS:\ 
     Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath IIS:\
 
+    # Firewall rule
+    Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
+    New-NetFirewallRule -DisplayName "FTP" -Direction Inbound -LocalPort 21 -Protocol TCP -Action Allow
+    
     # Reiniciar FTP para aplicar cambios
     Restart-Service -Name FTPSVC
 

@@ -101,11 +101,11 @@ function gestor_usuarios{
 
                     #Asignacion de permisos
                     # Configurar permisos para que SOLO el usuario y su grupo accedan a su carpeta
-                    icacls $userpath /grant "$usuario :(OI)(CI)F" /inheritance:r
-                    icacls $userpath /grant "$grp :(OI)(CI)F" /inheritance:r
+                    icacls $userpath /grant "$($usuario):(OI)(CI)F" /inheritance:r
+                    icacls $userpath /grant "$($grp):(OI)(CI)F" /inheritance:r
 
                     # Conceder acceso del usuario a la carpeta pública
-                    icacls "C:\FTP\General" /grant "$usuario :(OI)(CI)F" /inheritance:r
+                    icacls "C:\FTP\General" /grant "$($usuario):(OI)(CI)F" /inheritance:r
 
                     # Configurar IIS para que el usuario FTP vea solo su carpeta personal
                     $ftpuserpath = "IIS:\Sites\FTP\$usuario"
