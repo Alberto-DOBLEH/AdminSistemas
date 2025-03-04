@@ -101,7 +101,7 @@ function validar_usuario_existente {
         [string]$usuario
     )
 
-    $validacion =  Get-ADUser -Filter "SamAccountName -eq '$usuario'" -ErrorAction Stop | Out-Null
+    $validacion = Get-ADUser -Filter "SamAccountName -eq '$usuario'" -ErrorAction Stop | Out-Null
     if($null -eq $validacion){
         return $false
     }catch {
