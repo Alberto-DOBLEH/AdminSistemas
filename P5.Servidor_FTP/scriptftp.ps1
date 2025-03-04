@@ -3,13 +3,13 @@ Import-Module ../WinModulos/validadores.psm1
 Import-Module ../WinModulos/usuarios.psm1
 
 #Verificacion Inicial del servicio FTP 
-$serviceName = "FTPSVC"
-$service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+# $serviceName = "FTPSVC"
+# $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
 
-if ($null -ne $service) {
-    Write-Host "El servicio FTP ya está instalado."
-} else {
-    Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..."
+# if ($null -ne $service) {
+#    Write-Host "El servicio FTP ya está instalado."
+# } else {
+    #Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..."
    
     #Instalacion de los servcios para el servidor FTP
     Write-Host "Instalando servicios necesarios para el servidor FTP..." -ForegroundColor Yellow
@@ -52,6 +52,10 @@ if ($null -ne $service) {
     #New-WebVirtualDirectory -Site "FTP" -Name "Recursadores" -PhysicalPath $recursadoresPath
     #New-WebVirtualDirectory -Site "FTP" -Name "General" -PhysicalPath $generalPath
     
+    #Mando llamar al gestor de usuarios
+    Write-Host "Mandando llamar la funcion del gestor de usuarios..." -ForegroundColor Yellow
+    gestor_usuarios
+
     #Configuracion de los permisos de las carpetas
     # Permitir acceso total a los grupos en sus carpetas
     Write-Host "Asignando los permisos para los grupos de reprobados..." -ForegroundColor Yellow
@@ -65,11 +69,13 @@ if ($null -ne $service) {
     icacls $generalPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
     Write-Host "Asignando los permisos para los anonimos en la carpeta publica..." -ForegroundColor Yellow
     icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r
+    icacls $generalPath /grant "Everyone:(OI)(CI)F" /inheritance:r
 
     # Reemplaza "MiSitioFTP" con el nombre real de tu sitio FTP
     $sitioFTP = "FTP"
 
     # Verifica si el sitio FTP existe
+    # Si existe el sitio FTP, habilita la autenticación anónima y básica
     if (Get-Website -Name $sitioFTP) {
         Write-Host "Generando las autentificaciones basica y anonima." -ForegroundColor Yellow
         Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
@@ -84,10 +90,6 @@ if ($null -ne $service) {
     Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
     New-NetFirewallRule -DisplayName "FTP" -Direction Inbound -LocalPort 21 -Protocol TCP -Action Allow
 
-    #Mando llamar al gestor de usuarios
-    Write-Host "Mandando llamar la funcion del gestor de archivos..." -ForegroundColor Yellow
-    gestor_usuarios
-
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
     Restart-Service -Name FTPSVC
@@ -99,23 +101,23 @@ if ($null -ne $service) {
     #Mensaje de finalizacion
     Write-Host "Servidor FTP configurado correctamente" -ForegroundColor Green
     exit
-}
-do{
-    Write-Host "¿Qué desea hacer?"
-    Write-Host "[1].-Gestor de usuarios"
-    Write-Host "[2].-Salir"
-    $opcion = Read-Host ">" 
+#}
+#do{
+#    Write-Host "¿Qué desea hacer?"
+    # Write-Host "[1].-Gestor de usuarios"
+    # Write-Host "[2].-Salir"
+    # $opcion = Read-Host ">" 
 
-    if($opcion -eq 1){
-        gestor_usuarios
-        Restart-Service -Name FTPSVC
-    }
-    if($opcion -eq 2){
-        Write-Host "Saliendo..."
-        continue
-    }
-    else{
-        Write-Host "Opción no válida" -ForegroundColor Red
-    }
+    # if($opcion -eq 1){
+    #     gestor_usuarios
+    #     Restart-Service -Name FTPSVC
+    # }
+    # if($opcion -eq 2){
+    #     Write-Host "Saliendo..."
+    #     continue
+    # }
+    # else{
+    #     Write-Host "Opción no válida" -ForegroundColor Red
+    # }
 
-}while($opcion -ne 1 -and $opcion -ne 2)
+#}while($opcion -ne 1 -and $opcion -ne 2)

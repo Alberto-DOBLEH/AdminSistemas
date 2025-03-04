@@ -75,6 +75,10 @@ function gestor_usuarios{
                     $userpath = "C:\FTP\$usuario"
                     New-Item -Path $userpath -ItemType Directory
 
+                    #Asignacion de permisos
+                    # Configurar permisos para que SOLO el usuario y su grupo accedan a su carpeta
+                    icacls $userpath /grant "$($usuario):(OI)(CI)F" /inheritance:r
+                    
                     #Agregar el usuario a un grupo
                     do{
                         Write-Host "A que grupo desea agregarlo?"
@@ -86,12 +90,10 @@ function gestor_usuarios{
                             1 {
                                 Add-LocalGroupMember -Group "reprobados" -Member $usuario
                                 Write-Host "Usuario agregado al grupo reprobados" -ForegroundColor Green
-                                $grp = "reprobados"
                             }
                             2 {
                                 Add-LocalGroupMember -Group "recursadores" -Member $usuario
                                 Write-Host "Usuario agregado al grupo recursadores" -ForegroundColor Green
-                                $grp = "recursadores"
                             }
                             Default {
                                 Write-Host "Opción no válida" -ForegroundColor Red
@@ -99,19 +101,6 @@ function gestor_usuarios{
                         }
                     }while($grupo -ne 1 -and $grupo -ne 2)
 
-                    #Asignacion de permisos
-                    # Configurar permisos para que SOLO el usuario y su grupo accedan a su carpeta
-                    icacls $userpath /grant "$($usuario):(OI)(CI)F" /inheritance:r
-                    icacls $userpath /grant "$($grp):(OI)(CI)F" /inheritance:r
-
-                    # Conceder acceso del usuario a la carpeta pública
-                    icacls "C:\FTP\General" /grant "$($usuario):(OI)(CI)F" /inheritance:r
-
-                    # Configurar IIS para que el usuario FTP vea solo su carpeta personal
-                    $ftpuserpath = "IIS:\Sites\FTP\$usuario"
-                    if (-not (Test-Path $ftpuserpath)) {
-                        New-WebVirtualDirectory -Site "FTP" -Name $usuario -PhysicalPath $userpath
-                    }
                     do{
                         Write-Host "Desea crear otro usuario? "
                         $ver= Read-Host "<S/N>"
