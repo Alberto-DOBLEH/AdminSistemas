@@ -37,6 +37,7 @@ $User = [ADSI]"WinNT://$SID"
 $Group.Add($User.Path)
 
 #Habilitar autenticacion basica
+$FTPSiteName = "FTP"
 $FTPSitePath = "IIS:\Sites\$FTPSiteName"
 $BasicAuth = "ftpServer.security.authentication.basicAuthentication.enabled"
 Set-ItemProperty -Path $FTPSitePath -Name $BasicAuth -Value $True
