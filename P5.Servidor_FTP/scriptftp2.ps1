@@ -1,9 +1,9 @@
 Import-Module ../WinModulos/validadores.psm1
 
 #Instalacion de servicios para FTP
-Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
-Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
-Install-WindowsFeature Web-Basic-Auth 
+#Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
+#Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
+#Install-WindowsFeature Web-Basic-Auth 
 Import-Module WebAdministration
 
 
