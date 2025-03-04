@@ -184,27 +184,6 @@ function gestor_usuarios{
                         }
 
                         $vu3 = validar_usuario_existente -usuario $usuario
-                        if($vu3 -eq $true){
-                            Write-Host "Error: El usuario no existe" -ForegroundColor Red
-                            continue
-                        }
-                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $true)$usuario=""
-                    do{
-                        $usuario = Read-Host "Ingrese el nombre del usuario a cambiar de grupo"
-
-                        $vu1 = validar_textos_nulos -texto $usuario
-                        if($vu1 -eq $false){
-                            Write-Host "Error: El nombre de usuario no puede estar vacío" -ForegroundColor Red
-                            continue
-                        }
-
-                        $vu2 = validar_espacios -usuario $usuario
-                        if($vu2 -eq $false){
-                            Write-Host "Error: El nombre de usuario no puede contener espacios" -ForegroundColor Red
-                            continue
-                        }
-
-                        $vu3 = validar_usuario_existente -usuario $usuario
                         if($vu3 -eq $false){
                             Write-Host "Error: El usuario no existe" -ForegroundColor Red
                             continue
