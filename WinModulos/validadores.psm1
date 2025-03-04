@@ -101,11 +101,11 @@ function validar_usuario_existente {
         [string]$usuario
     )
 
-    $validacion = Get-ADUser -Filter "SamAccountName -eq '$usuario'" -ErrorAction Stop | Out-Null
-    if($null -eq $validacion){
-        return $false
-    }catch {
-        return $true
+    try {
+        Get-ADUser -Filter {SamAccountName -eq $usuario} -ErrorAction Stop
+        return $true  # Si se encuentra el usuario, retorna verdadero
+    } catch {
+        return $false  # Si no se encuentra o hay error, retorna falso
     }
 }
 
