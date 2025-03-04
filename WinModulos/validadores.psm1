@@ -101,6 +101,7 @@ function validar_usuario_existente {
         [string]$usuario
     )
 
+    Write-Host $usuario
     try {
         Get-ADUser -Filter {SamAccountName -eq $usuario} -ErrorAction Stop
         return $true  # Si se encuentra el usuario, retorna verdadero
