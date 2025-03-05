@@ -54,7 +54,7 @@ function validar_textos_nulos{
     param (
         [string]$texto
     )
-    write-Host $texto
+
     if( -not [string]::IsNullOrEmpty($texto)){
         return $true
     }else{
@@ -67,7 +67,6 @@ function validar_espacios {
         [string]$usuario
     )
 
-    write-Host $usuario
     if( $usuario -match "\s"){
         return $false
     }else{
@@ -80,7 +79,6 @@ function validar_contrasena {
         [string]$contrasena
     )
 
-    write-Host $contrasena
     if ($contrasena.Length -lt 8) {
         return $false
     }
@@ -102,7 +100,6 @@ function validar_usuario_existente {
         [string]$usuario
     )
 
-    Write-Host $usuario
     if (Get-LocalUser -Name $usuario -ErrorAction SilentlyContinue) {
         return $true
     } else {
