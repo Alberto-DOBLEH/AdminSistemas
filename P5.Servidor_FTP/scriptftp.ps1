@@ -96,7 +96,7 @@ Import-Module ../WinModulos/usuarios.psm1
 
     #Mostrar que esta corriendo el servicio
     Write-Host "Verificando si el servicio esta corriendo...." -ForegroundColor Yellow
-    Get-Service -Name $serviceName
+    Get-Service -Name FTPSVC
 
     #Mensaje de finalizacion
     Write-Host "Servidor FTP configurado correctamente" -ForegroundColor Green
