@@ -180,10 +180,16 @@ function gestor_usuarios{
                     }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false)
 
                     try {
-                       # Obtener los grupos en los que está el usuario
-                        $gruposActuales = Get-LocalGroup | Where-Object {
-                            (Get-LocalGroupMember -Group $_.Name -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name) -contains $usuario
-                        } | Select-Object -ExpandProperty Name
+                        # Obtener todos los grupos locales
+                        $gruposUsuario = @()
+
+                        Get-LocalGroup | ForEach-Object {
+                            $grupo = $_.Name
+                            $miembros = Get-LocalGroupMember -Group $grupo -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
+                            if ($miembros -contains $usuario) {
+                                $gruposUsuario += $grupo  # Almacenar el grupo en lugar del usuario
+                            }
+                        }
 
                         write-host $gruposActuales    
                         if ($gruposActuales.Count -eq 0) {
