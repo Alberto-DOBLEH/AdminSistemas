@@ -181,7 +181,7 @@ function gestor_usuarios{
 
                     try {
                         # Obtener los grupos actuales del usuario
-                        $gruposActuales = Get-LocalGroupMember -Name $usuario -ErrorAction Stop | Select-Object -ExpandProperty GroupName
+                        $gruposActuales = (net user $usuario | Select-String "Miembros del grupo local").ToString()
                 
                         if ($gruposActuales.Count -eq 0) {
                             Write-Host "El usuario '$usuario' no pertenece a ningún grupo local." -ForegroundColor Yellow

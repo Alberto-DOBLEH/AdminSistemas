@@ -16,7 +16,7 @@ Import-Module ../WinModulos/usuarios.psm1
     Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Basic-Auth
-    Get-WindowsCapability -Name RSAT.ActiveDirectory* -Online | Add-WindowsCapability -Online 
+    Install-WindowsFeature -Name RSAT-AD-PowerShell -IncludeManagementTools
     Import-Module WebAdministration
 
 
