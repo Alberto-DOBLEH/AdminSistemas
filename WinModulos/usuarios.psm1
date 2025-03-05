@@ -180,9 +180,11 @@ function gestor_usuarios{
                     }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false)
 
                     try {
-                        # Obtener los grupos actuales del usuario
-                        $gruposActuales = (net user $usuario | Select-String "Miembros del grupo local").ToString()
-                
+                       # Obtener los grupos en los que está el usuario
+                        $gruposActuales = Get-LocalGroup | Where-Object {
+                            (Get-LocalGroupMember -Group $_.Name -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name) -contains $usuario
+                        } | Select-Object -ExpandProperty Name
+
                         if ($gruposActuales.Count -eq 0) {
                             Write-Host "El usuario '$usuario' no pertenece a ningún grupo local." -ForegroundColor Yellow
                             return
