@@ -15,7 +15,8 @@ Import-Module ../WinModulos/usuarios.psm1
     Write-Host "Instalando servicios necesarios para el servidor FTP..." -ForegroundColor Yellow
     Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
-    Install-WindowsFeature Web-Basic-Auth 
+    Install-WindowsFeature Web-Basic-Auth
+    Get-WindowsCapability -Name RSAT.ActiveDirectory* -Online | Add-WindowsCapability -Online 
     Import-Module WebAdministration
 
 

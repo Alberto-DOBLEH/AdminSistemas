@@ -103,12 +103,10 @@ function validar_usuario_existente {
     )
 
     Write-Host $usuario
-    try {
-        $validador = Get-ADUser -Filter {SamAccountName -eq $usuario} -ErrorAction Stop
-        Write-Host $validador
-        return $true  # Si se encuentra el usuario, retorna verdadero
-    } catch {
-        return $false  # Si no se encuentra o hay error, retorna falso
+    if (Get-LocalUser -Name $usuario -ErrorAction SilentlyContinue) {
+        return $true
+    } else {
+        return $false
     }
 }
 
