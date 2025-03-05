@@ -185,6 +185,7 @@ function gestor_usuarios{
                             (Get-LocalGroupMember -Group $_.Name -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name) -contains $usuario
                         } | Select-Object -ExpandProperty Name
 
+                        write-host $gruposActuales    
                         if ($gruposActuales.Count -eq 0) {
                             Write-Host "El usuario '$usuario' no pertenece a ningún grupo local." -ForegroundColor Yellow
                             return
