@@ -86,8 +86,21 @@ Import-Module ../WinModulos/usuarios.psm1
         Write-Host "El sitio FTP '$sitioFTP' no existe."
     }
 
-    New-ItemProperty "IIS:\Sites\FTP" -Name "ftpServer.security.ssl.controlChannelPolicy" -Value 0 -PropertyType DWORD -Force
-    New-ItemProperty "IIS:\Sites\FTP" -Name "ftpServer.security.ssl.dataChannelPolicy" -Value 0 -PropertyType DWORD -Force
+    try{
+        New-ItemProperty "IIS:\Sites\FTP" -Name "ftpServer.security.ssl.controlChannelPolicy" -Value 0 -PropertyType DWORD -Force
+        New-ItemProperty "IIS:\Sites\FTP" -Name "ftpServer.security.ssl.dataChannelPolicy" -Value 0 -PropertyType DWORD -Force
+        Write-Host "Jalo el ItemProperty"
+    }catch{
+        Write-Host "No jalo el ItemProperty"  
+    }
+    
+    try{
+        Add-WebConfigurationProperty -Filter "/system.ftpServer/security/ssl/controlChannelPolicy" -PSPath "MACHINE/WEBROOT/APPHOST/$sitioFTP" -Name "Value" -Value 0
+        Add-WebConfigurationProperty -Filter "/system.ftpServer/security/ssl/dataChannelPolicy" -PSPath "MACHINE/WEBROOT/APPHOST/$sitioFTP" -Name "Value" -Value 0
+        Write-Host "Jalo el WebConfiguration"
+    }catch{
+        Write-Host "No jalo el WebConfiguration"
+    }
 
     # $SSLPolicy = @(
     #     'ftpServer.security.ssl.controlChannelPolicy',
