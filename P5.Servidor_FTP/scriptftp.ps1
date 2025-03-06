@@ -1,6 +1,7 @@
 #Importacion de modulos
 Import-Module ../WinModulos/validadores.psm1
 Import-Module ../WinModulos/usuarios.psm1
+Import-Module WebAdministration -Force
 
 #Verificacion Inicial del servicio FTP 
 # $serviceName = "FTPSVC"
@@ -17,7 +18,6 @@ Import-Module ../WinModulos/usuarios.psm1
     Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Basic-Auth
     Install-WindowsFeature Web-Mgmt-Service -IncludeManagementTools
-    Import-Module WebAdministration -Force
 
     # Firewall rule
     Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
