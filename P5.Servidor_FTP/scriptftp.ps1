@@ -16,8 +16,7 @@ Import-Module ../WinModulos/usuarios.psm1
     Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Basic-Auth
-    Install-WindowsFeature -Name RSAT-AD-PowerShell -IncludeManagementTools
-    Import-Module WebAdministration
+    Import-Module WebAdministration -Force
 
     # Firewall rule
     Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
@@ -72,9 +71,8 @@ Import-Module ../WinModulos/usuarios.psm1
     Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
-    # Reemplaza "MiSitioFTP" con el nombre real de tu sitio FTP
-    $sitioFTP = "FTP"
 
+    $sitioFTP = "FTP"
     # Verifica si el sitio FTP existe
     # Si existe el sitio FTP, habilita la autenticación anónima y básica
     if (Get-Website -Name $sitioFTP) {
@@ -91,8 +89,8 @@ Import-Module ../WinModulos/usuarios.psm1
         'ftpServer.security.ssl.controlChannelPolicy',
         'ftpServer.security.ssl.dataChannelPolicy'
     )
-    Add-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[0] -value 0
-    Add-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[1] -value 0
+    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[0] -value 0
+    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[1] -value 0
 
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
