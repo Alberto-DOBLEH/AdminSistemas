@@ -66,17 +66,54 @@ Import-Module WebAdministration -Force
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
     $sitioFTP = "FTP"
-    # Verifica si el sitio FTP existe
-    # Si existe el sitio FTP, habilita la autenticación anónima y básica
-    if (Get-Website -Name $sitioFTP) {
-        Write-Host "Generando las autentificaciones basica y anonima." -ForegroundColor Yellow
-        Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
-        Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
-        Set-WebConfigurationProperty -Filter "/system.ftpServer/messages" -PSPath "MACHINE/WEBROOT/APPHOST" -Name "bannerMessage" -Value "Bienvenido al servidor FTP"
-        Write-Host "Autenticación anónima y básica habilitada para el sitio FTP '$sitioFTP'."
-    } else {
-        Write-Host "El sitio FTP '$sitioFTP' no existe."
+
+    $FTPSitePath = "IIS:\Sites\$sitioFTP"
+    $BasicAuth = 'ftpServer.security.authentication.basicAuthentication.enabled'
+    Set-ItemProperty -Path $FTPSitePath -Name $BasicAuth -Value $true 
+    $param =@{
+        Filter = "/system.ftpServer/security/authorization"
+        value = @{
+            accessType = "Allow"
+            roles = "recursadores"
+            permision = 1
+        }
+        PSPath = 'IIS:\'
+        Location = $sitioFTP
     }
+    $param2 =@{
+        Filter = "/system.ftpServer/security/authorization"
+        value = @{
+            accessType = "Allow"
+            roles = "reprobados"
+            permision = 1
+        }
+        PSPath = 'IIS:\'
+        Location = $sitioFTP
+    }
+    $param3 =@{
+        Filter = "/system.ftpServer/security/authorization"
+        value = @{
+            accessType = "Allow"
+            roles = "*"
+            permision = "Read, Write"
+        }
+        PSPath = 'IIS:\'
+        Location = $sitioFTP
+    }
+    Add-WebConfiguration @param
+    Add-WebConfiguration @param2
+    Add-WebConfiguration @param3
+    # # Verifica si el sitio FTP existe
+    # # Si existe el sitio FTP, habilita la autenticación anónima y básica
+    # if (Get-Website -Name $sitioFTP) {
+    #     Write-Host "Generando las autentificaciones basica y anonima." -ForegroundColor Yellow
+    #     Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
+    #     Set-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/basicAuthentication" -Name "enabled" -Value "True" -PSPath "IIS:\Sites\$sitioFTP"
+    #     Set-WebConfigurationProperty -Filter "/system.ftpServer/messages" -PSPath "MACHINE/WEBROOT/APPHOST" -Name "bannerMessage" -Value "Bienvenido al servidor FTP"
+    #     Write-Host "Autenticación anónima y básica habilitada para el sitio FTP '$sitioFTP'."
+    # } else {
+    #     Write-Host "El sitio FTP '$sitioFTP' no existe."
+    # }
 
     $SSLPolicy = @(
         'ftpServer.security.ssl.controlChannelPolicy',
