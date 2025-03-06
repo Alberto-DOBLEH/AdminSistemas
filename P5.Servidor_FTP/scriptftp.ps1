@@ -37,6 +37,9 @@ Import-Module WebAdministration -Force
     Write-Host "Creando sitio FTP..." -ForegroundColor Yellow
     New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath
 
+    #Creacion de la propiedad de aislamiento
+    Set-ItemProperty -Path "IIS:\Sites\FTP" -Name "ftpserver.userIsolation.mode" -Value 3
+
     Write-Host "Creando carpetas de reprobados" -ForegroundColor Yellow
     $reprobadosPath = "C:\FTP\reprobados"
     New-Item -Path $reprobadosPath -ItemType Directory

@@ -74,6 +74,9 @@ function gestor_usuarios{
                     #Creacion de carpeta personal
                     $userpath = "C:\FTP\LocalUser\$usuario"
                     New-Item -Path $userpath -ItemType Directory
+                    
+                    $generalPath = "C:\FTP\LocalUser\general"
+                    New-Item -ItemType Junction -Path "$userpath\general" -Target $generalPath
 
                     #Asignacion de permisos
                     # Configurar permisos para que SOLO el usuario y su grupo accedan a su carpeta
@@ -90,10 +93,14 @@ function gestor_usuarios{
                             1 {
                                 Add-LocalGroupMember -Group "reprobados" -Member $usuario
                                 Write-Host "Usuario agregado al grupo reprobados" -ForegroundColor Green
+                                $reprobadosPath = "C:\FTP\reprobados"
+                                New-Item -ItemType Junction -Path "$userpath\reprobados" -Target $reprobadosPath
                             }
                             2 {
                                 Add-LocalGroupMember -Group "recursadores" -Member $usuario
                                 Write-Host "Usuario agregado al grupo recursadores" -ForegroundColor Green
+                                $recursadoresPath = "C:\FTP\recursadores"
+                                New-Item -ItemType Junction -Path "$userpath\recursadores" -Target $recursadoresPath
                             }
                             Default {
                                 Write-Host "Opción no válida" -ForegroundColor Red
