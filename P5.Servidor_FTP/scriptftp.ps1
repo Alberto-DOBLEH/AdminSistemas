@@ -91,8 +91,8 @@ Import-Module ../WinModulos/usuarios.psm1
         'ftpServer.security.ssl.controlChannelPolicy',
         'ftpServer.security.ssl.dataChannelPolicy'
     )
-    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[0] -value 0
-    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[1] -value 0
+    Add-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[0] -value 0
+    Add-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[1] -value 0
 
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
