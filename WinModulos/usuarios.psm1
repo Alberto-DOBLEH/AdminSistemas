@@ -76,7 +76,7 @@ function gestor_usuarios{
                     New-Item -Path $userpath -ItemType Directory
                     New-Item -Path "$userpath\$usuario" -ItemType Directory
                     
-                    $generalPath = "C:\FTP\LocalUser\general"
+                    $generalPath = "C:\FTP\LocalUser\Public"
                     New-Item -ItemType Junction -Path "$userpath\general" -Target $generalPath
 
                     #Asignacion de permisos

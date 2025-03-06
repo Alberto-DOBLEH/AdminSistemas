@@ -56,7 +56,7 @@ if ($null -ne $service) {
     New-Item -Path $localuserPath -ItemType Directory
 
     Write-Host "Creando carpeta general" -ForegroundColor Yellow
-    $generalPath = "C:\FTP\LocalUser\general"
+    $generalPath = "C:\FTP\LocalUser\Public"
     New-Item -Path $generalPath -ItemType Directory
 
     #Mando llamar al gestor de usuarios
@@ -73,7 +73,8 @@ if ($null -ne $service) {
 
     # Permitir acceso total a los usuarios en la carpeta general
     Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
-    icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
+    icacls $generalPath /grant "Todos:(OI)(CI)F" /inherite:r
+    icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r
     icacls $ftpPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
     Write-Host "Asignando los permisos para LocalUser..." -ForegroundColor Yellow
