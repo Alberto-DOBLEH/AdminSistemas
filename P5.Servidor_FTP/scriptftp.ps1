@@ -67,7 +67,7 @@ Import-Module WebAdministration -Force
 
     $sitioFTP = "FTP"
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true
-    Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.anonymousAuthentication.enabled -Value $false
+    Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.anonymousAuthentication.enabled -Value $true
 
     Add-WebConfigurationProperty -filter "/system.ftpServer/security/authentication/basicAuthentication" -name enamble -value true -PSPath "IIS:\Sites\$sitioFTP"
     Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -name enable -Value true -PSPath "IIS:\Sites\$sitioFTP"
