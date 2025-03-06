@@ -1,4 +1,5 @@
 #!/bin/bash
+source ../LinModulos/usuarios
 
 #Actualizando el sistema
 apt-get update -y
