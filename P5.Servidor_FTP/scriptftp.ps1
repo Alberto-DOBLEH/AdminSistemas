@@ -86,12 +86,15 @@ Import-Module ../WinModulos/usuarios.psm1
         Write-Host "El sitio FTP '$sitioFTP' no existe."
     }
 
-    $SSLPolicy = @(
-        'ftpServer.security.ssl.controlChannelPolicy',
-        'ftpServer.security.ssl.dataChannelPolicy'
-    )
-    Set-ItemProperty "IIS:\Sites\FTP" -name $SSLPolicy[0] -value 0
-    Set-ItemProperty "IIS:\Sites\FTP" -name $SSLPolicy[1] -value 0
+    New-ItemProperty "IIS:\Sites\FTP" -Name "ftpServer.security.ssl.controlChannelPolicy" -Value 0 -PropertyType DWORD -Force
+    New-ItemProperty "IIS:\Sites\FTP" -Name "ftpServer.security.ssl.dataChannelPolicy" -Value 0 -PropertyType DWORD -Force
+
+    # $SSLPolicy = @(
+    #     'ftpServer.security.ssl.controlChannelPolicy',
+    #     'ftpServer.security.ssl.dataChannelPolicy'
+    # )
+    # Set-ItemProperty "IIS:\Sites\FTP" -name $SSLPolicy[0] -value 0
+    # Set-ItemProperty "IIS:\Sites\FTP" -name $SSLPolicy[1] -value 0
 
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
