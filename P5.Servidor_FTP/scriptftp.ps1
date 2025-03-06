@@ -16,7 +16,7 @@ Import-Module ../WinModulos/usuarios.psm1
     Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Basic-Auth
-    #Install-WindowsFeature Web-Mngt-Server -IncludeManagementTools
+    Install-WindowsFeature Web-Mgmt-Server -IncludeManagementTools
     Import-Module WebAdministration -Force
 
     # Firewall rule
