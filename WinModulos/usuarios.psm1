@@ -66,7 +66,7 @@ function gestor_usuarios{
                     }While($vc1 -eq $false -or $vc2 -eq $false -or $vc3 -eq $false)
 
                     Write-Host "Creando usuario....." -ForegroundColor Green
-                    New-LocalUser -Name $usuario -Password (ConvertTo-SecureString -String $password -AsPlainText -Force) -FullName "$($usuario) SSH" -Description "Usuario " -PasswordNeverExpires 
+                    New-LocalUser -Name $usuario -Password (ConvertTo-SecureString -String $password -AsPlainText -Force) -FullName "$($usuario) EI" -Description "Usuario " -PasswordNeverExpires 
                     Add-LocalGroupMember -Group "Usuarios" -Member $usuario
                     Add-LocalGroupMember -Group "IIS_IUSRS" -Member $usuario       
                     Write-Host "Usuario creado correctamente" -ForegroundColor Green
@@ -180,17 +180,17 @@ function gestor_usuarios{
                     }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false)
 
                     try {
-                        # Obtener todos los grupos locales
-                        $gruposUsuario = @()
+                        
+                        $gruposActuales = $null
 
-                        Get-LocalGroup | ForEach-Object {
-                            $grupo = $_.Name
-                            $miembros = Get-LocalGroupMember -Group $grupo -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
-                            if ($miembros -contains $usuario) {
-                                $gruposUsuario += $grupo  # Almacenar el grupo en lugar del usuario
-                            }
+                        if (Get-LocalGroupMember -Group "reprobados" -Member $usuario -ErrorAction SilentlyContinue) {
+                            $gruposActuales = "reprobados"
+                        } elseif (Get-LocalGroupMember -Group "recursadores" -Member $usuario -ErrorAction SilentlyContinue) {
+                            $gruposActuales = "recursadores"
+                        } else {
+                            $gruposActuales = "ninguno"
                         }
-
+                        
                         write-host $gruposActuales    
                         if ($gruposActuales.Count -eq 0) {
                             Write-Host "El usuario '$usuario' no pertenece a ningún grupo local." -ForegroundColor Yellow
