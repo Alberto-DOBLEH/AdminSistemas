@@ -84,8 +84,8 @@ if ($null -ne $service) {
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.anonymousAuthentication.enabled -Value $true
 
-    Add-WebConfigurationProperty -filter "/system.ftpServer/security/authentication/basicAuthentication" -name enamble -value true -PSPath "IIS:\Sites\$sitioFTP"
-    Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -name enable -Value true -PSPath "IIS:\Sites\$sitioFTP"
+    Add-WebConfigurationProperty -filter "/system.ftpServer/security/authentication/basicAuthentication" -name enabled -value true -PSPath "IIS:\Sites\$sitioFTP"
+    Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -name enabled -Value true -PSPath "IIS:\Sites\$sitioFTP"
 
     $FTPSitePath = "IIS:\Sites\$sitioFTP"
     $BasicAuth = 'ftpServer.security.authentication.basicAuthentication.enabled'
