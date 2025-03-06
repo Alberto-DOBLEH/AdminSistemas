@@ -119,6 +119,8 @@ Import-Module WebAdministration -Force
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
     Restart-Service -Name FTPSVC
+    Restart-Service W3SVC
+    Restart-WebItem "IIS:\Sites\$sitioFTP" -Verbose
 
     #Mostrar que esta corriendo el servicio
     Write-Host "Verificando si el servicio esta corriendo...." -ForegroundColor Yellow
