@@ -13,7 +13,7 @@ Import-Module ../WinModulos/usuarios.psm1
    
     #Instalacion de los servcios para el servidor FTP
     Write-Host "Instalando servicios necesarios para el servidor FTP..." -ForegroundColor Yellow
-    Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
+    Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature
     Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Basic-Auth
     Install-WindowsFeature Web-Mgmt-Service -IncludeManagementTools
@@ -21,7 +21,6 @@ Import-Module ../WinModulos/usuarios.psm1
 
     # Firewall rule
     Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
-    New-PSDrive -Name IIS -PSProvider WebAdministration -Root IIS:\
     New-NetFirewallRule -DisplayName "FTP" -Direction Inbound -LocalPort 21 -Protocol TCP -Action Allow
 
     #Creacion de los grupos
@@ -33,6 +32,10 @@ Import-Module ../WinModulos/usuarios.psm1
     Write-Host "Creando carpeta principal del FTP..." -ForegroundColor Yellow
     $ftpPath = "C:\FTP"
     New-Item -Path $ftpPath -ItemType Directory
+
+    #Creacion de un sitio FTP
+    Write-Host "Creando sitio FTP..." -ForegroundColor Yellow
+    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath
 
     Write-Host "Creando carpetas de reprobados" -ForegroundColor Yellow
     $reprobadosPath = "C:\FTP\reprobados"
@@ -46,17 +49,6 @@ Import-Module ../WinModulos/usuarios.psm1
     $generalPath = "C:\FTP\general"
     New-Item -Path $generalPath -ItemType Directory
 
-    #Creacion de un sitio FTP
-    Write-Host "Creando sitio FTP..." -ForegroundColor Yellow
-    New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath
-
-    #Creacion de los directorios virtuales
-    #Write-Host "Creando directorios virtuales de cada carpeta..." -ForegroundColor Yellow
-    #New-WebVirtualDirectory -Site "FTP" -Name "RaizFTP" -PhysicalPath $ftpPath    
-    #New-WebVirtualDirectory -Site "FTP" -Name "Reprobados" -PhysicalPath $reprobadosPath
-    #New-WebVirtualDirectory -Site "FTP" -Name "Recursadores" -PhysicalPath $recursadoresPath
-    #New-WebVirtualDirectory -Site "FTP" -Name "General" -PhysicalPath $generalPath
-    
     #Mando llamar al gestor de usuarios
     Write-Host "Mandando llamar la funcion del gestor de usuarios..." -ForegroundColor Yellow
     gestor_usuarios
@@ -72,8 +64,6 @@ Import-Module ../WinModulos/usuarios.psm1
     # Permitir acceso total a los usuarios en la carpeta general
     Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
-
-    iisreset
 
     $sitioFTP = "FTP"
     # Verifica si el sitio FTP existe
@@ -92,13 +82,12 @@ Import-Module ../WinModulos/usuarios.psm1
         'ftpServer.security.ssl.controlChannelPolicy',
         'ftpServer.security.ssl.dataChannelPolicy'
     )
-    Set-ItemProperty "IIS:\Sites\FTP" -name $SSLPolicy[0] -value 0
-    Set-ItemProperty "IIS:\Sites\FTP" -name $SSLPolicy[1] -value 0
+    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[0] -value 0
+    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[1] -value 0
 
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
     Restart-Service -Name FTPSVC
-    iisreset
 
     #Mostrar que esta corriendo el servicio
     Write-Host "Verificando si el servicio esta corriendo...." -ForegroundColor Yellow
