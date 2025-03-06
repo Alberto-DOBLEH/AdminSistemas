@@ -83,7 +83,7 @@ function validar_contrasena {
         return $false
     }
 
-    if ($contrasena -notmatch "[A-Z]") {
+    if ($contrasena -notmatch "(?i)[A-Z]") {
         return $false
     }
 
