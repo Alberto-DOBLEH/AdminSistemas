@@ -1,4 +1,4 @@
-Import-Module ActiveDirectory
+
 function validar_ipv4 {
     param (
         [string]$IP

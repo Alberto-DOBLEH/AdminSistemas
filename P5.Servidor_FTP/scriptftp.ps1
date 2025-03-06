@@ -10,8 +10,7 @@ $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
 if ($null -ne $service) {
     Write-Host "El servicio FTP ya está instalado."
 } else {
-    #Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..."
-   
+    Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..." -ForegroundColor Yellow
     #Instalacion de los servcios para el servidor FTP
     Write-Host "Instalando servicios necesarios para el servidor FTP..." -ForegroundColor Yellow
     Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature
@@ -28,7 +27,7 @@ if ($null -ne $service) {
     New-LocalGroup -Name "reprobados" -Description "Grupo de reprobados"
     New-LocalGroup -Name "recursadores" -Description "Grupo de recursadores"
 
-    #Creacion de carpeta fisicas del FTP
+    #Creacion de carpeta raiz del FTP
     Write-Host "Creando carpeta principal del FTP..." -ForegroundColor Yellow
     $ftpPath = "C:\FTP"
     New-Item -Path $ftpPath -ItemType Directory
@@ -36,12 +35,14 @@ if ($null -ne $service) {
     #Creacion de un sitio FTP
     Write-Host "Creando sitio FTP..." -ForegroundColor Yellow
     New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath
+    Write-Host "Ajustando los enlaces del sitio..." -ForegroundColor Yellow
     Set-WebBinding -Name "FTP" -BindingInformation "*:21:" -PropertyName Port -Value 80
     New-WebBinding -Name "FTP" -Protocol "ftp" -IPAddress "*" -Port 21
 
     #Creacion de la propiedad de aislamiento
     Set-ItemProperty -Path "IIS:\Sites\FTP" -Name "ftpserver.userIsolation.mode" -Value 3
 
+    #Creando carpetas escenciales del FTP
     Write-Host "Creando carpetas de reprobados" -ForegroundColor Yellow
     $reprobadosPath = "C:\FTP\reprobados"
     New-Item -Path $reprobadosPath -ItemType Directory
@@ -75,9 +76,9 @@ if ($null -ne $service) {
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
     Write-Host "Asignando los permisos para LocalUser..." -ForegroundColor Yellow
-    icacls $localuserPath /grant "reprobados:(OI)(CI)F" /inheritance:r
-    icacls $localuserPath /grant "recursadores:(OI)(CI)F" /inheritance:r
+    icacls $localuserPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
+    #Ajustando autenticaciones con el set Property
     $sitioFTP = "FTP"
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.anonymousAuthentication.enabled -Value $true
@@ -153,7 +154,7 @@ do{
         gestor_usuarios
         Restart-Service -Name FTPSVC
         Restart-Service W3SVC
-        Restart-WebItem "IIS:\Sites\$sitioFTP" -Verbose
+        Restart-WebItem "IIS:\Sites\FTP" -Verbose
     }
     if($opcion -eq 2){
         Write-Host "Saliendo..."
