@@ -4,12 +4,12 @@ Import-Module ../WinModulos/usuarios.psm1
 Import-Module WebAdministration -Force
 
 #Verificacion Inicial del servicio FTP 
-# $serviceName = "FTPSVC"
-# $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+$serviceName = "FTPSVC"
+$service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
 
-# if ($null -ne $service) {
-#    Write-Host "El servicio FTP ya está instalado."
-# } else {
+if ($null -ne $service) {
+    Write-Host "El servicio FTP ya está instalado."
+} else {
     #Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..."
    
     #Instalacion de los servcios para el servidor FTP
@@ -139,23 +139,25 @@ Import-Module WebAdministration -Force
     #Mensaje de finalizacion
     Write-Host "Servidor FTP configurado correctamente" -ForegroundColor Green
     exit
-#}
-#do{
-#    Write-Host "¿Qué desea hacer?"
-    # Write-Host "[1].-Gestor de usuarios"
-    # Write-Host "[2].-Salir"
-    # $opcion = Read-Host ">" 
+}
+do{
+    Write-Host "¿Qué desea hacer?"
+    Write-Host "[1].-Gestor de usuarios"
+    Write-Host "[2].-Salir"
+    $opcion = Read-Host ">" 
 
-    # if($opcion -eq 1){
-    #     gestor_usuarios
-    #     Restart-Service -Name FTPSVC
-    # }
-    # if($opcion -eq 2){
-    #     Write-Host "Saliendo..."
-    #     continue
-    # }
-    # else{
-    #     Write-Host "Opción no válida" -ForegroundColor Red
-    # }
+    if($opcion -eq 1){
+        gestor_usuarios
+        Restart-Service -Name FTPSVC
+        Restart-Service W3SVC
+        Restart-WebItem "IIS:\Sites\$sitioFTP" -Verbose
+    }
+    if($opcion -eq 2){
+        Write-Host "Saliendo..."
+        continue
+    }
+    else{
+        Write-Host "Opción no válida" -ForegroundColor Red
+    }
 
-#}while($opcion -ne 1 -and $opcion -ne 2)
+}while($opcion -ne 1 -and $opcion -ne 2)
