@@ -190,8 +190,7 @@ function gestor_usuarios{
                         } else {
                             $gruposActuales = "ninguno"
                         }
-                        
-                        write-host $gruposActuales    
+  
                         if ($gruposActuales.Count -eq 0) {
                             Write-Host "El usuario '$usuario' no pertenece a ningún grupo local." -ForegroundColor Yellow
                             return

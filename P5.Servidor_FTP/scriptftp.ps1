@@ -19,6 +19,9 @@ Import-Module ../WinModulos/usuarios.psm1
     Install-WindowsFeature -Name RSAT-AD-PowerShell -IncludeManagementTools
     Import-Module WebAdministration
 
+    # Firewall rule
+    Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
+    New-NetFirewallRule -DisplayName "FTP" -Direction Inbound -LocalPort 21 -Protocol TCP -Action Allow
 
     #Creacion de los grupos
     Write-Host "Creando grupos necesarios para el servidor FTP..." -ForegroundColor Yellow
@@ -67,10 +70,7 @@ Import-Module ../WinModulos/usuarios.psm1
 
     # Permitir acceso total a los usuarios en la carpeta general
     Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
-    icacls $generalPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
-    Write-Host "Asignando los permisos para los anonimos en la carpeta publica..." -ForegroundColor Yellow
-    icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r
-    icacls $generalPath /grant "Everyone:(OI)(CI)F" /inheritance:r
+    icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
     # Reemplaza "MiSitioFTP" con el nombre real de tu sitio FTP
     $sitioFTP = "FTP"
@@ -87,9 +87,12 @@ Import-Module ../WinModulos/usuarios.psm1
         Write-Host "El sitio FTP '$sitioFTP' no existe."
     }
 
-    # Firewall rule
-    Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
-    New-NetFirewallRule -DisplayName "FTP" -Direction Inbound -LocalPort 21 -Protocol TCP -Action Allow
+    $SSLPolicy = @(
+        'ftpServer.security.ssl.controlChannelPolicy',
+        'ftpServer.security.ssl.dataChannelPolicy'
+    )
+    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[0] -value 0
+    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[1] -value 0
 
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
