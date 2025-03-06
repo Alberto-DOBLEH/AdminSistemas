@@ -74,6 +74,7 @@ if ($null -ne $service) {
     # Permitir acceso total a los usuarios en la carpeta general
     Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
+    icalcs $ftpPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
     Write-Host "Asignando los permisos para LocalUser..." -ForegroundColor Yellow
     icacls $localuserPath /grant "Todos:(OI)(CI)F" /inheritance:r

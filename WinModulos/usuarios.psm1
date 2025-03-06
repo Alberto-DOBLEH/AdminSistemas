@@ -1,5 +1,5 @@
 Import-Module "$PSScriptRoot/validadores.psm1"
-Import-Module WebAdministration
+Import-Module WebAdministration -Force
 function gestor_usuarios{
     
     do{
