@@ -16,6 +16,7 @@ Import-Module ../WinModulos/usuarios.psm1
     Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
     Install-WindowsFeature Web-Basic-Auth
+    #Install-WindowsFeature Web-Mngt-Server -IncludeManagementTools
     Import-Module WebAdministration -Force
 
     # Firewall rule
@@ -89,8 +90,8 @@ Import-Module ../WinModulos/usuarios.psm1
         'ftpServer.security.ssl.controlChannelPolicy',
         'ftpServer.security.ssl.dataChannelPolicy'
     )
-    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[0] -value 0
-    Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[1] -value 0
+    Set-ItemProperty "IIS:\Sites\FTP" -name $SSLPolicy[0] -value 0
+    Set-ItemProperty "IIS:\Sites\FTP" -name $SSLPolicy[1] -value 0
 
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
