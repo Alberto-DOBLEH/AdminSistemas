@@ -73,7 +73,8 @@ if ($null -ne $service) {
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
     Write-Host "Asignando los permisos para LocalUser..." -ForegroundColor Yellow
-    icacls $localuserPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
+    icacls $localuserPath /grant "reprobados:(OI)(CI)F" /inheritance:r
+    icacls $localuserPath /grant "recursadores:(OI)(CI)F" /inheritance:r
 
     $sitioFTP = "FTP"
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true
