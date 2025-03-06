@@ -36,6 +36,8 @@ if ($null -ne $service) {
     #Creacion de un sitio FTP
     Write-Host "Creando sitio FTP..." -ForegroundColor Yellow
     New-webSite -Name "FTP" -Port 21 -PhysicalPath $ftpPath
+    Set-WebBinding -Name "FTP" -BindingInformation "*:21:" -PropertyName Port -Value 80
+    New-WebBinding -Name "FTP" -Protocol "ftp" -IPAddress "*" -Port 21
 
     #Creacion de la propiedad de aislamiento
     Set-ItemProperty -Path "IIS:\Sites\FTP" -Name "ftpserver.userIsolation.mode" -Value 3
