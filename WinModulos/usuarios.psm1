@@ -139,6 +139,7 @@ function gestor_usuarios{
                     try{
                         Write-Host "Eliminando usuario....." -ForegroundColor Green
                         Remove-LocalUser -Name $usuario -Confirm:$false
+                        Remove-Item "C:/FTP/$usuario"
                         Write-Host "Usuario eliminado correctamente" -ForegroundColor Green
                     }
                     catch{
