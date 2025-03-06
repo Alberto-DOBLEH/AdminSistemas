@@ -21,6 +21,7 @@ Import-Module ../WinModulos/usuarios.psm1
 
     # Firewall rule
     Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
+    New-PSDrive -Name IIS -PSProvider WebAdministration -Root IIS:\
     New-NetFirewallRule -DisplayName "FTP" -Direction Inbound -LocalPort 21 -Protocol TCP -Action Allow
 
     #Creacion de los grupos
