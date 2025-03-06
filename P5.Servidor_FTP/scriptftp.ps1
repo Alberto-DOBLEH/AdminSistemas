@@ -73,6 +73,7 @@ Import-Module ../WinModulos/usuarios.psm1
     Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
+    iisreset
 
     $sitioFTP = "FTP"
     # Verifica si el sitio FTP existe
@@ -97,6 +98,7 @@ Import-Module ../WinModulos/usuarios.psm1
     # Reiniciar FTP para aplicar cambios
     Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
     Restart-Service -Name FTPSVC
+    iisreset
 
     #Mostrar que esta corriendo el servicio
     Write-Host "Verificando si el servicio esta corriendo...." -ForegroundColor Yellow
