@@ -45,8 +45,12 @@ Import-Module WebAdministration -Force
     $recursadoresPath = "C:\FTP\recursadores"
     New-Item -Path $recursadoresPath -ItemType Directory
     
+    Write-Host "Creando carpetas de localusers" -ForegroundColor Yellow
+    $localuserPath = "C:\FTP\LocalUser"
+    New-Item -Path $localuserPath -ItemType Directory
+
     Write-Host "Creando carpeta general" -ForegroundColor Yellow
-    $generalPath = "C:\FTP\general"
+    $generalPath = "C:\FTP\LocalUser\general"
     New-Item -Path $generalPath -ItemType Directory
 
     #Mando llamar al gestor de usuarios
@@ -64,6 +68,9 @@ Import-Module WebAdministration -Force
     # Permitir acceso total a los usuarios en la carpeta general
     Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
+
+    Write-Host "Asignando los permisos para LocalUser..." -ForegroundColor Yellow
+    icacls $localuserPath /grant "Usuarios:(OI)(CI)F" /inheritance:r
 
     $sitioFTP = "FTP"
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true

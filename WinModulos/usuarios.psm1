@@ -72,7 +72,7 @@ function gestor_usuarios{
                     Write-Host "Usuario creado correctamente" -ForegroundColor Green
 
                     #Creacion de carpeta personal
-                    $userpath = "C:\FTP\$usuario"
+                    $userpath = "C:\FTP\LocalUser\$usuario"
                     New-Item -Path $userpath -ItemType Directory
 
                     #Asignacion de permisos
