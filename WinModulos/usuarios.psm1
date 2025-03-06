@@ -74,6 +74,7 @@ function gestor_usuarios{
                     #Creacion de carpeta personal
                     $userpath = "C:\FTP\LocalUser\$usuario"
                     New-Item -Path $userpath -ItemType Directory
+                    New-Item -Path "$userpath\$usuario" -ItemType Directory
                     
                     $generalPath = "C:\FTP\LocalUser\general"
                     New-Item -ItemType Junction -Path "$userpath\general" -Target $generalPath
