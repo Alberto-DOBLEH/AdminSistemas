@@ -1,4 +1,6 @@
-source "$(dirname "$0")/validadores.sh"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+VALIDADORES="$DIR/validadores.sh"
+source "$VALIDADORES"
 
 crear_usuario() {
 
