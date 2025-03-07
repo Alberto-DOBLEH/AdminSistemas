@@ -25,6 +25,7 @@ crear_usuario() {
         fi
         if validar_usuario_existente "$username"; then
             echo "Error: El usuario ya existe"
+            continue
         fi
 
         echo "Usuario válido."
