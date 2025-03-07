@@ -1,4 +1,4 @@
-source ./validadores.sh
+source "$(dirname "$0")/validadores.sh"
 
 crear_usuario() {
 
