@@ -20,7 +20,6 @@ function gestor_usuarios{
                     do{
                         $usuario = Read-Host "Ingrese el nombre del usuario"
 
-                        Write-Host $usuario
                         $vu1 = validar_textos_nulos -texto $usuario
                         if($vu1 -eq $false){
                             Write-Host "Error: El nombre de usuario no puede estar vacío" -ForegroundColor Red

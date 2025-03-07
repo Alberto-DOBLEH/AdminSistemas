@@ -60,10 +60,6 @@ if ($null -ne $service) {
     New-Item -Path $generalPath -ItemType Directory
     New-Item -Path "$generalPath\General" -ItemType Directory
 
-    #Mando llamar al gestor de usuarios
-    Write-Host "Mandando llamar la funcion del gestor de usuarios..." -ForegroundColor Yellow
-    gestor_usuarios
-
     #Configuracion de los permisos de las carpetas
 
     # Permitir acceso total a los grupos en sus carpetas
@@ -152,7 +148,6 @@ if ($null -ne $service) {
 
     #Mensaje de finalizacion
     Write-Host "Servidor FTP configurado correctamente" -ForegroundColor Green
-    exit
 }
 do{
     Write-Host "¿Qué desea hacer?"
