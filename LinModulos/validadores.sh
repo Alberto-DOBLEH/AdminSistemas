@@ -76,14 +76,60 @@ calcular_red_broadcast() {
     printf "${base}.0|${base}.255"
 }
 
-#Validar textos nulos
+# Validación por textos vacíos
+validar_textos_nulos() {
+    local texto="$1"
+    [[ -n "$texto" ]]
+}
 
-#Validar espacios
+# Validación de que el username no tenga espacios
+validar_espacios() {
+    local usuario="$1"
+    [[ "$usuario" =~ \  ]] && return 1 || return 0
+}
 
-#Validar Caracteres especiales
+# Validación de formato de contraseña
+validar_contrasena() {
+    local contrasena="$1"
+    local usuario="$2"
 
-#Validar 20 caracteres
+    # Verificar la longitud de la contraseña (mínimo 8, máximo 12)
+    if [[ ${#contrasena} -lt 8 || ${#contrasena} -gt 12 ]]; then
+        return 1
+    fi
 
-#Validar existencia del usuario
+    # Verificar si contiene al menos una letra mayúscula
+    if ! [[ "$contrasena" =~ [A-Z] ]]; then
+        return 1
+    fi
 
-#validar contraseña
+    # Verificar si contiene al menos un número
+    if ! [[ "$contrasena" =~ [0-9] ]]; then
+        return 1
+    fi
+
+    # Verificar si la contraseña contiene el nombre de usuario (ignorando mayúsculas/minúsculas)
+    if [[ -n "$usuario" && "${contrasena,,}" == *"${usuario,,}"* ]]; then
+        return 1
+    fi
+
+    return 0
+}
+
+# Validación de caracteres especiales
+validar_sin_caracteres_especiales() {
+    local texto="$1"
+    [[ "$texto" =~ [^a-zA-Z0-9] ]] && return 1 || return 0
+}
+
+# Validación de 20 caracteres
+validar_longitud_maxima() {
+    local texto="$1"
+    [[ ${#texto} -gt 20 ]] && return 1 || return 0
+}
+
+# Validación de que el usuario ya existe
+validar_usuario_existente() {
+    local usuario="$1"
+    id "$usuario" &>/dev/null
+}

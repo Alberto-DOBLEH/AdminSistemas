@@ -155,5 +155,3 @@ function validar_grupo_existente {
         return $false
     }
 }
-
-#Validacion de que 

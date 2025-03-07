@@ -1,14 +1,55 @@
-source validadores.sh
+source ./validadores.sh
 
 crear_usuario() {
 
     #Faltan validaciones
-    read -p "Ingrese el nombre de usuario: " username
+    while true; do
+        read -p "Ingrese el nombre de usuario: " username
+        if ! validar_textos_nulos "usename"; then
+            echo "Error: El usuario no puede ser vacio"
+            continue
+        fi
+        if ! validar_espacios "usename"; then
+            echo "Error: El usuario no puede contener espacios"
+            continue
+        fi
+        if ! validar_longitud_maxima "usename"; then
+            echo "Error: EL usuario no puede ser mayor a 20 caracteres"
+            continue
+        fi
+        if ! validar_sin_caracteres_especiales "usename"; then
+            echo "Error: El usuario no puede contener caracteres especiales"
+            continue
+        fi
+        if validar_usuario_existente "usename"; then
+            echo "Error: El usuario ya existe"
+        fi
 
-    read -s -p "Ingrese la contraseña: " password
-    echo
+        echo "Usuario válido."
+        break
+    done
+    while true; do
+        read -s -p "Ingrese la contraseña: " password
+        echo
+        if ! validar_textos_nulos "password"; then
+            echo "Error: El usuario no puede ser vacio"
+            continue
+        fi
+        if ! validar_espacios "password"; then
+            echo "Error: El usuario no puede contener espacios"
+            continue
+        fi
+        if ! validar_contrasena "$password" "$usuario"; then
+            echo "La contraseña no cuenta con el formato(8 a 12 caracteres, una mayuscula, un numero y no tener el nombre del usuario)"
+            continue
+        fi
 
-     while true; do
+        echo "Contraseña Valida"
+        break
+    done
+    
+
+    while true; do
         echo "Seleccione el grupo de usuario:"
         echo "[1].-reprobados"
         echo "[2].-recursadores"
@@ -85,8 +126,31 @@ crear_usuario() {
     echo " - Carpeta privada: '$username'"
 }
 eliminar_usuario() {
-    #Faltan verificaciones
-    read -p "Ingrese el nombre de usuario a eliminar: " username
+    while true; do
+        read -p "Ingrese el nombre del usuario a eliminar: " username
+        if ! validar_textos_nulos "usename"; then
+            echo "Error: No hay usuarios vacios"
+            continue
+        fi
+        if ! validar_espacios "usename"; then
+            echo "Error: Los usuarios no tiene espacios"
+            continue
+        fi
+        if ! validar_longitud_maxima "usename"; then
+            echo "Error: Los usuarios no son mayores de 20 caracteres"
+            continue
+        fi
+        if ! validar_sin_caracteres_especiales "usename"; then
+            echo "Error: Los usuarios no contienen caracteres especiales"
+            continue
+        fi
+        if ! validar_usuario_existente "usename"; then
+            echo "Error: El usuario no existe"
+        fi
+
+        echo "Usuario válido."
+        break
+    done
 
     # Eliminar la carpeta personal del usuario
     carpeta_personal_usuario="/srv/ftp/LocalUser/$username"
@@ -112,8 +176,31 @@ eliminar_usuario() {
     fi
 }
 editar_grupo() {
-    #Faltan verficaciones
-    read -p "Ingrese el nombre de usuario a cambiar de grupo: " username
+    while true; do
+        read -p "Ingrese el nombre del usuario que quiere cambiar de grupo: " username
+        if ! validar_textos_nulos "usename"; then
+            echo "Error: No hay usuarios vacios"
+            continue
+        fi
+        if ! validar_espacios "usename"; then
+            echo "Error: Los usuarios no tiene espacios"
+            continue
+        fi
+        if ! validar_longitud_maxima "usename"; then
+            echo "Error: Los usuarios no son mayores de 20 caracteres"
+            continue
+        fi
+        if ! validar_sin_caracteres_especiales "usename"; then
+            echo "Error: Los usuarios no contienen caracteres especiales"
+            continue
+        fi
+        if ! validar_usuario_existente "usename"; then
+            echo "Error: El usuario no existe"
+        fi
+
+        echo "Usuario válido."
+        break
+    done
 
     # Obtener el grupo actual (se asume pertenencia a 'reprobados' o 'recursadores')
     grupo_actual=$(groups "$username" | sed 's/.*: //')
