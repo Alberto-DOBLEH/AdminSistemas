@@ -75,3 +75,15 @@ calcular_red_broadcast() {
     #Retornar los valores de la red y broadcast
     printf "${base}.0|${base}.255"
 }
+
+#Validar textos nulos
+
+#Validar espacios
+
+#Validar Caracteres especiales
+
+#Validar 20 caracteres
+
+#Validar existencia del usuario
+
+#validar contraseña
