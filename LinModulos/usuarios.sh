@@ -7,23 +7,23 @@ crear_usuario() {
     #Faltan validaciones
     while true; do
         read -p "Ingrese el nombre de usuario: " username
-        if ! validar_textos_nulos "usename"; then
+        if ! validar_textos_nulos "$username"; then
             echo "Error: El usuario no puede ser vacio"
             continue
         fi
-        if ! validar_espacios "usename"; then
+        if ! validar_espacios "$username"; then
             echo "Error: El usuario no puede contener espacios"
             continue
         fi
-        if ! validar_longitud_maxima "usename"; then
+        if ! validar_longitud_maxima "$username"; then
             echo "Error: EL usuario no puede ser mayor a 20 caracteres"
             continue
         fi
-        if ! validar_sin_caracteres_especiales "usename"; then
+        if ! validar_sin_caracteres_especiales "$username"; then
             echo "Error: El usuario no puede contener caracteres especiales"
             continue
         fi
-        if validar_usuario_existente "usename"; then
+        if validar_usuario_existente "$username"; then
             echo "Error: El usuario ya existe"
         fi
 
@@ -33,11 +33,11 @@ crear_usuario() {
     while true; do
         read -s -p "Ingrese la contraseña: " password
         echo
-        if ! validar_textos_nulos "password"; then
+        if ! validar_textos_nulos "$password"; then
             echo "Error: El usuario no puede ser vacio"
             continue
         fi
-        if ! validar_espacios "password"; then
+        if ! validar_espacios "$password"; then
             echo "Error: El usuario no puede contener espacios"
             continue
         fi
@@ -130,23 +130,23 @@ crear_usuario() {
 eliminar_usuario() {
     while true; do
         read -p "Ingrese el nombre del usuario a eliminar: " username
-        if ! validar_textos_nulos "usename"; then
+        if ! validar_textos_nulos "$username"; then
             echo "Error: No hay usuarios vacios"
             continue
         fi
-        if ! validar_espacios "usename"; then
+        if ! validar_espacios "$username"; then
             echo "Error: Los usuarios no tiene espacios"
             continue
         fi
-        if ! validar_longitud_maxima "usename"; then
+        if ! validar_longitud_maxima "$username"; then
             echo "Error: Los usuarios no son mayores de 20 caracteres"
             continue
         fi
-        if ! validar_sin_caracteres_especiales "usename"; then
+        if ! validar_sin_caracteres_especiales "$username"; then
             echo "Error: Los usuarios no contienen caracteres especiales"
             continue
         fi
-        if ! validar_usuario_existente "usename"; then
+        if ! validar_usuario_existente "$username"; then
             echo "Error: El usuario no existe"
         fi
 
@@ -180,23 +180,23 @@ eliminar_usuario() {
 editar_grupo() {
     while true; do
         read -p "Ingrese el nombre del usuario que quiere cambiar de grupo: " username
-        if ! validar_textos_nulos "usename"; then
+        if ! validar_textos_nulos "$username"; then
             echo "Error: No hay usuarios vacios"
             continue
         fi
-        if ! validar_espacios "usename"; then
+        if ! validar_espacios "$username"; then
             echo "Error: Los usuarios no tiene espacios"
             continue
         fi
-        if ! validar_longitud_maxima "usename"; then
+        if ! validar_longitud_maxima "$username"; then
             echo "Error: Los usuarios no son mayores de 20 caracteres"
             continue
         fi
-        if ! validar_sin_caracteres_especiales "usename"; then
+        if ! validar_sin_caracteres_especiales "$username"; then
             echo "Error: Los usuarios no contienen caracteres especiales"
             continue
         fi
-        if ! validar_usuario_existente "usename"; then
+        if ! validar_usuario_existente "$username"; then
             echo "Error: El usuario no existe"
         fi
 
