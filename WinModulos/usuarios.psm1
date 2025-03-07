@@ -206,7 +206,7 @@ function gestor_usuarios{
                 do{
                     $usuario = ""
                     do{
-                        $usuario = Read-Host "Ingrese el nombre del usuario a eliminar"
+                        $usuario = Read-Host "Ingrese el nombre del usuario para modificar"
 
                         $vu1 = validar_textos_nulos -texto $usuario
                         if($vu1 -eq $false){
