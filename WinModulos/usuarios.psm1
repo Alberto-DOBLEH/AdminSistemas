@@ -33,13 +33,25 @@ function gestor_usuarios{
                             continue
                         }
 
-                        $vu3 = validar_usuario_existente -usuario $usuario
-                        if($vu3 -eq $true){
+                        $vu3 = validar_longitud_maxima -texto $usuario
+                        if($vu3 -eq $false){
+                            Write-Host "Error: El usuario no puede se maximo de 20 caracteres" -ForegroundColor Red
+                            continue
+                        }
+
+                        $vu4 = validar_sin_caracteres_especiales -texto $usuario
+                        if($vu4 -eq $false){
+                            Write-Host "Error: El usuario no puede tener caracteres especiales" -ForegroundColor Red
+                            continue
+                        }
+
+                        $vu5 = validar_usuario_existente -usuario $usuario
+                        if($vu5 -eq $true){
                             Write-Host "Error: El usuario ya existe" -ForegroundColor Red
                             continue
                         }
 
-                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $true)
+                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false -or $vu4 -eq $false -or $vu5 -eq $true)
 
                     $password = ""
                     do{            
@@ -57,19 +69,23 @@ function gestor_usuarios{
                             continue
                         }
 
-                        $vc3 = validar_contrasena -contrasena $password
+                        $vc3 = validar_contrasena -contrasena $password -usuario $usuario
                         if($vc3 -eq $false){
-                            Write-Host "Error: La contrasena debe tener al menos 8 caracteres, una letra mayúscula y un número" -ForegroundColor Red
+                            Write-Host "Error: La contrasena debe ser entre 8 y 12 caracteres,llevar una letra mayúscula y un número" -ForegroundColor Red
                             continue
                         }
 
                     }While($vc1 -eq $false -or $vc2 -eq $false -or $vc3 -eq $false)
 
                     Write-Host "Creando usuario....." -ForegroundColor Green
-                    New-LocalUser -Name $usuario -Password (ConvertTo-SecureString -String $password -AsPlainText -Force) -FullName "$($usuario) EI" -Description "Usuario " -PasswordNeverExpires 
-                    Add-LocalGroupMember -Group "Usuarios" -Member $usuario
-                    Add-LocalGroupMember -Group "IIS_IUSRS" -Member $usuario       
-                    Write-Host "Usuario creado correctamente" -ForegroundColor Green
+                    try{
+                        New-LocalUser -Name $usuario -Password (ConvertTo-SecureString -String $password -AsPlainText -Force) -FullName "$($usuario) EI" -Description "Usuario" -PasswordNeverExpires 
+                        Add-LocalGroupMember -Group "Usuarios" -Member $usuario
+                        Add-LocalGroupMember -Group "IIS_IUSRS" -Member $usuario
+                        Write-Host "Usuario creado correctamente" -ForegroundColor Green
+                    }catch{
+                        Write-Host "Error Inesperado en la creacion del usuario." -ForegroundColor Red
+                    }
 
                     #Creacion de carpeta personal
                     $userpath = "C:\FTP\LocalUser\$usuario"
@@ -104,15 +120,18 @@ function gestor_usuarios{
                                 New-Item -ItemType Junction -Path "$userpath\recursadores" -Target $recursadoresPath
                             }
                             Default {
-                                Write-Host "Opción no válida" -ForegroundColor Red
+                                Write-Host "Opción no válida, ingrese 1 o 2" -ForegroundColor Red
                             }
                         }
                     }while($grupo -ne 1 -and $grupo -ne 2)
 
                     do{
                         Write-Host "Desea crear otro usuario? "
-                        $ver= Read-Host "<S/N>"
+                        $ver= Read-Host "Si(S) o No(N): "
                         $ver=$ver.ToUpper()
+                        if($ver -ne "S" -and $ver -ne "N"){
+                            Write-Host "Favor de ingresar S o N" -ForegroundColor Red
+                        }
                     }while($ver -ne "S" -and $ver -ne "N")
                 }while($ver -eq "S")
             }
@@ -127,27 +146,39 @@ function gestor_usuarios{
 
                         $vu1 = validar_textos_nulos -texto $usuario
                         if($vu1 -eq $false){
-                            Write-Host "Error: El nombre de usuario no puede estar vacío" -ForegroundColor Red
+                            Write-Host "Error: Los usuarios no son vacios" -ForegroundColor Red
                             continue
                         }
 
                         $vu2 = validar_espacios -usuario $usuario
                         if($vu2 -eq $false){
-                            Write-Host "Error: El nombre de usuario no puede contener espacios" -ForegroundColor Red
+                            Write-Host "Error: Los usuarios no contienen espacios" -ForegroundColor Red
                             continue
                         }
 
-                        $vu3 = validar_usuario_existente -usuario $usuario
+                        $vu3 = validar_longitud_maxima -texto $usuario
+                        if($vu3 -eq $false){
+                            Write-Host "Error: Los usuarios no tienen mas de 20 caracteres" -ForegroundColor Red
+                            continue
+                        }
+
+                        $vu4 = validar_sin_caracteres_especiales -texto $usuario
+                        if($vu4 -eq $false){
+                            Write-Host "Error: Los usuarios no tienen caracteres especiales" -ForegroundColor Red
+                            continue
+                        }
+
+                        $vu5 = validar_usuario_existente -usuario $usuario
                         if($vu3 -eq $false){
                             Write-Host "Error: El usuario no existe" -ForegroundColor Red
                             continue
                         }
-                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false)
+                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false -or $vu4 -eq $false -or $vu5 -eq $false)
 
+                    Write-Host "Eliminando usuario....." -ForegroundColor Green
                     try{
-                        Write-Host "Eliminando usuario....." -ForegroundColor Green
                         Remove-LocalUser -Name $usuario -Confirm:$false
-                        Remove-Item "C:/FTP/$usuario"
+                        Remove-Item -path "C:\FTP\LocalUser\$usuario" -recurse
                         Write-Host "Usuario eliminado correctamente" -ForegroundColor Green
                     }
                     catch{
@@ -155,38 +186,53 @@ function gestor_usuarios{
                     }
                     do{
                         Write-Host "Desea eliminar otro usuario? "
-                        $ver= Read-Host "<S/N>"
+                        $ver= Read-Host "Si(S) o No(N): "
                         $ver=$ver.ToUpper()
+                        if($ver -ne "S" -and $ver -ne "N"){
+                            Write-Host "Favor de ingresar S o N" -ForegroundColor Red
+                        }
                     }while($ver -ne "S" -and $ver -ne "N")
                 }while($ver -eq "S")
             }
             3 { 
-                #--------------------------------------
-                #           Editar usuarios
-                #--------------------------------------
+                #---------------------------------------------------------
+                #           Editar grupo del usuario
+                #---------------------------------------------------------
                 do{
-                    $usuario=""
+                    $usuario = ""
                     do{
-                        $usuario = Read-Host "Ingrese el nombre del usuario a cambiar de grupo"
+                        $usuario = Read-Host "Ingrese el nombre del usuario a eliminar"
 
                         $vu1 = validar_textos_nulos -texto $usuario
                         if($vu1 -eq $false){
-                            Write-Host "Error: El nombre de usuario no puede estar vacío" -ForegroundColor Red
+                            Write-Host "Error: Los usuarios no son vacios" -ForegroundColor Red
                             continue
                         }
 
                         $vu2 = validar_espacios -usuario $usuario
                         if($vu2 -eq $false){
-                            Write-Host "Error: El nombre de usuario no puede contener espacios" -ForegroundColor Red
+                            Write-Host "Error: Los usuarios no contienen espacios" -ForegroundColor Red
                             continue
                         }
 
-                        $vu3 = validar_usuario_existente -usuario $usuario
+                        $vu3 = validar_longitud_maxima -texto $usuario
+                        if($vu3 -eq $false){
+                            Write-Host "Error: Los usuarios no tienen mas de 20 caracteres" -ForegroundColor Red
+                            continue
+                        }
+
+                        $vu4 = validar_sin_caracteres_especiales -texto $usuario
+                        if($vu4 -eq $false){
+                            Write-Host "Error: Los usuarios no tienen caracteres especiales" -ForegroundColor Red
+                            continue
+                        }
+
+                        $vu5 = validar_usuario_existente -usuario $usuario
                         if($vu3 -eq $false){
                             Write-Host "Error: El usuario no existe" -ForegroundColor Red
                             continue
                         }
-                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false)
+                    }While($vu1 -eq $false -or $vu2 -eq $false -or $vu3 -eq $false -or $vu4 -eq $false -or $vu5 -eq $false)
 
                     try {
                         
@@ -235,8 +281,11 @@ function gestor_usuarios{
                     }
                     do{
                         Write-Host "Desea cambiar a otro usuario de grupo?"
-                        $ver= Read-Host "<S/N>"
+                        $ver= Read-Host "Si(S) o No(N): "
                         $ver=$ver.ToUpper()
+                        if($ver -ne "S" -and $ver -ne "N"){
+                            Write-Host "Favor de ingresar S o N" -ForegroundColor Red
+                        }
                     }while($ver -ne "S" -and $ver -ne "N")
                 }while($ver -eq "S")
             }
@@ -244,7 +293,7 @@ function gestor_usuarios{
                 Write-Host "Saliendo..." -ForegroundColor Green
             }
             Default {
-                Write-Host "Opción no válida" -ForegroundColor Red
+                Write-Host "Opción no válida, favor de ingresar un numero del 1 al 4." -ForegroundColor Red
             }
         }
     }While($opc -ne 4)

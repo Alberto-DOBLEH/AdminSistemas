@@ -76,22 +76,56 @@ function validar_espacios {
 #validcacion de formato de contrasena
 function validar_contrasena {
     param (
-        [string]$contrasena
+        [string]$contrasena,
+        [string]$usuario
     )
 
-    if ($contrasena.Length -lt 8) {
+    # Verificar la longitud de la contraseña (mínimo 8, máximo 12)
+    if ($contrasena.Length -lt 8 -or $contrasena.Length -gt 12) {
         return $false
     }
 
-    if ($contrasena -notmatch "(?i)[A-Z]") {
+    # Verificar si contiene al menos una letra mayúscula
+    if ($contrasena -notmatch "(?=[A-Z])") {
         return $false
     }
 
+    # Verificar si contiene al menos un número
     if ($contrasena -notmatch "[0-9]") {
         return $false
     }
 
+    # Verificar si la contraseña contiene el nombre de usuario (ignorando mayúsculas/minúsculas)
+    if ($usuario -and ($contrasena.ToLower() -match [regex]::Escape($usuario.ToLower()))) {
+        return $false
+    }
+
     return $true
+}
+
+#Validacion de caracteres especiales
+function validar_sin_caracteres_especiales {
+    param (
+        [string]$texto
+    )
+
+    if ($texto -match "[^a-zA-Z0-9]") {
+        return $false 
+    }
+
+    return $true
+}
+
+#Validacion de 20 caracteres
+function validar_longitud_maxima {
+    param (
+        [string]$texto
+    )
+
+    if ($texto.Length -gt 20) {
+        return $false  
+    }
+    return $true  
 }
 
 #Validacion de que el usuario ya existe
