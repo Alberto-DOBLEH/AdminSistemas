@@ -133,6 +133,9 @@ function gestor_usuarios{
                         }
                     }while($ver -ne "S" -and $ver -ne "N")
                 }while($ver -eq "S")
+                Restart-Service -Name FTPSVC
+                Restart-Service W3SVC
+                Restart-WebItem "IIS:\Sites\FTP" -Verbose
             }
             2 { 
                 #--------------------------------------
@@ -192,6 +195,9 @@ function gestor_usuarios{
                         }
                     }while($ver -ne "S" -and $ver -ne "N")
                 }while($ver -eq "S")
+                Restart-Service -Name FTPSVC
+                Restart-Service W3SVC
+                Restart-WebItem "IIS:\Sites\FTP" -Verbose
             }
             3 { 
                 #---------------------------------------------------------
@@ -265,11 +271,26 @@ function gestor_usuarios{
                         # Solicitar confirmación
                         $confirmacion = Read-Host "Desea cambiar el usuario '$usuario' de '$grupoAntiguo' a '$nuevoGrupo'? (S/N)"
                         $confirmacion = $confirmacion.ToUpper()
-                
+                        
+                        $userpath = "C:\FTP\LocalUser\$usuario"
+                        $reprobadosPath = "C:\FTP\reprobados"
+                        $recursadoresPath = "C:\FTP\recursadores"
+
                         if ($confirmacion -eq "S" -or $confirmacion -eq "s") {
                             # Cambiar el usuario de grupo
                             Remove-LocalGroupMember -Group $grupoAntiguo -Member $usuario -ErrorAction SilentlyContinue
                             Add-LocalGroupMember -Group $nuevoGrupo -Member $usuario -ErrorAction Stop
+
+                            Remove-Item -Path "$userpath\$grupoAntiguo"
+
+                            if ($nuevoGrupo -eq "reprobados") {
+                                New-Item -ItemType Junction -Path "$userpath\$nuevoGrupo" -Target "$reprobadosPath"
+                            } elseif ($nuevoGrupo -eq "recursadores") {
+                                New-Item -ItemType Junction -Path "$userpath\$nuevoGrupo" -Target "$recursadoresPath"
+                            } else {
+                                Write-Host "Error: Grupo no reconocido '$nuevoGrupo'." -ForegroundColor Red
+                            }
+
                             Write-Host "Usuario '$usuario' cambiado a '$nuevoGrupo' correctamente." -ForegroundColor Green
                         } else {
                             Write-Host "Cambio de grupo cancelado." -ForegroundColor Yellow
@@ -287,6 +308,9 @@ function gestor_usuarios{
                         }
                     }while($ver -ne "S" -and $ver -ne "N")
                 }while($ver -eq "S")
+                Restart-Service -Name FTPSVC
+                Restart-Service W3SVC
+                Restart-WebItem "IIS:\Sites\FTP" -Verbose
             }
             4 { 
                 Write-Host "Saliendo..." -ForegroundColor Green
