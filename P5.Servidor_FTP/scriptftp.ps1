@@ -10,7 +10,7 @@ $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
 if ($null -ne $service) {
     Write-Host "El servicio FTP ya está instalado."
 } else {
-    Write-Host "El servicio FTP no está instalado. Procediendo a la instalación..." -ForegroundColor Yellow
+    Write-Host "El servicio FTP no está instalado" -ForegroundColor Yellow
     #Instalacion de los servcios para el servidor FTP
     Write-Host "Instalando servicios necesarios para el servidor FTP..." -ForegroundColor Yellow
     Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature
@@ -65,15 +65,16 @@ if ($null -ne $service) {
     gestor_usuarios
 
     #Configuracion de los permisos de las carpetas
+
     # Permitir acceso total a los grupos en sus carpetas
-    Write-Host "Asignando los permisos para los grupos de reprobados..." -ForegroundColor Yellow
+    Write-Host "Asignando los permisos para el grupo de reprobados....." -ForegroundColor Yellow
     icacls $reprobadosPath /grant "reprobados:(OI)(CI)F" /inheritance:r
 
-    Write-Host "Asignando los permisos para los grupos de recursadores..." -ForegroundColor Yellow
+    Write-Host "Asignando los permisos para el grupo de recursadores....." -ForegroundColor Yellow
     icacls $recursadoresPath /grant "recursadores:(OI)(CI)F" /inheritance:r
 
     # Permitir acceso total a los usuarios en la carpeta general
-    Write-Host "Asignando los permisos para los usuarios en la carpeta publica..." -ForegroundColor Yellow
+    Write-Host "Asignando los permisos para todos en la carpeta publica....." -ForegroundColor Yellow
     icacls $generalPath /grant "Todos:(OI)(CI)F" /inheritance:r
     icacls $generalPath /grant "IUSR:(OI)(CI)F" /inheritance:r
     icacls "$generalPath\General" /grant "Todos:(OI)(CI)F" /inheritance:r
@@ -84,13 +85,16 @@ if ($null -ne $service) {
     icacls $localuserPath /grant "Todos:(OI)(CI)F" /inheritance:r
 
     #Ajustando autenticaciones con el set Property
+    Write-Host "Ajustando la autenticacion desde ItemProperty............." -ForegroundColor Yellow
     $sitioFTP = "FTP"
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.basicAuthentication.enabled -Value $true
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -Name ftpServer.security.authentication.anonymousAuthentication.enabled -Value $true
 
+    Write-Host "Ajustando la autenticacion desde WebConfiguration........" -ForegroundColor Yellow
     Add-WebConfigurationProperty -filter "/system.ftpServer/security/authentication/basicAuthentication" -name enabled -value true -PSPath "IIS:\Sites\$sitioFTP"
     Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -name enabled -Value true -PSPath "IIS:\Sites\$sitioFTP"
 
+    Write-Host "Ajustando los AccesType de los grupos y todos....." -ForegroundColor Yellow
     $FTPSitePath = "IIS:\Sites\$sitioFTP"
     $BasicAuth = 'ftpServer.security.authentication.basicAuthentication.enabled'
     Set-ItemProperty -Path $FTPSitePath -Name $BasicAuth -Value $true 
@@ -132,6 +136,7 @@ if ($null -ne $service) {
         'ftpServer.security.ssl.controlChannelPolicy',
         'ftpServer.security.ssl.dataChannelPolicy'
     )
+    Write-Host "Ajustando SSL del sitio FTP...." -ForegroundColor Yellow
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[0] -value 0
     Set-ItemProperty "IIS:\Sites\$sitioFTP" -name $SSLPolicy[1] -value 0
 
@@ -153,7 +158,7 @@ do{
     Write-Host "¿Qué desea hacer?"
     Write-Host "[1].-Gestor de usuarios"
     Write-Host "[2].-Salir"
-    $opcion = Read-Host ">" 
+    $opcion = Read-Host "<1/2>" 
 
     if($opcion -eq 1){
         gestor_usuarios
