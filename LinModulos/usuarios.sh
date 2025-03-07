@@ -149,6 +149,7 @@ eliminar_usuario() {
         fi
         if ! validar_usuario_existente "$username"; then
             echo "Error: El usuario no existe"
+            continue
         fi
 
         echo "Usuario válido."
@@ -199,6 +200,7 @@ editar_grupo() {
         fi
         if ! validar_usuario_existente "$username"; then
             echo "Error: El usuario no existe"
+            continue
         fi
 
         echo "Usuario válido."
