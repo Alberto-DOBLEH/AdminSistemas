@@ -11,6 +11,10 @@ crear_usuario() {
             echo "Error: El usuario no puede ser vacio"
             continue
         fi
+        if [[ "$contrasena" =~ [0-9] ]]; then
+            echo "Error: El usuario no puede tener numeros"
+            continue
+        fi
         if ! validar_espacios "$username"; then
             echo "Error: El usuario no puede contener espacios"
             continue
