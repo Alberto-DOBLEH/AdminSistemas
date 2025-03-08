@@ -11,7 +11,7 @@ crear_usuario() {
             echo "Error: El usuario no puede ser vacio"
             continue
         fi
-        if [[ "$contrasena" =~ [0-9] ]]; then
+        if ! [[ "$contrasena" =~ [0-9] ]]; then
             echo "Error: El usuario no puede tener numeros"
             continue
         fi
