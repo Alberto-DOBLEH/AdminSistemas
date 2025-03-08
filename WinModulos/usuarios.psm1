@@ -145,6 +145,11 @@ function gestor_usuarios{
                     $usuario = ""
                     do{
                         $usuario = Read-Host "Ingrese el nombre del usuario a eliminar"
+                        
+                        if($usuario -match "[0-9]"){
+                            Write-Host "El usuario no puede tener numeros"
+                            continue
+                        }
 
                         $vu1 = validar_textos_nulos -texto $usuario
                         if($vu1 -eq $false){
