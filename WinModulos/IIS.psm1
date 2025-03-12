@@ -19,6 +19,10 @@ function IIS(){
     #Ceacion del IIS Site
     New-IISSite -Name "Pagina" -PhysicalPath "$pagePath\" -BindingInformation "*:$($port):"
 
+    #Regla de Firewall
+    New-NetFirewallRule -DisplayName "HTTP" -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow
+
+
     #Agregar el formato de HTML dentro del archivo
     # Definir la ruta donde se guardará el archivo
     $ruta = "$pagePath\index.html"
