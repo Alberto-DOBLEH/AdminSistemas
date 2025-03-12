@@ -17,7 +17,7 @@ function IIS(){
     $port = Read-Host "Que puerto desea usar? "
 
     #Ceacion del IIS Site
-    New-IISSite -Name "Pagina" -Path "$pagePath\" -BindingInformation "*:$($port):"
+    New-IISSite -Name "Pagina" -PhysicalPath "$pagePath\" -BindingInformation "*:$($port):"
 
     #Agregar el formato de HTML dentro del archivo
     # Definir la ruta donde se guardará el archivo
