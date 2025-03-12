@@ -18,9 +18,11 @@ do{
         }
         2{
             Write-Host "Pasando con la seccion de Nginx...."
+            nginx
         }
         3{
             Write-Host "Pasando con la seccion de Tomcat...."
+            tomcat
         }
         4 {
             Write-Host "Saliendo...."
