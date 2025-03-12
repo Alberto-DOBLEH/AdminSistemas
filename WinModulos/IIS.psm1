@@ -30,18 +30,49 @@ function IIS(){
     # Definir el contenido HTML como una cadena
     $contenidoHTML = @"
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+        }
+    </style>
+</head>
+<body>
+    <h1> Curriculum Vitae</h1>
+    <label><strong>Nombre: </strong> Hernandez Hernandez Luis Alberto </label><br><br>
+    <label><strong>Edad: </strong> 20 años</label><br><br>
+    <label><strong>Telefono: </strong>6681348867</label><br><br>
+    <label><strong>Correo: </strong>luis.alberto.hdez.hdez245@gmail.com</label><br><br>
+    <label><strong>Domicilio: </strong>H.Galeana 1918 Alamos Country Los Mochis Sinaloa Mexico</label><br><br>
+    <label><b>Estudios:</b></label><br><br>
+    <ul>
+        <li><b>Primaria: </b>Primaria Profesor Santiago Zuñiga Barron</li>
+        <li><b>Secundaria: </b>Escuela Secundaria General No.4 "Jose Maria Martinez Rodriguez"</li>
+        <li><b>Preparatoria: </b>Unidad Academica Preparatoria Los Mochis</li>
+        <li><b>Universidad: </b>Universidad Autonoma de Sinaloa</li>
+    </ul>
+    <label><b>Hobbies:</b></label>
+    <ul>
+        <li>Videojuegos</li>
+        <li>Gimnasio</li>
+        <li>Correr</li>
+        <li>Leer</li>
+        <li>Ver Series</li>
+    </ul>
+    <label><b>Gustos:</b></label>
+    <ul>
+        <li>Pozole</li>
+        <li>Gueritas Mamonas</li>
+        <li>Culos</li>
+        <li>Cafe</li>
+        <li>Chilaquiles</li>
+    </ul>
 
-    <head>
-        <title>Prueba de IIS creado con PowerShell</title>
-    </head>
-
-    <body>
-        <h1>Prueba de IIS creado con PowerShell</h1>
-        <p>Esto lo hacemos para las pruebas de <b>Jotelulu</b></p>
-        <p>Creando una webpage de IIS mediante <b>PowerShell</b></p>
-    </body>
-
+</body>
 </html>
 "@
 
