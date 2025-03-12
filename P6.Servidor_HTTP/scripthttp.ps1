@@ -14,7 +14,7 @@ do{
     switch($opc){
         1 {
             Write-Host "Pasando con la seccion de IIS...."
-            
+            IIS
         }
         2{
             Write-Host "Pasando con la seccion de Nginx...."
