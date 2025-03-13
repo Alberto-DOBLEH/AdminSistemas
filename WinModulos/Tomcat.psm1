@@ -5,7 +5,7 @@ function tomcat(){
     $html = Invoke-WebRequest -Uri $url -UseBasicParsing
 
     # 2. Extraer las versiones disponibles de Tomcat del HTML
-    $versions = $html.ParsedHtml.body.getElementsByTagName("a") | Where-Object { $_.href -match "apache-tomcat-" } | ForEach-Object { $_.innerText.Trim() }
+    $versions = $html.ParsedHtml.body.getElementsByTagName("a") | Where-Object { $_.href -match "apache-tomcat-" -and $_.href -match ".zip$" } | ForEach-Object { $_.innerText.Trim() }
 
     # 3. Mostrar las versiones disponibles al usuario y pedirle que elija una
     Write-Host "Versiones disponibles de Apache Tomcat:"
