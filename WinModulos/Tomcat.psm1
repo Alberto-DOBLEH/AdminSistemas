@@ -2,7 +2,7 @@ function tomcat(){
     Write-Host "Aqui va la instalacion y configuracion de Tomcat"
     # 1. Descargar el HTML de la página de Apache Tomcat
     $url = "https://tomcat.apache.org/download-90.cgi"  # Puedes ajustar la versión si es necesario
-    $html = Invoke-WebRequest -Uri $url
+    $html = Invoke-WebRequest -Uri $url -UseBasicParsing
 
     # 2. Extraer las versiones disponibles de Tomcat del HTML
     $versions = $html.ParsedHtml.body.getElementsByTagName("a") | Where-Object { $_.href -match "apache-tomcat-" } | ForEach-Object { $_.innerText.Trim() }
