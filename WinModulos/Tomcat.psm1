@@ -4,6 +4,8 @@ function tomcat(){
     $url = "https://tomcat.apache.org/download-90.cgi"  # Puedes ajustar la versión si es necesario
     $html = Invoke-WebRequest -Uri $url -UseBasicParsing
 
+    Write-Host $html.Content
+
     # 2. Extraer las versiones disponibles de Tomcat del HTML
     $versions = $html.ParsedHtml.body.getElementsByTagName("a") | Where-Object { $_.href -match "apache-tomcat-" -and $_.href -match ".zip$" } | ForEach-Object { $_.innerText.Trim() }
 
