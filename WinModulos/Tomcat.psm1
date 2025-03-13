@@ -17,14 +17,19 @@ function tomcat(){
 
     # Mostrar opciones al usuario
     Write-Host "Seleccione la versión de Apache Tomcat a descargar:"
-    $downloadLinks | ForEach-Object { Write-Host "$($_.Split('/')[-1])" }
+    for ($i = 0; $i -lt $downloadLinks.Count; $i++) {
+        Write-Host "$($i + 1)) $($downloadLinks[$i].Split('/')[-1])"
+    }
 
-    $choice = Read-Host "Ingrese el nombre exacto del archivo que desea descargar"
+    # Solicitar la selección del usuario
+    $choice = Read-Host "Ingrese el número de la versión que desea descargar"
 
-    # Validar la elección del usuario
-    if ($downloadLinks -contains $choice) {
-        $downloadUrl = "https://tomcat.apache.org" + $choice
+    # Validar entrada y asignar la URL de descarga
+    if ($choice -match "^\d+$" -and [int]$choice -ge 1 -and [int]$choice -le $downloadLinks.Count) {
+        $selectedIndex = [int]$choice - 1
+        $downloadUrl = "https://tomcat.apache.org" + $downloadLinks[$selectedIndex]
         $fileName = "tomcat.zip"
+        Write-Host "Descargando: $($downloadLinks[$selectedIndex])" -ForegroundColor Green
     } else {
         Write-Host "Opción no válida. Saliendo..." -ForegroundColor Red
         exit
