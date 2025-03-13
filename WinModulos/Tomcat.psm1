@@ -27,7 +27,7 @@ function tomcat(){
     # Validar entrada y asignar la URL de descarga
     if ($choice -match "^\d+$" -and [int]$choice -ge 1 -and [int]$choice -le $downloadLinks.Count) {
         $selectedIndex = [int]$choice - 1
-        $downloadUrl = "https://tomcat.apache.org" + $downloadLinks[$selectedIndex]
+        $downloadUrl = "https://dlcdn.apache.org/tomcat" + $downloadLinks[$selectedIndex]
         $fileName = "tomcat.zip"
         Write-Host "Descargando: $($downloadLinks[$selectedIndex])" -ForegroundColor Green
     } else {
