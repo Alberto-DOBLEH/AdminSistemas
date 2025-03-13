@@ -5,9 +5,13 @@ function nginx(){
     $nginxUrl = "https://nginx.org/en/download.html"
     $htmlContent = Invoke-WebRequest -Uri $nginxUrl -UseBasicParsing
 
+    Write-Host "$htmlContent"
     # Extraer los enlaces de descarga usando regex
     $mainlineUrl = $htmlContent.Links | Where-Object { $_.href -match "nginx-\d+\.\d+\.\d+-mainline\.zip" } | Select-Object -ExpandProperty href
     $stableUrl = $htmlContent.Links | Where-Object { $_.href -match "nginx-\d+\.\d+\.\d+\.zip" -and $_.href -notmatch "mainline" } | Select-Object -ExpandProperty href
+
+    write-Host "$mainlineUrl"
+    write-Host "$stableUrl"
 
     # Verificar si se encontraron enlaces
     if (-not $mainlineUrl -or -not $stableUrl) {
