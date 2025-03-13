@@ -6,8 +6,8 @@ do{
     Write-Host "----Servidor HTTP-----"
     Write-Host "¿Que servicio desea utilizar?"
     Write-Host "[1].-IIS"
-    Write-Host "[3].-Nginx"
-    Write-Host "[2].-Tomcat"
+    Write-Host "[2].-Nginx"
+    Write-Host "[3].-Tomcat"
     Write-Host "[4].-Salir del script.."
     $opc = Read-Host "Ingrese su opcion:" 
 
