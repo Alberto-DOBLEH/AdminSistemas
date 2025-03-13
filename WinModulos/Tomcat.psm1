@@ -4,12 +4,13 @@ function tomcat(){
     $url = "https://tomcat.apache.org/download-90.cgi"  # Puedes ajustar la versión si es necesario
     $html = Invoke-WebRequest -Uri $url -UseBasicParsing
 
-    Write-Host $html.Content
+    # 2. Extraer los enlaces de descarga de archivos ZIP usando expresiones regulares
+    $matches = [regex]::Matches($html.Content, 'href="(https://dlcdn.apache.org/tomcat/tomcat-9/v[0-9\.]+/bin/apache-tomcat-[0-9\.]+\.zip)"')
 
-    # 2. Extraer las versiones disponibles de Tomcat del HTML
-    $versions = $html.ParsedHtml.body.getElementsByTagName("a") | Where-Object { $_.href -match "apache-tomcat-" -and $_.href -match ".zip$" } | ForEach-Object { $_.innerText.Trim() }
+    # 3. Crear una lista de versiones disponibles
+    $versions = $matches | ForEach-Object { $_.Groups[1].Value }
 
-    # 3. Mostrar las versiones disponibles al usuario y pedirle que elija una
+    # 4. Mostrar las versiones disponibles
     Write-Host "Versiones disponibles de Apache Tomcat:"
     for ($i = 0; $i -lt $versions.Count; $i++) {
         Write-Host "$($i + 1). $($versions[$i])"
