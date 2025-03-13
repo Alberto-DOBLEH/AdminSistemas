@@ -2,54 +2,54 @@ function nginx(){
     Write-Host "Aqui va la instalacion y configuracion de Nginx"
 
 
-    $nginxUrl = "https://nginx.org/en/download.html"
-    $htmlContent = Invoke-WebRequest -Uri $nginxUrl -UseBasicParsing
+        # URL de la página de descargas de Nginx
+    $nginxPageUrl = "https://nginx.org/en/download.html"
 
-    Write-Host "$htmlContent"
-    # Extraer los enlaces de descarga usando regex
-    $mainlineUrl = $htmlContent.Links | Where-Object { $_.href -match "nginx-\d+\.\d+\.\d+-mainline\.zip" } | Select-Object -ExpandProperty href
-    $stableUrl = $htmlContent.Links | Where-Object { $_.href -match "nginx-\d+\.\d+\.\d+\.zip" -and $_.href -notmatch "mainline" } | Select-Object -ExpandProperty href
+    # Descargar el HTML de la página
+    Write-Host "Descargando la página de Nginx..." -ForegroundColor Cyan
+    $html = Invoke-WebRequest -Uri $nginxPageUrl -UseBasicParsing
 
-    write-Host "$mainlineUrl"
-    write-Host "$stableUrl"
+    # Expresión regular corregida para capturar los enlaces de las versiones Mainline y Stable
+    $mainlineRegex = '<a href="(/download/nginx-[0-9.]+.zip)">nginx/Windows-[0-9.]+</a>'
+    $stableRegex = '<a href="(/download/nginx-[0-9.]+.zip)">nginx/Windows-[0-9.]+</a>'
 
-    # Verificar si se encontraron enlaces
-    if (-not $mainlineUrl -or -not $stableUrl) {
-        Write-Host "No se pudieron obtener los enlaces de descarga. Verifica la estructura de la página." -ForegroundColor Red
-        exit
-    }
-
-    # URLs completas
-    $baseDownloadUrl = "https://nginx.org"
-    $mainlineUrl = $baseDownloadUrl + $mainlineUrl
-    $stableUrl = $baseDownloadUrl + $stableUrl
-
-    # Mostrar opciones al usuario
-    Write-Host "Seleccione la versión de Nginx a descargar:"
-    Write-Host "1. Mainline Version: $mainlineUrl"
-    Write-Host "2. Stable Version: $stableUrl"
-
-    $choice = Read-Host "Ingrese el número de la versión que desea descargar"
-
-    # Determinar qué archivo descargar
-    if ($choice -eq "1") {
-        $downloadUrl = $mainlineUrl
-        $fileName = "nginx.zip"
-    } elseif ($choice -eq "2") {
-        $downloadUrl = $stableUrl
-        $fileName = "nginx.zip"
+    # Extraer la URL de la versión Mainline
+    $mainlineMatch = [regex]::Match($html.Content, $mainlineRegex)
+    if ($mainlineMatch.Success) {
+        $mainlineUrl = "https://nginx.org" + $mainlineMatch.Groups[1].Value
+        Write-Host "Mainline version encontrada: $mainlineUrl" -ForegroundColor Green
     } else {
-        Write-Host "Opción no válida. Saliendo..." -ForegroundColor Red
+        Write-Host "No se encontró la Mainline version." -ForegroundColor Red
+    }
+
+    # Extraer la URL de la versión Stable
+    $stableMatch = [regex]::Match($html.Content, $stableRegex, [System.Text.RegularExpressions.RegexOptions]::RightToLeft)
+    if ($stableMatch.Success) {
+        $stableUrl = "https://nginx.org" + $stableMatch.Groups[1].Value
+        Write-Host "Stable version encontrada: $stableUrl" -ForegroundColor Green
+    } else {
+        Write-Host "No se encontró la Stable version." -ForegroundColor Red
+    }
+
+    # Permitir al usuario elegir qué versión descargar
+    $choice = Read-Host "Seleccione la versión de Nginx a descargar (1 para Mainline, 2 para Stable)"
+    if ($choice -eq "1" -and $mainlineUrl) {
+        $downloadUrl = $mainlineUrl
+    } elseif ($choice -eq "2" -and $stableUrl) {
+        $downloadUrl = $stableUrl
+    } else {
+        Write-Host "Selección inválida o versión no encontrada." -ForegroundColor Red
         exit
     }
 
-    # Ruta de guardado
-    $outputPath = "C:\Users\Administrator\Downloads\$fileName"
+    # Definir ruta de descarga
+    $outputPath = "C:\Users\Administrator\Downloads\nginx.zip"
 
-    # Descargar el archivo
-    Write-Host "Descargando $fileName..."
+    # Descargar el archivo seleccionado
+    Write-Host "Descargando Nginx desde $downloadUrl..." -ForegroundColor Cyan
     Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
-    Write-Host "Descarga completada" -ForegroundColor Green
+
+    Write-Host "Descarga completada: $outputPath" -ForegroundColor Green
 
     # Definir variables
     $nginxZip = "C:\Users\Administrator\Downloads\nginx.zip"  # Ruta del archivo ZIP descargado
