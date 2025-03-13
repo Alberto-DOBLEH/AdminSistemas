@@ -1,46 +1,47 @@
 function tomcat(){
     Write-Host "Aqui va la instalacion y configuracion de Tomcat"
-    # URL de la página de descargas de Apache Tomcat
-    $tomcatUrl = "https://tomcat.apache.org/download-90.cgi"
+        # Página oficial de descargas de Apache Tomcat
+    $tomcatPage = "https://tomcat.apache.org/download-90.cgi"  # Cambiar a la versión deseada (90, 10, 8)
 
-    # Descargar el HTML de la página
-    $htmlContent = Invoke-WebRequest -Uri $tomcatUrl -UseBasicParsing
+    # Obtener el HTML de la página
+    $html = Invoke-WebRequest -Uri $tomcatPage -UseBasicParsing
 
-    # Extraer los enlaces de descarga para las versiones de Tomcat
-    $downloadLinks = $htmlContent.Links | Where-Object { $_.href -match "apache-tomcat-\d+\.\d+\.\d+-windows-x64\.zip" } | Select-Object -ExpandProperty href
+    # Buscar enlaces de descarga con regex
+    $matche = $html.Links | Where-Object { $_.href -match "https://dlcdn.apache.org/tomcat/tomcat-\d+/v[\d.]+/bin/apache-tomcat-[\d.-]+-windows-x64.zip" }
+
+    # Convertir los enlaces en una lista
+    $downloadLinks = $matche.href | Sort-Object -Descending
 
     # Verificar si se encontraron enlaces
-    if (-not $downloadLinks) {
-        Write-Host "No se pudieron obtener los enlaces de descarga. Verifica la estructura de la página." -ForegroundColor Red
+    if ($downloadLinks.Count -eq 0) {
+        Write-Host "No se encontraron enlaces de descarga. Verifique la URL." -ForegroundColor Red
         exit
     }
 
     # Mostrar opciones al usuario
     Write-Host "Seleccione la versión de Apache Tomcat a descargar:"
     for ($i = 0; $i -lt $downloadLinks.Count; $i++) {
-        Write-Host "$($i + 1)) $($downloadLinks[$i].Split('/')[-1])"
+        Write-Host "$($i + 1)) $($downloadLinks[$i])"
     }
 
     # Solicitar la selección del usuario
     $choice = Read-Host "Ingrese el número de la versión que desea descargar"
 
-    # Validar entrada y asignar la URL de descarga
+    # Validar la entrada del usuario
     if ($choice -match "^\d+$" -and [int]$choice -ge 1 -and [int]$choice -le $downloadLinks.Count) {
         $selectedIndex = [int]$choice - 1
-        $downloadUrl = "https://dlcdn.apache.org/tomcat" + $downloadLinks[$selectedIndex]
-        $fileName = "tomcat.zip"
-        Write-Host "Descargando: $($downloadLinks[$selectedIndex])" -ForegroundColor Green
+        $downloadUrl = $downloadLinks[$selectedIndex]
+        $outputPath = "C:\Users\Administrador\Downloads\tomcat.zip"
+        Write-Host "Descargando: $downloadUrl" -ForegroundColor Green
     } else {
         Write-Host "Opción no válida. Saliendo..." -ForegroundColor Red
         exit
     }
 
-    # Ruta de guardado
-    $outputPath ="C:\Users\Administrador\Downloads\$fileName"
-
     # Descargar el archivo
     Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
-    Write-Host "Descarga completada" -ForegroundColor Green
+    Write-Host "Descarga completada: $outputPath" -ForegroundColor Cyan
+
 
     # Ruta de extracción
     $extractPath = "C:\Users\Administrador\Downloads\ApacheTomcat"
@@ -55,7 +56,7 @@ function tomcat(){
     Write-Host "Extracción completada en: $extractPath" -ForegroundColor Green
 
     # Definir variables
-    $tomcatZip = "C:\Users\Administrador\Downloads\$fileName"  # Ruta del archivo ZIP descargado
+    $tomcatZip = "C:\Users\Administrador\Downloads\tomcat.zip"  # Ruta del archivo ZIP descargado
     $installPath = "C:\Tomcat"  # Carpeta de instalación
     $configFile = "$installPath\conf\server.xml"  # Archivo de configuración
 
