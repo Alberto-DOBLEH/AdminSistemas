@@ -1,25 +1,38 @@
 function IIS(){
     #Obtenecion del modulo de IIS
+    Write-Host "Verificar si estan los modulos de IIS"
     Get-WindowsFeature -Name *IIS*
 
     #Instalacion del Web Server que utilizaremos en IIS
+    Write-Host "Instalando el servicio de Web Server para poder generar la pagina.."
     Install-WindowsFeature -Name Web-Server -IncludeManagementTools
 
     #Creacion de las carpeta de contencion del sitio
+    # Asignacion de paths
     $httpPath = "C:\HTTP"
     $pagePath = "$httpPath\Pagina"
-    New-Item -ItemType Directory -Name "HTTP" -Path $httpPath
-    New-Item -ItemType Directory -Name "Pagina" -Path $pagePath
-
+    # Creacion de carpetas con comandos
+    Write-Host "Creando las carpetas..."
+    try{
+        Write-Host "Creando la carpeta raiz del HTTP...."
+        New-Item -ItemType Directory -Name "HTTP" -Path $httpPath
+        Write-Host "Creando la carpeta de la Pagina...."
+        New-Item -ItemType Directory -Name "Pagina" -Path $pagePath
+    }catch{
+        Write-Host "[Error]. Error inesperado al crear las carpetas" -ForegroundColor Red
+    }
     #Creacion del archivo Index de la pagina 
+    Write-Host "Creando el archivo index en la carpeta de la pagina..."
     New-Item -ItemType File -Name "index.html" -Path "$pagePath\"
 
     $port = Read-Host "Que puerto desea usar? "
 
     #Ceacion del IIS Site
+    Write-Host "Creando el IIS Site para generar la pagina, usando el puerto recibido..."
     New-IISSite -Name "Pagina" -PhysicalPath "$pagePath\" -BindingInformation "*:$($port):"
 
     #Regla de Firewall
+    Write-Host "Creando regla de firewall para el servicio HTTP.."
     New-NetFirewallRule -DisplayName "HTTP" -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow
 
 
@@ -34,7 +47,7 @@ function IIS(){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Curriculum</title>
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;

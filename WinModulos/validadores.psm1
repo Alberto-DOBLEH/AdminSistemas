@@ -155,3 +155,36 @@ function validar_grupo_existente {
         return $false
     }
 }
+
+#Vaidar el puerto que se ingresa
+function validar_puerto {
+    param(
+        [string]$Puerto
+    )
+
+    $reservedPorts = @(
+        @{Port = 21; Application = "FTP"},
+        @{Port = 22; Application = "SSH"},
+        @{Port = 23; Application = "Telnet"},
+        @{Port = 25; Application = "SMTP"},
+        @{Port = 53; Application = "DNS"},
+        @{Port = 80; Application = "HTTP"},
+        @{Port = 110; Application = "POP3"},
+        @{Port = 143; Application = "IMAP"},
+        @{Port = 443; Application = "HTTPS"},
+        @{Port = 3306; Application = "MySQL"},
+        @{Port = 3389; Application = "Remote Desktop"},
+        @{Port = 5432; Application = "PostgreSQL"},
+        @{Port = 5900; Application = "VNC"},
+        @{Port = 6379; Application = "Redis"},
+        @{Port = 8080; Application = "Alternate HTTP"},
+        @{Port = 8443; Application = "Alternate HTTPS"},
+        @{Port = 27017; Application = "MongoDB"},
+        @{Port = 137; Application = "NetBIOS Name Service"},
+        @{Port = 138; Application = "NetBIOS Datagram Service"},
+        @{Port = 161; Application = "SNMP"}
+    )
+
+    
+
+}
