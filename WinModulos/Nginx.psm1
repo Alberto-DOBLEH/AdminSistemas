@@ -43,7 +43,7 @@ function nginx(){
     }
 
     # Definir ruta de descarga
-    $outputPath = "C:\Users\Administrator\Downloads\nginx.zip"
+    $outputPath = "C:\Users\Administrador\Downloads\nginx.zip"
 
     # Descargar el archivo seleccionado
     Write-Host "Descargando Nginx desde $downloadUrl..." -ForegroundColor Cyan
@@ -52,7 +52,7 @@ function nginx(){
     Write-Host "Descarga completada: $outputPath" -ForegroundColor Green
 
     # Definir variables
-    $nginxZip = "C:\Users\Administrator\Downloads\nginx.zip"  # Ruta del archivo ZIP descargado
+    $nginxZip = "C:\Users\Administrador\Downloads\nginx.zip"  # Ruta del archivo ZIP descargado
     $installPath = "C:\Nginx"  # Carpeta de instalación
     $configFile = "$installPath\conf\nginx.conf"  # Ruta del archivo de configuración
 

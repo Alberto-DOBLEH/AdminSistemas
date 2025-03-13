@@ -31,14 +31,14 @@ function tomcat(){
     }
 
     # Ruta de guardado
-    $outputPath ="C:\Users\Administrator\Downloads\$fileName"
+    $outputPath ="C:\Users\Administrador\Downloads\$fileName"
 
     # Descargar el archivo
     Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath
     Write-Host "Descarga completada" -ForegroundColor Green
 
     # Ruta de extracción
-    $extractPath = "C:\Users\Administrator\Downloads\ApacheTomcat"
+    $extractPath = "C:\Users\Administrador\Downloads\ApacheTomcat"
 
     # Crear directorio de extracción si no existe
     if (-not (Test-Path -Path $extractPath)) {
@@ -50,7 +50,7 @@ function tomcat(){
     Write-Host "Extracción completada en: $extractPath" -ForegroundColor Green
 
     # Definir variables
-    $tomcatZip = "C:\Users\Administrator\Downloads\$fileName"  # Ruta del archivo ZIP descargado
+    $tomcatZip = "C:\Users\Administrador\Downloads\$fileName"  # Ruta del archivo ZIP descargado
     $installPath = "C:\Tomcat"  # Carpeta de instalación
     $configFile = "$installPath\conf\server.xml"  # Archivo de configuración
 
