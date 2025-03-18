@@ -37,7 +37,7 @@ function tomcat(){
     }
 
     # 6. Descomprimir el archivo ZIP y configurar el puerto
-    $extractPath = "$($env:USERPROFILE)\Downloads\apache-tomcat.zip"
+    $extractPath = "$($env:USERPROFILE)\Downloads\apache-tomcat"
     Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
 
     #Configurar el puerto
