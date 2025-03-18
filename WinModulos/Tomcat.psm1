@@ -5,26 +5,29 @@ function tomcat(){
     $html = Invoke-WebRequest -Uri $url -UseBasicParsing
 
     # 2. Extraer los enlaces de descarga de archivos ZIP usando expresiones regulares
-    $matches = [regex]::Matches($html.Content, 'href="(https://dlcdn.apache.org/tomcat/tomcat-9/v[0-9\.]+/bin/apache-tomcat-[0-9\.]+\.zip)"')
+    $match = [regex]::Matches($html.Content, 'href="(https://dlcdn.apache.org/tomcat/tomcat-9/v[0-9\.]+/bin/apache-tomcat-[0-9\.]+\.zip)"')
 
     # 3. Crear una lista de versiones disponibles
-    $versions = $matches | ForEach-Object { $_.Groups[1].Value }
+    $versions = $match | ForEach-Object { $_.Groups[1].Value }
 
-    # 4. Mostrar las versiones disponibles
-    Write-Host "Versiones disponibles de Apache Tomcat:"
-    for ($i = 0; $i -lt $versions.Count; $i++) {
-        Write-Host "$($i + 1). $($versions[$i])"
+    Write-Host "Que version quiere usar?"
+    Write-Host "[1].-LTS"
+    Write-Host "[2].-Mainline"
+    $opc = Read-Host "Elija una opcion:"
+
+    switch($opc){
+        1{
+            $downloadPath = "https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.5/bin/apache-tomcat-11.0.5.zip"
+        }
+        2{
+            $downloadPath = "https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.39/bin/apache-tomcat-10.1.39.zip"
+        }
+        default{
+
+        }
     }
 
-    $versionIndex = Read-Host "Elige el número de la versión que deseas descargar"
-    $selectedVersion = $versions[$versionIndex - 1]
-
-    # 4. Construir la URL de descarga y descargar el archivo ZIP
-    $versionNumber = $selectedVersion.Substring($selectedVersion.LastIndexOf('-') + 1)
-    $mainVersion = $selectedVersion.Substring(0, $selectedVersion.LastIndexOf('.'))
-    $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-$(($mainVersion.Split('-'))[2])/v$versionNumber/bin/$selectedVersion.zip"
-
-    $downloadPath = "$($env:USERPROFILE)\Downloads\apache-tomcat-$selectedVersion.zip"
+    $downloadPath = "$($env:USERPROFILE)\Downloads\apache-tomcat.zip"
     Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
 
     # 5. Preguntar al usuario qué puerto desea utilizar
@@ -34,7 +37,7 @@ function tomcat(){
     }
 
     # 6. Descomprimir el archivo ZIP y configurar el puerto
-    $extractPath = "$($env:USERPROFILE)\Downloads\apache-tomcat-$selectedVersion"
+    $extractPath = "$($env:USERPROFILE)\Downloads\apache-tomcat.zip"
     Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
 
     #Configurar el puerto
