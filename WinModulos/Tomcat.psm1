@@ -17,10 +17,10 @@ function tomcat(){
 
     switch($opc){
         1{
-            $downloadPath = "https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.5/bin/apache-tomcat-11.0.5.zip"
+            $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.5/bin/apache-tomcat-11.0.5.zip"
         }
         2{
-            $downloadPath = "https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.39/bin/apache-tomcat-10.1.39.zip"
+            $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.39/bin/apache-tomcat-10.1.39.zip"
         }
         default{
 
