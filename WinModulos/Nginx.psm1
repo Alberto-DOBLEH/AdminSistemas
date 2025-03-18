@@ -89,7 +89,7 @@ function nginx(){
     Write-Host "Configurando Firewall..."
     New-NetFirewallRule -DisplayName "Nginx" -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow -ErrorAction SilentlyContinue
 
-    cd "C:/$installPath"
+    cd $installPath
     # Iniciar Nginx
     Write-Host "Iniciando Nginx en el puerto $port..."
     Start-Process "$installPath\nginx.exe"
