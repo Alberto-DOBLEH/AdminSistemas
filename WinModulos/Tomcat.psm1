@@ -17,15 +17,18 @@ function tomcat(){
 
     switch($opc){
         1{
-            $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-11/v11.0.5/bin/apache-tomcat-11.0.5.zip"
+            $v = "11"
+            $version = "11.0.5"
         }
         2{
-            $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.39/bin/apache-tomcat-10.1.39.zip"
+            $v = "10"
+            $version = "10.1.39"
         }
         default{
 
         }
     }
+    $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-$v/v$version/bin/apache-tomcat-$version.zip"
 
     $downloadPath = "$($env:USERPROFILE)\Downloads\apache-tomcat.zip"
     Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
@@ -41,7 +44,7 @@ function tomcat(){
     Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
 
     #Configurar el puerto
-    $serverXmlPath = "$extractPath\conf\server.xml"
+    $serverXmlPath = "$extractPath\apache-tomcat-$version\conf\server.xml"
     (Get-Content $serverXmlPath) -replace 'port="8080"', "port=`"$tomcatPort`"" | Set-Content $serverXmlPath
 
     # 7. Iniciar Apache Tomcat
