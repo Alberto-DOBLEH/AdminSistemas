@@ -44,7 +44,7 @@ function tomcat(){
     Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
 
     #Configurar el puerto
-    .\"C:$extractPath\apache-tomcat-$version\bin\tomcat$v.exe"
+    .\"$($extractPath)\apache-tomcat-$($version)\bin\tomcat$($v).exe"
     $serverXmlPath = "$extractPath\apache-tomcat-$version\conf\server.xml"
     (Get-Content $serverXmlPath) -replace 'port="8080"', "port=`"$tomcatPort`"" | Set-Content $serverXmlPath
 
