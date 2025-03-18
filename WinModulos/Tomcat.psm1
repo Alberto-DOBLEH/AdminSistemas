@@ -47,8 +47,10 @@ function tomcat(){
     $serverXmlPath = "$extractPath\apache-tomcat-$version\conf\server.xml"
     (Get-Content $serverXmlPath) -replace 'port="8080"', "port=`"$tomcatPort`"" | Set-Content $serverXmlPath
 
+    New-NetFirewallRule -DisplayName "HTTP" -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow
+
     # 7. Iniciar Apache Tomcat
-    Start-Process "$extractPath\bin\startup.bat"
+    Start-Process "$extractPath\apache-tomcat-$version\bin\startup.bat"
 
     Write-Host "Apache Tomcat $selectedVersion instalado y configurado en el puerto $tomcatPort."
 }
