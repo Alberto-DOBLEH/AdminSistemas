@@ -1,20 +1,10 @@
 function tomcat(){
     Write-Host "Aqui va la instalacion y configuracion de Tomcat"
-    # 1. Descargar el HTML de la página de Apache Tomcat
-    $url = "https://tomcat.apache.org/download-90.cgi"  # Puedes ajustar la versión si es necesario
-    $html = Invoke-WebRequest -Uri $url -UseBasicParsing
-
-    # 2. Extraer los enlaces de descarga de archivos ZIP usando expresiones regulares
-    $match = [regex]::Matches($html.Content, 'href="(https://dlcdn.apache.org/tomcat/tomcat-9/v[0-9\.]+/bin/apache-tomcat-[0-9\.]+\.zip)"')
-
-    # 3. Crear una lista de versiones disponibles
-    $versions = $match | ForEach-Object { $_.Groups[1].Value }
-
+    
     Write-Host "Que version quiere usar?"
     Write-Host "[1].-LTS"
     Write-Host "[2].-Mainline"
     $opc = Read-Host "Elija una opcion:"
-
     switch($opc){
         1{
             $v = "11"
@@ -25,44 +15,136 @@ function tomcat(){
             $version = "10.1.39"
         }
         default{
-
+            Write-Host "Opción inválida, usando versión LTS por defecto"
+            $v = "11"
+            $version = "11.0.5"
         }
     }
+    
+    $serviceName = "Tomcat$v"
+    
+    # Eliminar servicio existente
+    $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+    if ($service) {
+        Write-Host "Eliminando servicio anterior..."
+        Stop-Service -Name $serviceName -Force -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 5
+        sc.exe delete $serviceName
+        Start-Sleep -Seconds 5
+    }
+    
+    # URL de descarga directa
     $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-$v/v$version/bin/apache-tomcat-$version-windows-x64.zip"
-
-    $downloadPath = "$($env:USERPROFILE)\Downloads\apache-tomcat.zip"
+    $downloadPath = "$($env:USERPROFILE)\Downloads\apache-tomcat-$version.zip"
+    
+    Write-Host "Descargando Apache Tomcat $version..."
     Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
-
-    # 5. Preguntar al usuario qué puerto desea utilizar
+    
+    $extractPath = "C:\Apache"
+    
+    if (Test-Path "$extractPath\apache-tomcat-$version") {
+        Remove-Item -Path "$extractPath\apache-tomcat-$version" -Recurse -Force
+    }
+    
+    if (!(Test-Path $extractPath)) {
+        New-Item -ItemType Directory -Path $extractPath -Force
+    }
+    
+    Write-Host "Extrayendo archivos..."
+    Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
+    
+    $tomcatPath = "$extractPath\apache-tomcat-$version"
+    
+    if (!(Test-Path $tomcatPath)) {
+        Write-Host "Error: No se encontró la carpeta de Tomcat en $tomcatPath"
+        return
+    }
+    
+    # Modificar los archivos de configuración para eliminar opciones incompatibles
+    Write-Host "Ajustando configuración de JVM para compatibilidad..."
+    
+    # Eliminar la opción --enable-native-access=ALL-UNNAMED del archivo catalina.bat
+    $catalinaBatPath = "$tomcatPath\bin\catalina.bat"
+    if (Test-Path $catalinaBatPath) {
+        $catalinaBatContent = Get-Content $catalinaBatPath
+        $catalinaBatContent = $catalinaBatContent -replace '--enable-native-access=ALL-UNNAMED', ''
+        Set-Content -Path $catalinaBatPath -Value $catalinaBatContent
+    }
+    
+    # Ajustar también setenv.bat si existe
+    $setenvBatPath = "$tomcatPath\bin\setenv.bat"
+    if (Test-Path $setenvBatPath) {
+        $setenvContent = Get-Content $setenvBatPath
+        $setenvContent = $setenvContent -replace '--enable-native-access=ALL-UNNAMED', ''
+        Set-Content -Path $setenvBatPath -Value $setenvContent
+    } else {
+        # Crear un archivo setenv.bat que establezca las opciones de JVM correctas
+        @"
+@echo off
+rem Configuración optimizada para Java 11
+set "CATALINA_OPTS=%CATALINA_OPTS% -Xms512m -Xmx1024m"
+"@ | Out-File -FilePath $setenvBatPath -Encoding ASCII
+    }
+    
+    # Preguntar por el puerto
     $tomcatPort = Read-Host "Introduce el puerto que deseas utilizar para Apache Tomcat (por defecto: 8080)"
     if (-not $tomcatPort) {
         $tomcatPort = 8080
     }
-
-    # 6. Descomprimir el archivo ZIP y configurar el puerto
-    $extractPath = "$($env:USERPROFILE)\Downloads\apache-tomcat"
-    Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
-
-    #Configurar el puerto
-    $serverXmlPath = "$extractPath\apache-tomcat-$version\conf\server.xml"
-    Write-Host $serverXmlPath
+    
+    # Configurar el puerto
+    $serverXmlPath = "$tomcatPath\conf\server.xml"
     if (Test-Path $serverXmlPath) {
         (Get-Content $serverXmlPath) -replace 'port="8080"', "port=`"$tomcatPort`"" | Set-Content $serverXmlPath
+        Write-Host "Puerto configurado: $tomcatPort"
     } else {
         Write-Host "Error: No se encontró server.xml en $serverXmlPath"
+        return
     }
-
-    New-NetFirewallRule -DisplayName "HTTP" -Direction Inbound -Protocol TCP -LocalPort $tomcatPort -Action Allow   
-
-    # 7. Iniciar Apache Tomcat
-    #Start-Process "$extractPath\apache-tomcat-$version\bin\startup.bat"
-
-    cd "$extractPath\apache-tomcat-$version\bin"
-
-    .\service.bat install tomcat$v
-    Start-Service -Name tomcat$v
-    Get-Service -Name tomcat$v
-
-    Write-Host "Apache Tomcat $version instalado y configurado en el puerto $tomcatPort."
-}
     
+    # Configurar regla de firewall
+    Remove-NetFirewallRule -DisplayName "Tomcat $v" -ErrorAction SilentlyContinue
+    New-NetFirewallRule -DisplayName "Tomcat $v" -Direction Inbound -Protocol TCP -LocalPort $tomcatPort -Action Allow
+    
+    # Establecer variables de entorno
+    $env:CATALINA_HOME = $tomcatPath
+    [Environment]::SetEnvironmentVariable("CATALINA_HOME", $tomcatPath, "Machine")
+    
+    # Modificar configuración del servicio
+    Write-Host "Instalando servicio con configuración compatible..."
+    Set-Location -Path "$tomcatPath\bin"
+    
+    # Instalar servicio
+    & "$tomcatPath\bin\service.bat" install $serviceName
+    
+    # Verificar instalación 
+    $newService = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+    if (!$newService) {
+        Write-Host "Error: No se pudo instalar el servicio $serviceName"
+        return
+    }
+    
+    # Iniciar servicio
+    Write-Host "Iniciando el servicio Tomcat..."
+    Start-Service -Name $serviceName -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 10
+    
+    # Verificar estado
+    $serviceStatus = Get-Service -Name $serviceName
+    if ($serviceStatus.Status -eq "Running") {
+        Write-Host "Apache Tomcat $version instalado y configurado correctamente en el puerto $tomcatPort."
+        Write-Host "Puedes acceder a la aplicación en: http://localhost:$tomcatPort"
+        
+        # Abrir el navegador para mostrar Tomcat
+        Start-Process "http://localhost:$tomcatPort"
+    } else {
+        Write-Host "Error: El servicio Tomcat no se pudo iniciar correctamente."
+        Write-Host "Estado del servicio: $($serviceStatus.Status)"
+        
+        # Para depuración, mostrar los logs
+        Write-Host "Revisando logs para diagnóstico..."
+        if (Test-Path "$tomcatPath\logs\catalina.*.log") {
+            Get-Content "$tomcatPath\logs\catalina.*.log" -Tail 20
+        }
+    }
+}
