@@ -54,7 +54,7 @@ function tomcat(){
 
     cd "$extractPath\apache-tomcat-$version\bin"
 
-    .\service.bat install tomcat-$v
+    .\service.bat install tomcat$v
     Start-Service -Name tomcat$v
 
     Write-Host "Apache Tomcat $selectedVersion instalado y configurado en el puerto $tomcatPort."
