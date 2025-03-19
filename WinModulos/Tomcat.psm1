@@ -28,7 +28,7 @@ function tomcat(){
 
         }
     }
-    $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-$v/v$version/bin/apache-tomcat-$version-windows-x64.zip"
+    $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-$v/v$version/bin/apache-tomcat-$version.zip"
 
     $downloadPath = "$($env:USERPROFILE)\Downloads\apache-tomcat.zip"
     Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
@@ -44,14 +44,18 @@ function tomcat(){
     Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
 
     #Configurar el puerto
-    .\"$($extractPath)\apache-tomcat-$($version)\bin\tomcat$($v).exe"
     $serverXmlPath = "$extractPath\apache-tomcat-$version\conf\server.xml"
     (Get-Content $serverXmlPath) -replace 'port="8080"', "port=`"$tomcatPort`"" | Set-Content $serverXmlPath
 
     New-NetFirewallRule -DisplayName "HTTP" -Direction Inbound -Protocol TCP -LocalPort $tomcatport -Action Allow   
 
     # 7. Iniciar Apache Tomcat
-    Start-Process "$extractPath\apache-tomcat-$version\bin\startup.bat"
+    #Start-Process "$extractPath\apache-tomcat-$version\bin\startup.bat"
+
+    cd "$extractPath\apache-tomcat-$version\bin"
+
+    .\service.bat install tomcat-$v
+    Start-Service -Name tomcat$v
 
     Write-Host "Apache Tomcat $selectedVersion instalado y configurado en el puerto $tomcatPort."
 }
