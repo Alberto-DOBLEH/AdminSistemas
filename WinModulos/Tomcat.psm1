@@ -28,7 +28,7 @@ function tomcat(){
 
         }
     }
-    $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-$v/v$version/bin/apache-tomcat-$version.zip"
+    $downloadUrl = "https://dlcdn.apache.org/tomcat/tomcat-$v/v$version/bin/apache-tomcat-$version-windows-x64.zip"
 
     $downloadPath = "$($env:USERPROFILE)\Downloads\apache-tomcat.zip"
     Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
