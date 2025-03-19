@@ -52,7 +52,7 @@ function tomcat(){
     # 7. Iniciar Apache Tomcat
     #Start-Process "$extractPath\apache-tomcat-$version\bin\startup.bat"
 
-    cd "$extractPath\apache-tomcat-$version\bin"
+    Set-Location "$extractPath\apache-tomcat-$version\bin"
 
     .\service.bat install tomcat$v
     Start-Service -Name tomcat$v
