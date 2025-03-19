@@ -1,6 +1,6 @@
-[System.Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Java\jdk-23", [System.EnvironmentVariableTarget]::Machine)
+[System.Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Java\jdk-21", [System.EnvironmentVariableTarget]::Machine)
 
-$jdkBinPath = "C:\Program Files\Java\jdk-23\bin"
+$jdkBinPath = "C:\Program Files\Java\jdk-21\bin"
 $existingPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
 
 if ($existingPath -notlike "*$jdkBinPath*") {
