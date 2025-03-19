@@ -44,10 +44,15 @@ function tomcat(){
     Expand-Archive -Path $downloadPath -DestinationPath $extractPath -Force
 
     #Configurar el puerto
-    $serverXmlPath = "$extractPath\apache-tomcat-$version\conf\server.xml"
-    (Get-Content $serverXmlPath) -replace 'port="8080"', "port=`"$tomcatPort`"" | Set-Content $serverXmlPath
 
-    New-NetFirewallRule -DisplayName "HTTP" -Direction Inbound -Protocol TCP -LocalPort $tomcatport -Action Allow   
+    $serverXmlPath = "$extractPath\apache-tomcat-$version\conf\server.xml"|
+    if (Test-Path $serverXmlPath) {
+        (Get-Content $serverXmlPath) -replace 'port="8080"', "port=`"$tomcatPort`"" | Set-Content $serverXmlPath
+    } else {
+        Write-Host "Error: No se encontró server.xml en $serverXmlPath"
+    }
+
+    New-NetFirewallRule -DisplayName "HTTP" -Direction Inbound -Protocol TCP -LocalPort $tomcatPort -Action Allow   
 
     # 7. Iniciar Apache Tomcat
     #Start-Process "$extractPath\apache-tomcat-$version\bin\startup.bat"
@@ -56,7 +61,8 @@ function tomcat(){
 
     .\service.bat install tomcat$v
     Start-Service -Name tomcat$v
+    Get-Service -Name tomcat$v
 
-    Write-Host "Apache Tomcat $selectedVersion instalado y configurado en el puerto $tomcatPort."
+    Write-Host "Apache Tomcat $version instalado y configurado en el puerto $tomcatPort."
 }
     
