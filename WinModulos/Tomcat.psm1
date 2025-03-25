@@ -61,6 +61,7 @@ function tomcat(){
 
     .\service.bat install tomcat$v
     Start-Service -Name tomcat$v
+    .\startup.bat
     Get-Service -Name tomcat$v
 
     Write-Host "Apache Tomcat $version instalado y configurado en el puerto $tomcatPort."
