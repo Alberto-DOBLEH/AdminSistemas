@@ -1,3 +1,5 @@
+Import-Module "$PSScriptRoot/validadores.psm1"
+
 function nginx(){
     Write-Host "Aqui va la instalacion y configuracion de Nginx"
 
@@ -57,7 +59,13 @@ function nginx(){
     $configFile = "$installPath\conf\nginx.conf"  # Ruta del archivo de configuración
 
     # Pedir al usuario que ingrese el puerto deseado
-    $port = Read-Host "Ingrese el puerto en el que desea ejecutar Nginx (por defecto 80)"
+    do{
+        $port = Read-Host "Que puerto desea usar: "
+        $valido = validar_puerto $port
+        if($valido -eq $false){
+            Write-Host "El puerto no es valido, intente de nuevo" -ForegroundColor Red
+        }
+    }while($valido -eq $false)
 
     # Verificar si ya está instalado
     if (-not (Test-Path $installPath)) {

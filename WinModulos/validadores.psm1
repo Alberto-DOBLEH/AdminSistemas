@@ -156,10 +156,10 @@ function validar_grupo_existente {
     }
 }
 
-#Vaidar el puerto que se ingresa
+# Validar el puerto que se ingresa
 function validar_puerto {
     param(
-        [string]$Puerto
+        [int]$Puerto
     )
 
     $reservedPorts = @(
@@ -185,6 +185,26 @@ function validar_puerto {
         @{Port = 161; Application = "SNMP"}
     )
 
+    # Validar si el puerto está en el rango permitido (1-65535)
+    if ($Puerto -lt 1 -or $Puerto -gt 65535) {
+        Write-Host "El puerto $Puerto está fuera del rango permitido." -ForegroundColor Red
+        return $false
+    }
     
-
+    # Validar si el puerto está reservado
+    $reservado = $reservedPorts | Where-Object { $_.Port -eq $Puerto }
+    if ($reservado) {
+        Write-Host "El puerto $Puerto está reservado para $($reservado.Application)." -ForegroundColor Yellow
+        return $false
+    }
+    
+    # Verificar si el puerto está en uso
+    $enUso = Get-NetTCPConnection -LocalPort $Puerto -ErrorAction SilentlyContinue
+    if ($enUso) {
+        Write-Host "El puerto $Puerto está en uso." -ForegroundColor Red
+        return $false
+    }
+    
+    Write-Host "El puerto $Puerto está disponible." -ForegroundColor Green
+    return $true
 }

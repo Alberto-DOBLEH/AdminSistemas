@@ -1,3 +1,5 @@
+Import-Module "$PSScriptRoot/validadores.psm1"
+
 function tomcat(){
     Write-Host "Aqui va la instalacion y configuracion de Tomcat"
     # 1. Descargar el HTML de la página de Apache Tomcat
@@ -34,10 +36,13 @@ function tomcat(){
     Invoke-WebRequest -Uri $downloadUrl -OutFile $downloadPath
 
     # 5. Preguntar al usuario qué puerto desea utilizar
-    $tomcatPort = Read-Host "Introduce el puerto que deseas utilizar para Apache Tomcat (por defecto: 8080)"
-    if (-not $tomcatPort) {
-        $tomcatPort = 8080
-    }
+    do{
+        $port = Read-Host "Que puerto desea usar: "
+        $valido = validar_puerto $port
+        if($valido -eq $false){
+            Write-Host "El puerto no es valido, intente de nuevo" -ForegroundColor Red
+        }
+    }while($valido -eq $false)
 
     # 6. Descomprimir el archivo ZIP y configurar el puerto
     $extractPath = "$($env:USERPROFILE)\Downloads\apache-tomcat"

@@ -1,3 +1,5 @@
+Import-Module "$PSScriptRoot/validadores.psm1"
+
 function IIS(){
     #Obtenecion del modulo de IIS
     Write-Host "Verificar si estan los modulos de IIS"
@@ -25,7 +27,13 @@ function IIS(){
     Write-Host "Creando el archivo index en la carpeta de la pagina..."
     New-Item -ItemType File -Name "index.html" -Path "$pagePath\"
 
-    $port = Read-Host "Que puerto desea usar? "
+    do{
+        $port = Read-Host "Que puerto desea usar: "
+        $valido = validar_puerto $port
+        if($valido -eq $false){
+            Write-Host "El puerto no es valido, intente de nuevo" -ForegroundColor Red
+        }
+    }while($valido -eq $false)
 
     #Ceacion del IIS Site
     Write-Host "Creando el IIS Site para generar la pagina, usando el puerto recibido..."
