@@ -1,10 +1,8 @@
 Import-Module "$PSScriptRoot/validadores.psm1"
 
 function nginx(){
-    Write-Host "Aqui va la instalacion y configuracion de Nginx"
 
-
-        # URL de la página de descargas de Nginx
+    # URL de la página de descargas de Nginx
     $nginxPageUrl = "https://nginx.org/en/download.html"
 
     # Descargar el HTML de la página
