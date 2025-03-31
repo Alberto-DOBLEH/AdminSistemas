@@ -164,7 +164,7 @@ do{
             $cert = Get-ChildItem -Path "Cert:\LocalMachine\My" | Where-Object { $_.FriendlyName -eq "Certificado Local" }
 
             New-Item -Path "C:\Certificados" -ItemType Directory -Force
-            Export-PfxCertificate -Cert $Cert -FilePath "C:\Certificados\mi_certificado.pfx" -Password (ConvertTo-SecureString -String "Alberto2004" -Force -AsPlainText)
+            Export-PfxCertificate -Cert $cert -FilePath "C:\Certificados\mi_certificado.pfx" -Password (ConvertTo-SecureString -String "Alberto2004" -Force -AsPlainText)
 
             $Thumbprint = ($cert.Thumbprint)
             Set-ItemProperty -Path "IIS:\Sites\FTP" -Name sslCertificateHash -Value $Thumbprint
