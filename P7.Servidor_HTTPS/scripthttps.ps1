@@ -16,7 +16,6 @@ if ($null -ne $service) {
     Install-WindowsFeature -Name Web-Server, Web-Ftp-Server, Web-Ftp-Service, Web-Ftp-Ext, Web-Scripting-Tools -IncludeManagementTools
 
     Remove-Website -Name "Default Web Site"
-
     # Firewall rule
     Write-Host "Creando regla de firewall..." -ForegroundColor Yellow
     New-NetFirewallRule -DisplayName "FTP" -Direction Inbound -LocalPort 21 -Protocol TCP -Action Allow
@@ -153,7 +152,7 @@ do{
     $respuesta = Read-Host "Si(S) o No(N)"
     $respuesta = $respuesta.ToUpper()
 
-    switch($respuesa){
+    switch($respuesta){
         "S"{
                 New-SelfSignedCertificate `
                 -DnsName "localhost" `
@@ -186,4 +185,100 @@ do{
         }
     }
 }while($respuesta -ne "S" -and $respuesta -ne "N")
+
+do{
+    Write-Host "Como desea descargar los servicios HTTP?"
+    Write-Host "[1]. Descargar desde Navegador"
+    Write-Host "[2]. Descargar desde FTP"
+    $opcion = Read-Host "Elija su opcion"
+    switch($opcion){
+        1{
+            do{
+                Write-Host "----Servidor HTTP-----"
+                Write-Host "¿Que servicio desea utilizar?"
+                Write-Host "[1].-IIS"
+                Write-Host "[2].-Nginx"
+                Write-Host "[3].-Tomcat"
+                $opc = Read-Host "Ingrese su opcion:" 
+            
+                switch($opc){
+                    1 {
+                        Write-Host "Pasando con la seccion de IIS...."
+                        IIS
+                        do{
+                            Write-Host "Desea ponerle SSL al IIS?"
+                            $ssl = Read-Host "Si(S) o No(N)"
+                            $ssl = $ssl.ToUpper()
+                            switch($ssl){
+                                "S"{
+                                    New-NetFirewallRule -Name "HTTPS" -Action Allow -DisplayName "HTTPS" -Direction Inbound -Protocol TCP -LocalPort 443
+                                    New-WebBinding -Name "Pagina" -Protocol "https" -IPAddress "*" -Port 443
+                                    $cert = Get-ChildItem -Path "Cert:\LocalMachine\My" | Where-Object { $_.FriendlyName -eq "Certificado Local" }
+                                    $Thumbprint = ($cert.Thumbprint)
+                                    Set-ItemProperty -Path "C:\HTTP\Pagina" -Name sslCertificateHash -Value $Thumbprint
+                                }
+                                "N"{
+                                    Write-Host "No se le pondra SSL al IIS"
+                                }
+                                Default{
+                                    Write-Host "Opcion no valida, intente de nuevo" -ForegroundColor Red
+                                }
+                            }
+                        }while($ssl -ne "S" -and $ssl -ne "N")
+                    }
+                    2{
+                        Write-Host "Pasando con la seccion de Nginx...."
+                        nginx
+                        do{
+                        Write-Host "Desea ponerle SSL al Nginx?"
+                            $ssl = Read-Host "Si(S) o No(N)"
+                            $ssl = $ssl.ToUpper()
+                            switch($ssl){
+                                "S"{
+                                }
+                                "N"{
+                                    Write-Host "No se le pondra SSL al IIS"
+                                }
+                                Default{
+                                    Write-Host "Opcion no valida, intente de nuevo" -ForegroundColor Red
+                                }
+                            }
+                        }while($ssl -ne "S" -and $ssl -ne "N")
+                    }
+                    3{
+                        Write-Host "Pasando con la seccion de Tomcat...."
+                        tomcat
+                        do{
+                            Write-Host "Desea ponerle SSL al Tomcat?"
+                                $ssl = Read-Host "Si(S) o No(N)"
+                                $ssl = $ssl.ToUpper()
+                                switch($ssl){
+                                    "S"{
+                                    }
+                                    "N"{
+                                        Write-Host "No se le pondra SSL al IIS"
+                                    }
+                                    Default{
+                                        Write-Host "Opcion no valida, intente de nuevo" -ForegroundColor Red
+                                    }
+                                }
+                            }while($ssl -ne "S" -and $ssl -ne "N")
+                    }
+                    Default{
+                        Write-Host "Opcion no valida. Favor de ingresar una opcion del 1 al 4"
+                    }
+                }
+            }while($opc -ne 1 -and $opc -ne 2 -and $opc -ne 3)
+        }
+        2{
+            Write-Host "Descargando desde el FTP" -ForegroundColor Green
+            $ftpUrl = "ftp://localhost/LocalUser/Public/General/nginx-1.25.2.zip"
+            $output = "C:\nginx-1.25.2.zip"
+            Invoke-WebRequest -Uri $ftpUrl -OutFile $output
+        }
+        default{
+            Write-Host "Opcion no valida, intente de nuevo" -ForegroundColor Red
+        }
+    }
+}while($opcion -ne 1 -and $opcion -ne 2)
 

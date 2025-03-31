@@ -1,7 +1,7 @@
 Import-Module "$PSScriptRoot/validadores.psm1"
 
 function tomcat(){
-    <
+    
     # 1. Descargar el HTML de la página de Apache Tomcat
     $url = "https://tomcat.apache.org/download-90.cgi"  # Puedes ajustar la versión si es necesario
     $html = Invoke-WebRequest -Uri $url -UseBasicParsing
