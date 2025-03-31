@@ -163,14 +163,15 @@ do{
                 -TextExtension "2.5.29.37={text}1.3.6.1.5.5.7.3.1,1.3.6.1.5.5.7.3.2"
             $cert = Get-ChildItem -Path "Cert:\LocalMachine\My" | Where-Object { $_.FriendlyName -eq "Certificado Local" }
 
+            New-Item -Path "C:\Certificados" -ItemType Directory -Force
             Export-PfxCertificate -Cert $Cert -FilePath "C:\Certificados\mi_certificado.pfx" -Password (ConvertTo-SecureString -String "Alberto2004" -Force -AsPlainText)
 
             $Thumbprint = ($cert.Thumbprint)
             Set-ItemProperty -Path "IIS:\Sites\FTP" -Name sslCertificateHash -Value $Thumbprint
             Set-ItemProperty -Path "IIS:\Sites\FTP" -Name sslCertificateStoreName -Value "My"
 
-            Set-WebConfigurationProperty -filter "/system.applicationHost/sites/site[@name='FTP Site']/ftpServer/security/ssl" -name "controlChannelPolicy" -value "SslAllow"
-            Set-WebConfigurationProperty -filter "/system.applicationHost/sites/site[@name='FTP Site']/ftpServer/security/ssl" -name "dataChannelPolicy" -value "SslAllow"
+            Set-WebConfigurationProperty -filter "/system.applicationHost/sites/FTP/ftpServer/security/ssl" -name "controlChannelPolicy" -value "SslAllow"
+            Set-WebConfigurationProperty -filter "/system.applicationHost/sites/FTP/ftpServer/security/ssl" -name "dataChannelPolicy" -value "SslAllow"
 
             Write-Host "Reiniciando el servicio de FTP....." -ForegroundColor Yellow
             Restart-Service -Name FTPSVC
