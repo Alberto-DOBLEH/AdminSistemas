@@ -28,7 +28,7 @@ function install_squirrel{
     $configPath = "$htdocsPath\config\config.php"
 
 # Crear configuración básica
-$configContent = @"
+$configContent = @'
 <?php
 \$domain           = 'correo.local';             // Tu dominio (o IP interna)
 \$imapServerAddress = '127.0.0.1';               // IP del servidor Mercury (IMAP)
@@ -41,7 +41,7 @@ $configContent = @"
 \$smtpUserName     = '';
 \$smtpPassword     = '';
 ?>
-"@
+'@
 
 $configContent | Set-Content -Path $configPath -Encoding UTF8
 
