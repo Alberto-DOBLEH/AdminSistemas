@@ -9,6 +9,8 @@ function install_mercury{
     cd $env:HOMEPATH\Downloads
     Start-Process .\mercury.exe
 
+    Start-Process -FilePath "C:\MERCURY\mercury.exe" -ArgumentList "/install" -Wait
+
     #Seccion de instalacion de XAMPP
     New-Item -Path "C:\Installers" -ItemType Directory -Force | Out-Null
 
