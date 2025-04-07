@@ -8,7 +8,7 @@ function install_squirrel{
     New-Item -Path $htdocsPath -ItemType Directory -Force | Out-Null
 
     # Descargar desde GitHub
-    $zipUrl = "https://sourceforge.net/projects/squirrelmail/files/stable/1.4.22/squirrelmail-webmail-1.4.22.zip/download"
+    $zipUrl = "https://github.com/emersion/squirrelmail/archive/refs/heads/master.zip"
     $zipPath = "C:\Installers\squirrelmail.zip"
 
     
