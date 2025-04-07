@@ -8,7 +8,7 @@ function install_xampp{
     $outputPath = "C:\Installers\xampp-installer.exe"
 
 
-    Invoke-WebRequest -Uri $xamppUrl -OutFile $outputPath
+    curl.exe -L $xamppUrl -o $outputPath
 
     # Ejecutar el instalador de XAMPP
     cd "C:\Installers"
