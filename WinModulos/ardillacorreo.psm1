@@ -16,7 +16,6 @@ function install_squirrel{
 
     # Descomprimir el archivo ZIP
     Expand-Archive -Path $zipPath -DestinationPath "C:\Installers" -Force
-    Remove-Item -Path $zipPath -Force
 
     # Copiar contenido a htdocs
     $extractedFolder = "C:\Installers\squirrelmail-webmail-1.4.22"
