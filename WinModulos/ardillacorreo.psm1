@@ -13,9 +13,9 @@ function install_squirrel{
 
     Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
 
-    # Extraer ZIP
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, "C:\Installers")
+    # Descomprimir el archivo ZIP
+    Expand-Archive -Path $zipPath -DestinationPath "C:\Installers" -Force
+    Remove-Item -Path $zipPath -Force
 
     # Copiar contenido a htdocs
     Copy-Item -Path "C:\Installers\squirrelmail-master\*" -Destination $htdocsPath -Recurse -Force
