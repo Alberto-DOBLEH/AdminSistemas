@@ -8,9 +8,10 @@ function install_squirrel{
     New-Item -Path $htdocsPath -ItemType Directory -Force | Out-Null
 
     # Descargar desde GitHub
-    $zipUrl = "https://www.squirrelmail.org/countdl.php?fileurl=http%3A%2F%2Fprdownloads.sourceforge.net%2Fsquirrelmail%2Fsquirrelmail-webmail-1.4.22.zip"
+    $zipUrl = "https://sourceforge.net/projects/squirrelmail/files/stable/1.4.22/squirrelmail-webmail-1.4.22.zip/download"
     $zipPath = "C:\Installers\squirrelmail.zip"
 
+    
     Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
 
     # Descomprimir el archivo ZIP
