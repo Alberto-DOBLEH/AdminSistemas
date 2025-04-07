@@ -8,7 +8,7 @@ function install_squirrel{
     New-Item -Path $htdocsPath -ItemType Directory -Force | Out-Null
 
     # Descargar desde GitHub
-    $zipUrl = "https://github.com/emersion/squirrelmail/archive/refs/heads/master.zip"
+    $zipUrl = "https://sourceforge.net/projects/squirrelmail/files/stable/1.4.22/squirrelmail-webmail-1.4.22.zip/download"
     $zipPath = "C:\Installers\squirrelmail.zip"
 
     curl.exe -L $zipUrl -o $zipPath
@@ -17,7 +17,7 @@ function install_squirrel{
     Expand-Archive -Path $zipPath -DestinationPath "C:\Installers" -Force
 
     # Copiar contenido a htdocs
-    $extractedFolder = "C:\Installers\squirrelmail-master"
+    $extractedFolder = "C:\Installers\squirrelmail-webmail-1.4.22"
     Copy-Item -Path "$extractedFolder\*" -Destination $htdocsPath -Recurse -Force
 
     # Crear carpeta de configuración si no existe
