@@ -16,6 +16,7 @@ do{
         1{
             Write-Host "Instalando Mercury..." -ForegroundColor Green
             install_mercury
+            Start-Process -FilePath "C:\MERCURY\mercury.exe" -ArgumentList "/install" -Wait
             Write-Host "Mercury instalado correctamente." -ForegroundColor Green
         }
         2{
