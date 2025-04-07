@@ -15,6 +15,12 @@ do{
             Write-Host "Instalando Mercury..." -ForegroundColor Green
             install_mercury
             Write-Host "Mercury instalado correctamente." -ForegroundColor Green
+            Write-Host "Instalando XAMPP..." -ForegroundColor Green
+            install_xampp
+            Write-Host "XAMPP instalado correctamente." -ForegroundColor Green
+            Write-Host "Instalando SquirrelMail..." -ForegroundColor Green
+            install_squirrel
+            Write-Host "SquirrelMail instalado correctamente." -ForegroundColor Green
         }
         2{
             Write-Host "Seccion de creacion de usuario" -ForegroundColor Yellow
