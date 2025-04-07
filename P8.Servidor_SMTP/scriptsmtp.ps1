@@ -1,5 +1,7 @@
 Import-Module ..\WinModulos\mercury.psm1
 Import-Module ..\WinModulos\m_user.psm1
+Import-Module ..\WinModulos\XAMPP.psm1
+Import-Module ..\WinModulos\ardillacorreo.psm1
 
 
 do{
