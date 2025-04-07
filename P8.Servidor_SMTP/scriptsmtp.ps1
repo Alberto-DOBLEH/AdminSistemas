@@ -21,6 +21,7 @@ do{
             Write-Host "Instalando SquirrelMail..." -ForegroundColor Green
             install_squirrel
             Write-Host "SquirrelMail instalado correctamente." -ForegroundColor Green
+            Start-Process "C:\xampp\apache_start.bat"
         }
         2{
             Write-Host "Seccion de creacion de usuario" -ForegroundColor Yellow
