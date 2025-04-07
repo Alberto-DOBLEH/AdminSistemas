@@ -1,9 +1,31 @@
-
-$downloadPath = "https://download-us.pmail.com/m32-480.exe"
-$downloadedPath = "$env:HOMEPATH\Downloads\mercury.exe"
-
-Invoke-WebRequest -Uri $downloadPath -Outfile $downloadedPath -UseBasicParsing -ErrorAction Stop
-cd $env:HOMEPATH\Downloads
-Start-Process .\mercury.exe
+Import-Module ..\WinModulos\mercury.psm1
+Import-Module ..\WinModulos\m_user.psm1
 
 
+do{
+    Write-Host "Que desea hacer?"
+    Write-Host "[1].-Instalar Mercury"
+    Write-Host "[2].-Crear usuario"
+    Write-Host "[3].-Salir"
+    $opc = Read-Host "Eleccion: "
+    switch($opc){
+        1{
+            Write-Host "Instalando Mercury..." -ForegroundColor Green
+            install_mercury
+            Write-Host "Mercury instalado correctamente." -ForegroundColor Green
+        }
+        2{
+            Write-Host "Seccion de creacion de usuario" -ForegroundColor Yellow
+            $nombre = Read-Host "Nombre de usuario: "
+            $password = Read-Host "Password: "
+            crear_usuario -nombre $nombre -contra $password
+            Write-Host "Usuario creado correctamente." -ForegroundColor Green
+        }
+        3{
+            Write-Host "Saliendo..." -ForegroundColor Yellow
+        }
+        default{
+            Write-Host "Opcion no valida." -ForegroundColor Red
+        }
+    }
+}while($opc -ne 3)
