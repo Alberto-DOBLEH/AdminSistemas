@@ -30,19 +30,35 @@ function install_squirrel{
 # Crear configuración básica
 $configContent = @'
 <?php
-\$domain           = 'correo.local';             // Tu dominio (o IP interna)
-\$imapServerAddress = '127.0.0.1';               // IP del servidor Mercury (IMAP)
-\$imapPort         = 143;
-\$smtpServerAddress = '127.0.0.1';               // IP Mercury SMTP
-\$smtpPort         = 25;
-\$imap_server_type = 'other';
-\$useSendmail      = false;
-\$smtp_auth_mech   = 'login';
-\$smtpUserName     = '';
-\$smtpPassword     = '';
+$domain           = 'correo.local';             // Tu dominio (o IP interna)
+$imapServerAddress = '127.0.0.1';               // IP del servidor Mercury (IMAP)
+$imapPort         = 143;
+$smtpServerAddress = '127.0.0.1';               // IP Mercury SMTP
+$smtpPort         = 25;
+$imap_server_type = 'other';
+$useSendmail      = false;
+$smtp_auth_mech   = 'login';
+$smtpUserName     = '';
+$smtpPassword     = '';
 ?>
 '@
 
-$configContent | Set-Content -Path $configPath -Encoding UTF8
+    $configContent | Set-Content -Path $configPath -Encoding UTF8
+    # Configurar permisos (IMPORTANTE)
+    Write-Host "Configurando permisos..." -ForegroundColor Cyan
+    try {
+        $acl = Get-Acl $htdocsPath
+        $accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+            "Todos",  # O "IUSR" si usas IIS
+            "FullControl",
+            "ContainerInherit,ObjectInherit",
+            "None",
+            "Allow"
+        )
+        $acl.SetAccessRule($accessRule)
+        Set-Acl -Path $htdocsPath -AclObject $acl
+    } catch {
+        Write-Warning "No se pudieron configurar los permisos: $_"
+    }
 
 }
