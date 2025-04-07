@@ -30,7 +30,7 @@ do{
             Write-Host "SquirrelMail instalado correctamente." -ForegroundColor Green
             Start-Process "C:\xampp\apache_start.bat"
         }
-        2{
+        4{
             Write-Host "Seccion de creacion de usuario" -ForegroundColor Yellow
             $nombre = Read-Host "Nombre de usuario: "
             $password = Read-Host "Password: "

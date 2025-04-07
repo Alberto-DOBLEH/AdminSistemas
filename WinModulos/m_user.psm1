@@ -22,9 +22,11 @@ Password=$contra
 "@
     
         # Escribe el archivo USER.INI
+        # Escribe el archivo USER.INI con codificación ANSI (Default = ANSI en Windows)
         $userIniPath = Join-Path $userPath "USER.INI"
-        $userIni | Set-Content -Path $userIniPath -Encoding ASCII
-    
-        Write-Host "Usuario '$username' creado correctamente."
+        $bytes = [System.Text.Encoding]::Default.GetBytes($userIni)
+        [System.IO.File]::WriteAllBytes($userIniPath, $bytes)
+
+        Write-Host "Usuario '$nombre' creado correctamente."
     }
 }
