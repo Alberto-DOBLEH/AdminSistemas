@@ -11,5 +11,6 @@ function install_mercury{
 
     Start-Process -FilePath "C:\MERCURY\mercury.exe" -ArgumentList "/install" -Wait
 
+    New-NetFirewallRule -DisplayName "SMTP" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 25,110,143,587,993,995 -Profile Any -Enabled True
 }
 

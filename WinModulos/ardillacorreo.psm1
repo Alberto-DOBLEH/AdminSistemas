@@ -38,6 +38,8 @@ $smtpPort         = 25;
 $imap_server_type = 'other';
 $useSendmail      = false;
 $smtp_auth_mech   = 'login';
+$use_smtp_auth = true;
+$use_imap_login_for_smtp = true;
 $smtpUserName     = '';
 $smtpPassword     = '';
 ?>
