@@ -18,7 +18,7 @@ function install_squirrel{
     Expand-Archive -Path $zipPath -DestinationPath "C:\Installers" -Force
 
     # Copiar contenido a htdocs
-    $extractedFolder = "C:\Installers\squirrelmail-webmail-1.4.22"
+    $extractedFolder = "C:\Installers\squirrelmail-master"
     Copy-Item -Path "$extractedFolder\*" -Destination $htdocsPath -Recurse -Force
 
     # Crear carpeta de configuración si no existe
