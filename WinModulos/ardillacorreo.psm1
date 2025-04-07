@@ -11,8 +11,7 @@ function install_squirrel{
     $zipUrl = "https://github.com/emersion/squirrelmail/archive/refs/heads/master.zip"
     $zipPath = "C:\Installers\squirrelmail.zip"
 
-    
-    Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
+    curl.exe -L $zipUrl -o $zipPath
 
     # Descomprimir el archivo ZIP
     Expand-Archive -Path $zipPath -DestinationPath "C:\Installers" -Force
