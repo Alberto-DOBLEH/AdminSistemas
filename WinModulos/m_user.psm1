@@ -3,7 +3,7 @@ function crear_usuario{
         [string]$nombre,
         [string]$contra
     )
-    
+
     $mercuryMailPath = "C:\Mercury\Mail"
     $userPath = Join-Path $mercuryMailPath $nombre
     $pmFilePath = Join-Path $userPath "PASSWD.PM" # Nombre fijo del archivo PM
@@ -14,7 +14,7 @@ function crear_usuario{
         New-Item -Path $userPath -ItemType Directory -Force | Out-Null
         $pmFileContent = @"
 # Mercury/32 User Information File
-POP3_access: $password
+POP3_access: $contra
 APOP_secret:
 "@
         try {
