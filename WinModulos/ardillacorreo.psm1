@@ -20,53 +20,16 @@ function install_squirrel{
     $extractedFolder = "C:\Installers\squirrelmail-webmail-1.4.22"
     Copy-Item -Path "$extractedFolder\*" -Destination $htdocsPath -Recurse -Force
 
+
     # Crear carpeta de configuración si no existe
     $configFolder = "$htdocsPath\config"
     New-Item -Path $configFolder -ItemType Directory -Force | Out-Null
 
-    #Configuracion de SquirrelMail
-    $configPath = "$htdocsPath\config\config.php"
+    #Renombramos y editamos el archivo de configuracion
+    Rename-Item -Path C:\xampp\htdocs\squirrelmail\config\config_default.php -NewName "config.php"            #Aqui el dominio que se configuro en la instalacion
+    (Get-Content "C:\xampp\htdocs\squirrelmail\config\config.php") -replace '\$domain\s*=\s*''[^'']+'';', '$domain = ''localhost'';' | Set-Content "C:\xampp\htdocs\squirrelmail\config\config.php"
+    (Get-Content "C:\xampp\htdocs\squirrelmail\config\config.php") -replace '\$data_dir\s*=\s*''[^'']+'';', '$data_dir = ''C:/xampp/htdocs/squirrelmail/data/'';' | Set-Content "C:\xampp\htdocs\squirrelmail\config\config.php"
 
-# Crear configuración básica
-$configContent = @'
-<?php
-$domain           = '<ip del server>';             // Tu dominio (o IP interna)
-$imapServerAddress = '127.0.0.1';               // IP del servidor Mercury (IMAP)
-$imapPort         = 143;
-$smtpServerAddress = '127.0.0.1';               // IP Mercury SMTP
-$smtpPort         = 25;
-$imap_server_type = 'mercury';
-$useSendmail      = false;
-$smtp_auth_mech   = 'login';
-$use_smtp_auth = true;
-$use_imap_login_for_smtp = true;
-$data_dir = 'C:\xampp\htdocs\squirrelmail\data';
-$smtpUserName     = '';
-$smtpPassword     = '';
-$org_logo = SM_PATH . '/images/logo.png';
-$org_name = 'SquirrelMail';
-$org_logo_width = '308';
-$org_title = 'SquirrelMail $version';
-$theme_default = 0;
-$theme_css = '';
-$default_use_javascript_addr_book = false;
-$default_unseen_notify = 2;
-$default_unseen_type = 1;
-$default_move_to_trash = true;
-$default_move_to_sent = true;
-$default_save_as_draft = true;
-$default_folder_prefix = '';
-$trash_folder = 'INBOX.Trash';
-$sent_folder = 'INBOX.Sent';
-$draft_folder = 'INBOX.Drafts';
-$auto_expunge = true;
-$delete_folder = false;
-$auto_create_especial = true;
-$motd = "";
-?>
-'@
-
-    $configContent | Set-Content -Path $configPath -Encoding UTF8
     # Configurar permisos (IMPORTANTE)
     Write-Host "Configurando permisos..." -ForegroundColor Cyan
     try {
