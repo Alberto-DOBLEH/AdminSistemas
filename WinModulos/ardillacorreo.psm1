@@ -30,7 +30,7 @@ function install_squirrel{
 # Crear configuración básica
 $configContent = @'
 <?php
-$domain           = 'correo.local';             // Tu dominio (o IP interna)
+$domain           = '<ip del server>';             // Tu dominio (o IP interna)
 $imapServerAddress = '127.0.0.1';               // IP del servidor Mercury (IMAP)
 $imapPort         = 143;
 $smtpServerAddress = '127.0.0.1';               // IP Mercury SMTP
@@ -40,8 +40,29 @@ $useSendmail      = false;
 $smtp_auth_mech   = 'login';
 $use_smtp_auth = true;
 $use_imap_login_for_smtp = true;
+$data_dir = 'C:\xampp\htdocs\squirrelmail\data';
 $smtpUserName     = '';
 $smtpPassword     = '';
+$org_logo = SM_PATH . '/images/logo.png';
+$org_name = 'SquirrelMail';
+$org_logo_width = '308';
+$org_title = 'SquirrelMail $version';
+$theme_default = 0;
+$theme_css = '';
+$default_use_javascript_addr_book = false;
+$default_unseen_notify = 2;
+$default_unseen_type = 1;
+$default_move_to_trash = true;
+$default_move_to_sent = true;
+$default_save_as_draft = true;
+$default_folder_prefix = '';
+$trash_folder = 'INBOX.Trash';
+$sent_folder = 'INBOX.Sent';
+$draft_folder = 'INBOX.Drafts';
+$auto_expunge = true;
+$delete_folder = false;
+$auto_create_especial = true;
+$motd = "";
 ?>
 '@
 
