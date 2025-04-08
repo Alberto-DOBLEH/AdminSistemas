@@ -3,30 +3,27 @@ function crear_usuario{
         [string]$nombre,
         [string]$contra
     )
+    
     $mercuryMailPath = "C:\Mercury\Mail"
-
-    # Ruta del usuario
     $userPath = Join-Path $mercuryMailPath $nombre
-    # Verifica si ya existe
+    $pmFilePath = Join-Path $userPath "PASSWD.PM" # Nombre fijo del archivo PM
+
     if (Test-Path $userPath) {
         Write-Host "El usuario '$nombre' ya existe."
     } else {
-        # Crea carpeta del usuario
         New-Item -Path $userPath -ItemType Directory -Force | Out-Null
-    
-        # Contenido del USER.INI
-        $userIni = @"
-[User]
-Name=$nombre
-Password=$contra
+        $pmFileContent = @"
+# Mercury/32 User Information File
+POP3_access: $password
+APOP_secret:
 "@
-    
-        # Escribe el archivo USER.INI
-        # Escribe el archivo USER.INI con codificación ANSI (Default = ANSI en Windows)
-        $userIniPath = Join-Path $userPath "USER.INI"
-        $bytes = [System.Text.Encoding]::Default.GetBytes($userIni)
-        [System.IO.File]::WriteAllBytes($userIniPath, $bytes)
-
-        Write-Host "Usuario '$nombre' creado correctamente."
+        try {
+            # Escribe el archivo PM con codificación ANSI
+            $ansi = [System.Text.Encoding]::GetEncoding("Windows-1252")
+            [System.IO.File]::WriteAllBytes($pmFilePath, $ansi.GetBytes($pmFileContent))
+            Write-Host "Archivo 'PASSWD.PM' creado correctamente para el usuario '$nombre'."
+        } catch {
+            Write-Host "Error al crear el archivo 'PASSWD.PM': $($_.Exception.Message)" -ForegroundColor Red
+        }
     }
 }
