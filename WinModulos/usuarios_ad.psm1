@@ -12,7 +12,7 @@ function crear_user_ad{
         Write-Host "1. OU cuates"
         Write-Host "2. OU no cuates"
         $opcou = Read-Host "Ingresa la OU <1/2>"
-        switch($ocpou){
+        switch($opcou){
             1{
                 $ou = "cuates"
                 Write-Host "Seleccionaste la OU cuates"
