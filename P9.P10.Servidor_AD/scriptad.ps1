@@ -54,7 +54,7 @@ do{
 
     switch($opcion){
         1{
-            Write-Host "Seccion de creacion de usuarios "
+            crear_user_ad
         }
         2{
             Write-Host "Seccion de modificacion de usuarios"
