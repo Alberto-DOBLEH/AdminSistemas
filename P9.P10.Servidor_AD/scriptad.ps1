@@ -19,11 +19,18 @@ if (-not $rol.Installed) {
 # Verificar si el servidor es un controlador de dominio
 try {
     $dominio = Get-ADDomain
-    Write-Host "✅ El servidor forma parte del dominio: $($dominio.Name)" -ForegroundColor Green
+    Write-Host "El servidor forma parte del dominio: $($dominio.Name)" -ForegroundColor Green
 } catch {
-    Write-Host "❌ El servidor NO está unido a un dominio o no es un DC." -ForegroundColor Red
-    Install-ADDSForest -DomainName "cuates.local" -DomainNetbiosName "CUATES" -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro")
-    shutdown.exe /r
+    Write-Host "El servidor NO está unido a un dominio o no es un DC." -ForegroundColor Red
+    try{    
+        Install-ADDSForest -DomainName "cuates.local" -DomainNetbiosName "CUATES" -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro")
+        Write-Host "El servidor se ha unido al dominio 'cuates.local'." -ForegroundColor Green
+        Write-Host "Reiniciando el servidor..." -ForegroundColor Yellow
+        shutdown.exe /r
+        exit
+    }catch{
+        Write-Host "Error al unir el dominio: $($_.Exception.Message)" -ForegroundColor Red
+    }
 }
 
 # Verificar existencia de las OUs 'cuates' y 'no cuates'
@@ -31,25 +38,34 @@ $ouCuates = Get-ADOrganizationalUnit -Filter 'Name -eq "cuates"' -ErrorAction Si
 $ouNoCuates = Get-ADOrganizationalUnit -Filter 'Name -eq "no cuates"' -ErrorAction SilentlyContinue
 
 if ($ouCuates) {
-    Write-Host "✅ La OU 'cuates' existe." -ForegroundColor Green
+    Write-Host "La OU 'cuates' existe." -ForegroundColor Green
 } else {
-    Write-Host "❌ La OU 'cuates' NO existe." -ForegroundColor Red
-    New-ADOrganizationalUnit -Name "cuates" -ProtectedFromAccidentalDeletion $true
+    Write-Host "La OU 'cuates' NO existe." -ForegroundColor Red
+    try{
+        New-ADOrganizationalUnit -Name "cuates" -ProtectedFromAccidentalDeletion $true
+        Write-Host "La OU 'cuates' ha sido creada." -ForegroundColor Green
+    }catch{
+        Write-Host "Error al crear la OU 'cuates': $($_.Exception.Message)" -ForegroundColor Red
+    }
 }
 
 if ($ouNoCuates) {
-    Write-Host "✅ La OU 'no cuates' existe." -ForegroundColor Green
+    Write-Host "La OU 'no cuates' existe." -ForegroundColor Green
 } else {
-    Write-Host "❌ La OU 'no cuates' NO existe." -ForegroundColor Red
-    New-ADOrganizationalUnit -Name "no cuates" -ProtectedFromAccidentalDeletion $true
+    Write-Host "La OU 'no cuates' NO existe." -ForegroundColor Red
+    try{
+        New-ADOrganizationalUnit -Name "no cuates" -ProtectedFromAccidentalDeletion $true
+        Write-Host "La OU 'no cuates' ha sido creada." -ForegroundColor Green
+    }catch{
+        Write-Host "Error al crear la OU 'no cuates': $($_.Exception.Message)" -ForegroundColor Red
+    }
 }
 
 do{
     Write-Host "---Menu Usuarios AD---"
     Write-Host "1. Crear usuario"
-    Write-Host "2. Modificar usuario"
-    Write-Host "3. Eliminar usuario"
-    write-Host "4. Salir"
+    Write-Host "2. Eliminar usuario"
+    write-Host "3. Salir"
     $opcion = Read-Host "Selecciona una opción"
 
     switch($opcion){
@@ -57,12 +73,9 @@ do{
             crear_user_ad
         }
         2{
-            Write-Host "Seccion de modificacion de usuarios"
+            eliminar_user_ad
         }
         3{
-            Write-Host "Seccion de eliminacion de usuarios"
-        }
-        4{
             Write-Host "Saliendo..."
             break
         }

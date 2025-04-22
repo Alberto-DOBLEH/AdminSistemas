@@ -1,10 +1,23 @@
+import-Module ..\WinModulos\validadores.psm1
+
 function crear_user_ad{
     Write-Host "---Seccion de creacion de usuarios---"
 
-    $user = Read-Host "Ingresa el nombre del usuario"
+    do{
+        $user = Read-Host "Ingresa el nombre del usuario"
+        
+        if(validar_textos_nulos -texto $user -eq $false){
+            Write-Host "El nombre de usuario no puede estar vacio" -ForegroundColor Red
+            $v1=$false
+        }
+        if(validar_espacios -usuario $user -eq $false){
+            Write-Host "El nombre de usuario no puede contener espacios" -ForegroundColor Red
+            $v2=$false
+        }
+    }while($v1 -eq $false -or $v2 -eq $false)
+
 
     $password = Read-Host "Ingresa la contraseña del usuario" -AsSecureString
-
 
     #Menu de seleccion de OU
     do{
@@ -36,9 +49,26 @@ function crear_user_ad{
         Write-Host "Error al crear el usuario: $_" -ForegroundColor Red
     }
 }
-function Modificar_user_ad{
+function eliminar_user_ad{
+    Write-Host "---Seccion de eliminacion de usuarios---"
 
-}
-function Eliminar_user_ad{
+    do{
+        $user = Read-Host "Ingresa el nombre del usuario"
+        
+        if(validar_textos_nulos -texto $user -eq $false){
+            Write-Host "El nombre de usuario no puede estar vacio" -ForegroundColor Red
+            $v1=$false
+        }
+        if(validar_espacios -usuario $user -eq $false){
+            Write-Host "El nombre de usuario no puede contener espacios" -ForegroundColor Red
+            $v2=$false
+        }
+    }while($v1 -eq $false -or $v2 -eq $false)
 
+    try{
+        Remove-ADUser -Identity $user -Confirm:$false
+        Write-Host "Usuario $user eliminado exitosamente" -ForegroundColor Green
+    }catch{
+        Write-Host "Error al eliminar el usuario: $_" -ForegroundColor Red
+    }
 }
