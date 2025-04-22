@@ -5,14 +5,16 @@ function crear_user_ad{
 
     do{
         $user = Read-Host "Ingresa el nombre del usuario"
-        
-        if(validar_textos_nulos -texto $user -eq $false){
+        Write-Host $user
+        if((validar_textos_nulos -texto $user) -eq $false){
             Write-Host "El nombre de usuario no puede estar vacio" -ForegroundColor Red
             $v1=$false
+            continue
         }
-        if(validar_espacios -usuario $user -eq $false){
+        if((validar_espacios -usuario $user) -eq $false){
             Write-Host "El nombre de usuario no puede contener espacios" -ForegroundColor Red
             $v2=$false
+            continue
         }
     }while($v1 -eq $false -or $v2 -eq $false)
 
