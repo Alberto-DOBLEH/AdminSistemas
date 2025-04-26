@@ -45,7 +45,8 @@ function crear_user_ad{
     }while($opcou -ne 1 -and $opcou -ne 2)
     
     try{
-        New-ADUser -Name $user -SamAccountName $user -AccountPassword $password -Enabled $true -Path $ouPath
+        #New-ADUser -Name $user -SamAccountName $user -AccountPassword $password -Enabled $true -Path $ouPath
+        New-ADUser -Name $user -SamAccountName $user -AccountPassword $password -Enabled $true -Path $ouPath -ChangePasswordAtLogon $true
         Write-Host "Usuario $user creado exitosamente en la OU $ou" -ForegroundColor Green
     }catch{
         Write-Host "Error al crear el usuario: $_" -ForegroundColor Red

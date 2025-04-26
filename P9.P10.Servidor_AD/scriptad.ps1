@@ -65,7 +65,8 @@ do{
     Write-Host "---Menu Usuarios AD---"
     Write-Host "1. Crear usuario"
     Write-Host "2. Eliminar usuario"
-    write-Host "3. Salir"
+    Write-Host "3. Aplicar politicas de las OUs"
+    write-Host "4. Salir"
     $opcion = Read-Host "Selecciona una opción"
 
     switch($opcion){
@@ -76,6 +77,11 @@ do{
             eliminar_user_ad
         }
         3{
+            Write-Host "Aplicando políticas de las OUs..."
+            # Aquí puedes llamar a la función que aplica las políticas
+            # Por ejemplo: aplicar_politicas_ou
+        }
+        4{
             Write-Host "Saliendo..."
             break
         }
@@ -84,5 +90,5 @@ do{
         }    
     }
     
-}while($opcion -ne 3)
+}while($opcion -ne 4)
 
