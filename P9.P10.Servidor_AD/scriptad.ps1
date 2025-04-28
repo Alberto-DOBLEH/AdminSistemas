@@ -23,7 +23,7 @@ try {
 } catch {
     Write-Host "El servidor NO está unido a un dominio o no es un DC." -ForegroundColor Red
     try{    
-        Install-ADDSForest -DomainName "cuates.local" -DomainNetbiosName "CUATES" -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro")
+        Install-ADDSForest -DomainName "cuates.local" -DomainNetbiosName "CUATES" -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro") -InstallDNS
         Write-Host "El servidor se ha unido al dominio 'cuates.local'." -ForegroundColor Green
         Write-Host "Reiniciando el servidor..." -ForegroundColor Yellow
         shutdown.exe /r
