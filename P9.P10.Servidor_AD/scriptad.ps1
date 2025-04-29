@@ -20,7 +20,7 @@ if (-not $rol.Installed) {
 try {
     $dominio = Get-ADDomain
     Write-Host "El servidor forma parte del dominio: $($dominio.Name)" -ForegroundColor Green
-    $domainName = $dominio.Name
+    $domainName = $dominio.DNSRoot
 } catch {
     Write-Host "El servidor NO está unido a un dominio o no es un DC." -ForegroundColor Red
 
