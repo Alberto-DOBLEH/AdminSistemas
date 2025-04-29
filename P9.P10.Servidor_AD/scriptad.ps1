@@ -16,16 +16,17 @@ if (-not $rol.Installed) {
     Write-Host "El rol 'AD-Domain-Services' está instalado." -ForegroundColor Green
 }
 
-# Preguntar el nombre del dominio
-$domainName = Read-Host "Ingresa el nombre de dominio que quieres crear (ej. cuates.local)"
-$netbiosName = Read-Host "Ingresa el nombre NetBIOS para el dominio (ej. CUATES)"
-
 # Verificar si el servidor es un controlador de dominio
 try {
     $dominio = Get-ADDomain
     Write-Host "El servidor forma parte del dominio: $($dominio.Name)" -ForegroundColor Green
+    $domainName = $dominio.Name
 } catch {
     Write-Host "El servidor NO está unido a un dominio o no es un DC." -ForegroundColor Red
+
+    # Preguntar el nombre del dominio
+    $domainName = Read-Host "Ingresa el nombre de dominio que quieres crear (ej. cuates.local)"
+    $netbiosName = Read-Host "Ingresa el nombre NetBIOS para el dominio (ej. CUATES)"
     try{    
         Install-ADDSForest -DomainName $domainName -DomainNetbiosName $netbiosName -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro") -InstallDNS
         Write-Host "El servidor se ha unido al dominio 'cuates.local'." -ForegroundColor Green
