@@ -1,6 +1,9 @@
 import-Module ..\WinModulos\validadores.psm1
 
 function crear_user_ad{
+    param(
+        [string]$dominio
+    )
     Write-Host "---Seccion de creacion de usuarios---"
 
     do{
@@ -17,7 +20,6 @@ function crear_user_ad{
             continue
         }
     }while($v1 -eq $false -or $v2 -eq $false)
-
 
     $password = Read-Host "Ingresa la contraseña del usuario" -AsSecureString
 
@@ -41,7 +43,12 @@ function crear_user_ad{
             }
         }
 
-    $ouPath = "OU=$ou,DC=cuates,DC=local"
+    $sdominio = $dominio.Split('.')
+
+    $dc = $sdominio[0]
+    $ds = $sdominio[1]
+
+    $ouPath = "OU=$ou,DC=$dc,DC=$ds"
     }while($opcou -ne 1 -and $opcou -ne 2)
     
     try{

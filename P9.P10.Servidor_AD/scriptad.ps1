@@ -16,6 +16,10 @@ if (-not $rol.Installed) {
     Write-Host "El rol 'AD-Domain-Services' está instalado." -ForegroundColor Green
 }
 
+# Preguntar el nombre del dominio
+$domainName = Read-Host "Ingresa el nombre de dominio que quieres crear (ej. cuates.local)"
+$netbiosName = Read-Host "Ingresa el nombre NetBIOS para el dominio (ej. CUATES)"
+
 # Verificar si el servidor es un controlador de dominio
 try {
     $dominio = Get-ADDomain
@@ -23,7 +27,7 @@ try {
 } catch {
     Write-Host "El servidor NO está unido a un dominio o no es un DC." -ForegroundColor Red
     try{    
-        Install-ADDSForest -DomainName "plan-tres.local" -DomainNetbiosName "PLANTRES" -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro") -InstallDNS
+        Install-ADDSForest -DomainName $domainName -DomainNetbiosName $netbiosName -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro") -InstallDNS
         Write-Host "El servidor se ha unido al dominio 'cuates.local'." -ForegroundColor Green
         Write-Host "Reiniciando el servidor..." -ForegroundColor Yellow
         shutdown.exe /r
@@ -61,6 +65,11 @@ if ($ouNoCuates) {
     }
 }
 
+
+#Seccion de Reglas de Firewall
+New-NetFirewallRule -DisplayName "Active Directory"  -Direction Inbound -Protocol TCP -LocalPort 53,88,135,389,445,636,49152-65535 -Action Allow -Profile Domain -ErrorAction SilentlyContinue | Out-Null
+New-NetFirewallRule -DisplayName "Active Directory (UDP)" -Direction Inbound -Protocol UDP -LocalPort 53,88,389 -Action Allow -Profile Domain -ErrorAction SilentlyContinue | Out-Null
+
 do{
     Write-Host "---Menu Usuarios AD---"
     Write-Host "1. Crear usuario"
@@ -71,7 +80,7 @@ do{
 
     switch($opcion){
         1{
-            crear_user_ad
+            crear_user_ad -dominio $domainName
         }
         2{
             eliminar_user_ad
