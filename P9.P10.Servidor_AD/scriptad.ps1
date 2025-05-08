@@ -30,6 +30,8 @@ try {
     try{    
         Install-ADDSForest -DomainName $domainName -DomainNetbiosName $netbiosName -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro") -InstallDNS
         Write-Host "El servidor se ha unido al dominio 'cuates.local'." -ForegroundColor Green
+        Set-ADUser -Identity "Administrator" -PasswordNeverExpires $true -ChangePasswordAtLogon $false
+
         Write-Host "Reiniciando el servidor..." -ForegroundColor Yellow
         shutdown.exe /r
         exit
