@@ -90,6 +90,58 @@ function acceso_aplicaciones{
 
 function configuracion_multifactor{
     # Habilitar MFA en la configuración de los usuarios en el AD
+    param (
+        [string]$NombreUsuario = '',
+        [string]$Issuer = 'plan-tres.com'
+    )
+
+    # Definir el alfabeto Base32
+    $Script:Base32Charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+
+    # Generar clave secreta en Base32
+    $SecretLength = 10
+    $byteArrayForSecret = [byte[]]::new($SecretLength)
+    [Security.Cryptography.RNGCryptoServiceProvider]::new().GetBytes($byteArrayForSecret, 0, $SecretLength)
+
+    $binaryString = -join $byteArrayForSecret.ForEach{
+        [Convert]::ToString($_, 2).PadLeft(8, '0')
+    }
+
+    $Base32Secret = [regex]::Replace($binaryString, '.{5}', {
+        param($Match)
+        $Script:Base32Charset[[Convert]::ToInt32($Match.Value, 2)]
+    })
+
+    # Construir URI TOTP
+    $otpUri = "otpauth://totp/{0}?secret={1}&issuer={2}" -f (
+        [Uri]::EscapeDataString($NombreUsuario),
+        $Base32Secret,
+        [Uri]::EscapeDataString($Issuer)
+    )
+
+    $encodedUri = [Uri]::EscapeDataString($otpUri)
+    $qrCodeUri = "https://api.qrserver.com/v1/create-qr-code/?size200x200&data=$encodedUri"
+
+    $NombreUsuario = Read-Host "Ingrese el nombre de usuario (incluyendo el dominio)"
+
+    # Mostrar datos
+    Write-Host "`n--- Configuración MFA ---"
+    Write-Host "Usuario         : $NombreUsuario"
+    Write-Host "Emisor          : $Issuer"
+    Write-Host "Secreto         : $Base32Secret"
+    Write-Host "URI TOTP        : $otpUri"
+    Write-Host "QR para escanear:"
+    Write-Host $qrCodeUri
+
+    # Opcional: Abrir el navegador automáticamente
+    Start-Process $qrCodeUri
+
+    return [PSCustomObject]@{
+        Usuario    = $NombreUsuario
+        Issuer     = $Issuer
+        Secreto    = $Base32Secret
+        QrCode     = $qrCodeUri
+    }
 }
 
 function configuracion_auditorias{

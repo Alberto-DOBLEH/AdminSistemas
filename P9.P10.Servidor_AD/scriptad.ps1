@@ -66,6 +66,20 @@ if ($ouNoCuates) {
     }
 }
 
+# Carpeta de usuarios moviles
+$carpetaMoviles = "D:\PerfilesMoviles"
+if(Test-Path $carpetaMoviles) {
+    Write-Host "La carpeta de perfiles móviles ya existe." -ForegroundColor Green
+}else{
+    Write-Host "La carpeta de perfiles móviles no existe. Creando..." -ForegroundColor Yellow
+    try{
+        New-Item -Path "D:\PerfilesMoviles" -ItemType Directory
+        New-SmbShare -Name "Perfiles$" -Path "D:\PerfilesMoviles" -FullAccess "Administradores"    
+    }catch{
+        Write-Host "Error al crear la carpeta de perfiles móviles: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+
 
 #Seccion de Reglas de Firewall
 New-NetFirewallRule -DisplayName "Active Directory"  -Direction Inbound -Protocol TCP -LocalPort 53,88,135,389,445,636,49152-65535 -Action Allow -Profile Domain -ErrorAction SilentlyContinue | Out-Null
@@ -76,7 +90,8 @@ do{
     Write-Host "1. Crear usuario"
     Write-Host "2. Eliminar usuario"
     Write-Host "3. Aplicar politicas de las OUs"
-    write-Host "4. Salir"
+    Write-Host "4. Aplicar MFA"
+    write-Host "5. Salir"
     $opcion = Read-Host "Selecciona una opción"
 
     switch($opcion){
@@ -91,7 +106,12 @@ do{
             # Aquí puedes llamar a la función que aplica las políticas
             # Por ejemplo: aplicar_politicas_ou
         }
-        4{
+        3{
+            $Usuario = Read-Host "Ingrese el nombre de usuario (incluyendo el dominio)"
+            $issuer = Read-Host "Ingrese el emisor (ej. plan-tres.com)"
+            configuracion_multifactor -NombreUsuario $Usuario -Issuer $issuer
+        }
+        5{
             Write-Host "Saliendo..."
             break
         }
