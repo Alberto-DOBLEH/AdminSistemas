@@ -16,6 +16,8 @@ if (-not $rol.Installed) {
     Write-Host "El rol 'AD-Domain-Services' está instalado." -ForegroundColor Green
 }
 
+Set-ADUser -Identity "Administrador" -PasswordNeverExpires $true -ChangePasswordAtLogon $false
+
 # Verificar si el servidor es un controlador de dominio
 try {
     $dominio = Get-ADDomain
@@ -29,8 +31,7 @@ try {
     $netbiosName = Read-Host "Ingresa el nombre NetBIOS para el dominio (ej. CUATES)"
     try{    
         Install-ADDSForest -DomainName $domainName -DomainNetbiosName $netbiosName -SafeModeAdministratorPassword (Read-Host -AsSecureString "Ingresa la contraseña de modo seguro") -InstallDNS
-        Write-Host "El servidor se ha unido al dominio 'cuates.local'." -ForegroundColor Green
-        Set-ADUser -Identity "Administrador" -PasswordNeverExpires $true -ChangePasswordAtLogon $false
+        Write-Host "El servidor se ha unido al dominio '$domainName'" -ForegroundColor Green
 
         Write-Host "Reiniciando el servidor..." -ForegroundColor Yellow
         shutdown.exe /r
