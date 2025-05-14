@@ -97,7 +97,7 @@ if ($fsrmFeature.Installed) {
 $plantillaCuates = Get-FsrmQuotaTemplate -Name "Cuota_Cuates" -ErrorAction SilentlyContinue
 if (-not $plantillaCuates) {
     Write-Host "Creando plantilla de cuota para Cuates (5MB)..." -ForegroundColor Yellow
-    New-FsrmQuotaTemplate -Name "Cuota_Cuates" -Description "Límite de 5MB para usuarios de la OU Cuates" -Size 5MB -SoftLimit $false
+    New-FsrmQuotaTemplate -Name "Cuota_Cuates" -Description "Límite de 5MB para usuarios de la OU Cuates" -Size 5MB
 } else {
     Write-Host "La plantilla 'Cuota_Cuates' ya existe." -ForegroundColor Green
 }
@@ -106,7 +106,7 @@ if (-not $plantillaCuates) {
 $plantillaNoCuates = Get-FsrmQuotaTemplate -Name "Cuota_NoCuates" -ErrorAction SilentlyContinue
 if (-not $plantillaNoCuates) {
     Write-Host "Creando plantilla de cuota para NoCuates (10MB)..." -ForegroundColor Yellow
-    New-FsrmQuotaTemplate -Name "Cuota_NoCuates" -Description "Límite de 10MB para usuarios de la OU NoCuates" -Size 10MB -SoftLimit $false
+    New-FsrmQuotaTemplate -Name "Cuota_NoCuates" -Description "Límite de 10MB para usuarios de la OU NoCuates" -Size 10MB
 } else {
     Write-Host "La plantilla 'Cuota_NoCuates' ya existe." -ForegroundColor Green
 }
