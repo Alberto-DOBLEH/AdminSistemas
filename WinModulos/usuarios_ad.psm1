@@ -47,13 +47,15 @@ function crear_user_ad{
 
     $dc = $sdominio[0]
     $ds = $sdominio[1]
-
+    
     $ouPath = "OU=$ou,DC=$dc,DC=$ds"
     }while($opcou -ne 1 -and $opcou -ne 2)
     
+    $hostname = $env:COMPUTERNAME
+
     try{
         New-ADUser -Name $user -SamAccountName $user -AccountPassword $password -Enabled $true -Path $ouPath -PasswordNeverExpires $true
-        Set-ADUser -Identity $user -ProfilePath "\\Servidor\Perfiles\$user"
+        Set-ADUser -Identity $user -ProfilePath "\\$hostname\PerfilesMoviles\$user"
 
         Write-Host "Usuario $user creado exitosamente en la OU $ou" -ForegroundColor Green
     }catch{
