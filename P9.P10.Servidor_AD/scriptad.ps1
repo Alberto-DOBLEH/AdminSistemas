@@ -1,4 +1,5 @@
 Import-Module ..\WinModulos\usuarios_ad.psm1
+Import-Module ..\WinModulos\modulos_politicas.psm1
 
 # Verificar si está instalado el rol de Active Directory Domain Services
 $rol = Get-WindowsFeature -Name AD-Domain-Services
