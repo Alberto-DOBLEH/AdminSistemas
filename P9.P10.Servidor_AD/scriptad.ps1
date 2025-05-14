@@ -76,7 +76,7 @@ if(Test-Path $carpetaMoviles) {
     Write-Host "La carpeta de perfiles móviles no existe. Creando..." -ForegroundColor Yellow
     try{
         New-Item -Path "C:\PerfilesMoviles" -ItemType Directory
-        New-SmbShare -Name "Perfiles$" -Path "C:\PerfilesMoviles" -FullAccess "Administradores" -ChangeAccess "DIADELNINO\Usuarios del dominio"
+        New-SmbShare -Name "PerfilesMoviles" -Path "C:\PerfilesMoviles" -FullAccess "Administradores" -ChangeAccess "DIADELNINO\Usuarios del dominio"
         icacls "C:\PerfilesMoviles" /grant "DIADELNINO\Usuarios del dominio:(OI)(CI)(M)"
         
     }catch{
