@@ -104,6 +104,7 @@ function Procesar_Usuarios {
 
     foreach ($usuario in $usuarios) {
         $carpetaUsuario = Join-Path -Path $rutaPerfiles -ChildPath $usuario.SamAccountName
+        $carpetaUsuario = "$carpetaUsuario.V6"
 
         if (Test-Path $carpetaUsuario) {
             Aplicar_Cuota -Ruta $carpetaUsuario -Plantilla $PlantillaCuota
