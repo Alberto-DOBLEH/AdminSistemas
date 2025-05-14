@@ -84,6 +84,33 @@ if(Test-Path $carpetaMoviles) {
     }
 }
 
+$fsrmFeature = Get-WindowsFeature -Name FS-Resource-Manager
+
+if ($fsrmFeature.Installed) {
+    Write-Host "FS-Resource-Manager ya está instalado." -ForegroundColor Green
+} else {
+    Write-Host "FS-Resource-Manager no está instalado. Instalando..." -ForegroundColor Yellow
+    Install-WindowsFeature FS-Resource-Manager
+}
+
+# Verificar y crear la plantilla para Cuates (5MB)
+$plantillaCuates = Get-FsrmQuotaTemplate -Name "Cuota_Cuates" -ErrorAction SilentlyContinue
+if (-not $plantillaCuates) {
+    Write-Host "Creando plantilla de cuota para Cuates (5MB)..." -ForegroundColor Yellow
+    New-FsrmQuotaTemplate -Name "Cuota_Cuates" -Description "Límite de 5MB para usuarios de la OU Cuates" -Size 5MB -SoftLimit $false
+} else {
+    Write-Host "La plantilla 'Cuota_Cuates' ya existe." -ForegroundColor Green
+}
+
+# Verificar y crear la plantilla para NoCuates (10MB)
+$plantillaNoCuates = Get-FsrmQuotaTemplate -Name "Cuota_NoCuates" -ErrorAction SilentlyContinue
+if (-not $plantillaNoCuates) {
+    Write-Host "Creando plantilla de cuota para NoCuates (10MB)..." -ForegroundColor Yellow
+    New-FsrmQuotaTemplate -Name "Cuota_NoCuates" -Description "Límite de 10MB para usuarios de la OU NoCuates" -Size 10MB -SoftLimit $false
+} else {
+    Write-Host "La plantilla 'Cuota_NoCuates' ya existe." -ForegroundColor Green
+}
+
 
 #Seccion de Reglas de Firewall
 New-NetFirewallRule -DisplayName "Active Directory"  -Direction Inbound -Protocol TCP -LocalPort 53,88,135,389,445,636,49152-65535 -Action Allow -Profile Domain -ErrorAction SilentlyContinue | Out-Null
@@ -93,9 +120,11 @@ do{
     Write-Host "---Menu Usuarios AD---"
     Write-Host "1. Crear usuario"
     Write-Host "2. Eliminar usuario"
-    Write-Host "3. Aplicar politicas de las OUs"
-    Write-Host "4. Aplicar MFA"
-    write-Host "5. Salir"
+    Write-Host "3. Aplicar Horarios"
+    Write-Host "4. Aplicar restriccion de espacio"
+    Write-Host "5. Aplicar restriccion de aplicacion"
+    Write-Host "6. Aplicar MFA"
+    write-Host "7. Salir"
     $opcion = Read-Host "Selecciona una opción"
 
     switch($opcion){
@@ -106,16 +135,24 @@ do{
             eliminar_user_ad
         }
         3{
-            Write-Host "Aplicando políticas de las OUs..."
+            Write-Host "Aplicando horarios a las OUs..."
             # Aquí puedes llamar a la función que aplica las políticas
             # Por ejemplo: aplicar_politicas_ou
         }
-        3{
+        4{
+            archivos_limitados -dominio $domainName
+        }
+        5{
+            Write-Host "Aplicando restricciones de aplicacion de las OUs..."
+            # Aquí puedes llamar a la función que aplica las políticas
+            # Por ejemplo: aplicar_politicas_ou
+        }
+        6{
             $Usuario = Read-Host "Ingrese el nombre de usuario (incluyendo el dominio)"
             $issuer = Read-Host "Ingrese el emisor (ej. plan-tres.com)"
             configuracion_multifactor -NombreUsuario $Usuario -Issuer $issuer
         }
-        5{
+        7{
             Write-Host "Saliendo..."
             break
         }
@@ -124,5 +161,5 @@ do{
         }    
     }
     
-}while($opcion -ne 5)
+}while($opcion -ne 7)
 

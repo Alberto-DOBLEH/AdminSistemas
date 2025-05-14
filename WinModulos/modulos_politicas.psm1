@@ -74,11 +74,68 @@ function horarios{
 
 }
 
+# Función para aplicar cuota en una carpeta
+function Aplicar_Cuota {
+    param (
+        [string]$Ruta,
+        [string]$Plantilla
+    )
+
+    # Verificar si ya tiene una cuota aplicada
+    $cuotaExistente = Get-FsrmQuota -Path $Ruta -ErrorAction SilentlyContinue
+
+    if (-not $cuotaExistente) {
+        Write-Host "Aplicando cuota '$Plantilla' a $Ruta" -ForegroundColor Cyan
+        New-FsrmQuota -Path $Ruta -Template $Plantilla
+    } else {
+        Write-Host "Ya existe una cuota en $Ruta" -ForegroundColor Yellow
+    }
+}
+
+# Función para procesar los usuarios de una OU
+function Procesar_Usuarios {
+    param (
+        [string]$OuPath,
+        [string]$PlantillaCuota,
+        [string]$RutaPerfiles    
+    )
+
+    $usuarios = Get-ADUser -Filter * -SearchBase $OuPath
+
+    foreach ($usuario in $usuarios) {
+        $carpetaUsuario = Join-Path -Path $rutaPerfiles -ChildPath $usuario.SamAccountName
+
+        if (Test-Path $carpetaUsuario) {
+            Aplicar_Cuota -Ruta $carpetaUsuario -Plantilla $PlantillaCuota
+        } else {
+            Write-Host "La carpeta $carpetaUsuario no existe, omitiendo." -ForegroundColor DarkGray
+        }
+    }
+}
+
+
 function archivos_limitados{
+    param (
+        [string]$dominio 
+    )
+    
+    Import-Module FileServerResourceManager
 
-    # OU cuates archivos de 5MB
+    $sdominio = $dominio.Split('.')
 
-    # OU no cuates archivos de 10MB
+    $dc = $sdominio[0]
+    $ds = $sdominio[1]
+
+    # OUs de referencia (ajusta el DN si es necesario)
+    $ouCuates = "OU=cuates,DC=$dc,DC=$ds"
+    $ouNoCuates = "OU=no cuates,DC=$dc,DC=$ds"
+    $rutaPerfiles = "C:\PerfilesMoviles"
+    # Aplicar cuotas a usuarios de Cuates (5MB)
+    Procesar_Usuarios -OuPath $ouCuates -PlantillaCuota "Cuota_Cuates" -RutaPerfiles $rutaPerfiles
+
+    # Aplicar cuotas a usuarios de NoCuates (10MB)
+    Procesar_Usuarios -OuPath $ouNoCuates -PlantillaCuota "Cuota_NoCuates" -RutaPerfiles $rutaPerfiles
+
 }
 
 function acceso_aplicaciones{
