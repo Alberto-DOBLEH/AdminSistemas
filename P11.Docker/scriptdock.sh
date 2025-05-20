@@ -39,7 +39,7 @@ read -p "Usuario para el contenedor PostgreSQL (usuario1): " USUARIO1
 read -p "Contraseña para el contenedor PostgreSQL (Hola9080): " CONTRASENA1
 
 read -p "Usuario para el contenedor PostgreSQL (usuario2): " USUARIO2
-read -p "Contraseña para el contenedor PostgreSQL (Hola9080): " CONTRASENA1
+read -p "Contraseña para el contenedor PostgreSQL (Hola9080): " CONTRASENA2
 
 # Crear dos contenedores con PostgreSQL
 echo "Levantando contenedores PostgreSQL..."
@@ -60,4 +60,4 @@ echo "Instalando cliente psql en pg1 para pruebas de conexión..."
 docker exec pg1 apt update && docker exec pg1 apt install -y postgresql-client
 
 echo "Probando conexión desde pg1 a pg2..."
-docker exec pg1 psql -h pg2 -U $USUARIO2 -d bd2 -c '\l'
+docker exec pg1 psql -h pg2 -U $USUARIO2 -d bd2
