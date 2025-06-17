@@ -3,7 +3,7 @@
 # ========================
 
 # Cargar funciones desde libreriawindows.ps1
-Import-Module "C:\Users\Administrator\Desktop\librerianueva.ps1"
+Import-Module .\librerianueva.ps1
 
 function Mostrar-Menu {
     Clear-Host
