@@ -1,5 +1,5 @@
 # Importar funciones desde el módulo externo
-Import-Module "C:\Users\Administrator\Desktop\librerianueva.ps1"
+Import-Module .\librerianueva.ps1
 
 function Menu-Web {
     while ($true) {
