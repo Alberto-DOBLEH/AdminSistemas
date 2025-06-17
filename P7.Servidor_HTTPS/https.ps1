@@ -1,5 +1,5 @@
 # Importar funciones desde el módulo externo
-Import-Module .\librerianueva.ps1
+Import-Module "$PSScriptRoot/librerianueva.ps1"
 
 function Menu-Web {
     while ($true) {
