@@ -1269,7 +1269,7 @@ function seleccionar_protocolo {
 }
 
 # Configuración del servidor FTP
-$FTP_SERVER = "10.0.0.254"  # Cambia por la IP de tu servidor
+$FTP_SERVER = "127.0.0.1"  # Cambia por la IP de tu servidor
 $FTP_USER = "windows"          # Usuario para Windows
 $FTP_PASS = "Hola9080"              # Contraseña
 
