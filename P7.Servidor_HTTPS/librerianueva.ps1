@@ -1302,7 +1302,7 @@ function seleccionar_version_ftp {
         $request.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
         $request.Credentials = New-Object System.Net.NetworkCredential("windows", "Hola9080")
         $request.UseBinary = $true
-        $request.UsePassive = $true
+        $request.UsePassive = $false
 
         $response = $request.GetResponse()
         Write-Host "Conexión exitosa"
