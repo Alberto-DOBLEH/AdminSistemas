@@ -223,7 +223,7 @@ function comprobarPassword {
     param (
         [string]$clave
     )
-    $regex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,16}$"
+    $regex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,16}$"
 
     if ($clave -match $regex) {
         return $true
