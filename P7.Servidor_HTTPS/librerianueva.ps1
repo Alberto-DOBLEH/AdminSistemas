@@ -1297,6 +1297,19 @@ function seleccionar_version_ftp {
     # Definir la URL del FTP
     $ftpUri = "ftp://$FTP_SERVER/$carpeta_ftp/"
 
+    try {
+        $request = [System.Net.FtpWebRequest]::Create("ftp://10.0.0.254/")
+        $request.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+        $request.Credentials = New-Object System.Net.NetworkCredential("windows", "Hola9080")
+        $request.UseBinary = $true
+        $request.UsePassive = $true
+
+        $response = $request.GetResponse()
+        Write-Host "Conexión exitosa"
+    } catch {
+        Write-Host "Error: $_"
+    }
+
     # Crear la solicitud FTP para obtener la lista de archivos
     try {
         $request = [System.Net.FtpWebRequest]::Create($ftpUri)
