@@ -5,7 +5,7 @@ $ProgressPreference = 'SilentlyContinue'
 # Cuando cambie de red tengo que editar la ip que ingreso en el Caddyfile <- importante
 $opcDescarga = Read-Host "Desde donde quieres realizar la instalacion de los servicios? (web/ftp)"
 
-$servidorFtp = "ftp://127.0.0.1"
+$servidorFtp = "ftps://127.0.0.1"
 
 function Es-PuertoValido([int]$puerto) {
     $puertosReservados = @{
@@ -91,7 +91,7 @@ function listarDirectoriosFtp {
             $peticion.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectoryDetails
             $peticion.Credentials = New-Object System.Net.NetworkCredential($usuario, $contrasena)
             $peticion.EnableSsl = $usarSsl
-            $peticion.UsePassive = $true
+            $peticion.UsePassive = $false
 
             if ($usarSsl) {
                 [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
