@@ -1313,10 +1313,6 @@ function seleccionar_version_ftp {
         $reader.Close()
         $response.Close()
 
-        # Filtrar solo archivos válidos según el servicio
-        $versionesDisponibles = $versionesDisponibles | Where-Object { 
-            $_ -match '^(httpd-[0-9]+\.[0-9]+\.[0-9]+.*\.zip|apache-tomcat-[0-9]+\.[0-9]+\.[0-9]+.*\.zip|nginx-[0-9]+\.[0-9]+\.[0-9]+.*\.zip)$' 
-        }
 
         if ($versionesDisponibles.Count -eq 0 -or -not $versionesDisponibles[0]) {
             Write-Host "No se encontraron versiones disponibles en el servidor FTP para $global:servicio."
