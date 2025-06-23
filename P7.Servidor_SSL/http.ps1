@@ -80,7 +80,7 @@ function listarDirectoriosFtp {
     )
 
     $usuario = "anonymous"
-    $contrasena = ""
+    $contrasena = "anonymous@example.com"
 
     $exito = $false
 
