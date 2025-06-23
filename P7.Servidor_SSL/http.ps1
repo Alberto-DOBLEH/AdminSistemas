@@ -115,7 +115,7 @@ function listarDirectoriosFtp {
             break
         }
         catch {
-            Write-Host "Fallo con SSL = $usarSsl, reintentando..."
+            Write-Host "Fallo con SSL = $usarSsl, reintentando..., error: $($_.Exception.Message)"
         }
     }
 
