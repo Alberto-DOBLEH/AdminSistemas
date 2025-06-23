@@ -5,7 +5,7 @@ $ProgressPreference = 'SilentlyContinue'
 # Cuando cambie de red tengo que editar la ip que ingreso en el Caddyfile <- importante
 $opcDescarga = Read-Host "Desde donde quieres realizar la instalacion de los servicios? (web/ftp)"
 
-$servidorFtp = "ftp://localhost"
+$servidorFtp = "ftp://127.0.0.1"
 
 function Es-PuertoValido([int]$puerto) {
     $puertosReservados = @{
