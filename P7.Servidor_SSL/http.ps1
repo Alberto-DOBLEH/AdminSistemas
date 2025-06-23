@@ -80,30 +80,32 @@ function listarDirectoriosFtp {
 
     $usuario = "anonymous"
     $contrasena = ""
-
     $exito = $false
 
+    # Configuración global de SSL
     $validacionOriginalCallback = [System.Net.ServicePointManager]::ServerCertificateValidationCallback
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
+    [System.Net.ServicePointManager]::SecurityProtocol = 
+        [System.Net.SecurityProtocolType]::Tls12 -bor 
+        [System.Net.SecurityProtocolType]::Tls11 -bor 
+        [System.Net.SecurityProtocolType]::Tls
 
-    foreach ($usarSsl in $false, $true) {
+    foreach ($usarSsl in $true, $false) { # Probamos primero con SSL
         try {
             $peticion = [System.Net.FtpWebRequest]::Create($servidorFtp)
             $peticion.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectoryDetails
             $peticion.Credentials = New-Object System.Net.NetworkCredential($usuario, $contrasena)
             $peticion.EnableSsl = $usarSsl
-            $peticion.UsePassive = $false
+            $peticion.UsePassive = $true  # Cambiado a true
+            $peticion.KeepAlive = $false
 
-            if ($usarSsl) {
-                [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { 
-                    param ($sender, $cert, $chain, $errors) return $true
-                }
-            }
+            Write-Host "Intentando conexión con SSL = $usarSsl..."
 
             $respuesta = $peticion.GetResponse()
             $respuestaStream = $respuesta.GetResponseStream()
             $lector = New-Object System.IO.StreamReader($respuestaStream)
 
-            Write-Host "Conexion exitosa usando SSL = $usarSsl"
+            Write-Host "Conexión exitosa usando SSL = $usarSsl"
 
             while (-not $lector.EndOfStream) {
                 $linea = $lector.ReadLine()
@@ -118,17 +120,20 @@ function listarDirectoriosFtp {
             break
         }
         catch {
-            Write-Host "Fallo con SSL = $usarSsl, reintentando..., error: $($_.Exception.Message)"
+            Write-Host "Fallo con SSL = $usarSsl, error: $($_.Exception.Message)"
         }
     }
 
+    # Restaurar configuración original
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $validacionOriginalCallback
+
     if (-not $exito) {
         Write-Host "No se pudo conectar al FTP con o sin SSL."
+        return $false
     }
 
-    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $validacionOriginalCallback
+    return $true
 }
-
 function Es-ArchivoExistente($rutaDirectorio, $archivoABuscar){
     forEach($file in Get-ChildItem -Path $rutaDirectorio){
         if($file.Name -eq $archivoABuscar){
