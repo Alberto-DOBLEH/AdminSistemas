@@ -1313,12 +1313,6 @@ function seleccionar_version_ftp {
         $reader.Close()
         $response.Close()
 
-
-        if ($versionesDisponibles.Count -eq 0 -or -not $versionesDisponibles[0]) {
-            Write-Host "No se encontraron versiones disponibles en el servidor FTP para $global:servicio."
-            return
-        }
-
         # Mostrar opciones y permitir selección
         Write-Host "Seleccione la versión disponible:"
         for ($i = 0; $i -lt $versionesDisponibles.Count; $i++) {
