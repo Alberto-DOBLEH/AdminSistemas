@@ -1303,7 +1303,7 @@ function seleccionar_version_ftp {
         $request.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
         $request.Credentials = New-Object System.Net.NetworkCredential($FTP_USER, $FTP_PASS)
         $request.UseBinary = $true
-        $request.UsePassive = $false
+        $request.UsePassive = $true
 
         $response = $request.GetResponse()
         $stream = $response.GetResponseStream()
