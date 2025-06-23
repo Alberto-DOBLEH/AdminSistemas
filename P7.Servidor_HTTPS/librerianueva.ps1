@@ -1301,7 +1301,7 @@ function seleccionar_version_ftp {
     try {
         $request = [System.Net.FtpWebRequest]::Create($ftpUri)
         $request.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
-        $request.Credentials = New-Object System.Net.NetworkCredential($FTP_USER, $FTP_PASS)
+        $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
         $request.UseBinary = $true
         $request.UsePassive = $true
 
