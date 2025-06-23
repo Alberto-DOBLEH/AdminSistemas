@@ -1270,8 +1270,8 @@ function seleccionar_protocolo {
 
 # Configuración del servidor FTP
 $FTP_SERVER = "127.0.0.1"  # Cambia por la IP de tu servidor
-$FTP_USER = "Administrador"          # Usuario para Windows
-$FTP_PASS = "PokemonRojo9080"             # Contraseña
+$FTP_USER = "windows"          # Usuario para Windows
+$FTP_PASS = "Hola9080"             # Contraseña
 
 function seleccionar_version_ftp {
     # Si el servicio es IIS, no permitir selección de versión
