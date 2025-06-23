@@ -1,4 +1,4 @@
-$ftpbase = "ftp://192.168.100.76" #Cammbia esto en la escuela
+$ftpbase = "ftp://127.0.0.1" #Cammbia esto en la escuela
 
 function Comprobarpuerto{
   param (
@@ -13,14 +13,14 @@ function Comprobarpuerto{
   if($newPort -gt 1 -and $newPort -lt 65535 -and $puertosinvalidos -notcontains $newPort){
     if($netstatoutput){
         return $false
-        Write-Host "El puerto está en uso"
+        Write-Host "El puerto estï¿½ en uso"
       }else{
         return $true
-        Write-Host "Puerto Valido, se procederá a la instalacion"
+        Write-Host "Puerto Valido, se procederï¿½ a la instalacion"
       }
   }else{
     return $false
-    echo "Puerto introducido invalido, los posibles puertos validos están entre el 1024 y el 65535"
+    echo "Puerto introducido invalido, los posibles puertos validos estï¿½n entre el 1024 y el 65535"
   }
   
 }
@@ -35,11 +35,11 @@ cd C:\caddy
     New-Item -Path "C:\caddy\www\" -Name "index.html" -ItemType "File"
         $HTMLcontent = @"
     <html>
-    <h1>Le juro profe que caddy está corriendo en el puerto $newPort</h1>
+    <h1>Le juro profe que caddy estï¿½ corriendo en el puerto $newPort</h1>
 </html>
 "@
 
-#Creo el caddyfile y añado la configuracion inicial
+#Creo el caddyfile y aï¿½ado la configuracion inicial
 $HTMLcontent | Out-File -Encoding utf8 -FilePath "C:\caddy\www\index.html"
     $CaddyfileContent = @"
 :$newPort {
@@ -139,7 +139,7 @@ function InstallCady{
     
  
   switch($opc){
-    '1'{ #Obtendá las versiones de la pagina web (o en este caso de la api de github)
+    '1'{ #Obtendï¿½ las versiones de la pagina web (o en este caso de la api de github)
       Write-Host "Obteniendo versiones de Caddy"
       [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null #Recuerdas ese comando que no sabias que hacia pero se ocupaba?
                                                                                     #Hay que revertitlo porque si no la peticion al servicio web no jala xD
@@ -190,10 +190,10 @@ function InstallCady{
         $request.Method = [System.Net.WebRequestMethods+FTP]::ListDirectory #Indica que lo que va a recibir es una lista de directorios
         $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com") #Conecta con usuario anonymo(recuerda los archivos estan en la carpeta publica)
         $request.EnableSsl = $true #Activamos ssl para la peticion, ya que el servidor lo solicita
-        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {return $true} #Ajá
+        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {return $true} #Ajï¿½
         
         try{
-            #Obtendrá y listará los directorios de las versiones disponibles
+            #Obtendrï¿½ y listarï¿½ los directorios de las versiones disponibles
             $response = $request.GetResponse()
             $reader = New-Object System.IO.StreamReader $response.GetResponseStream()
             $directories = $reader.ReadToEnd()
@@ -232,7 +232,7 @@ function InstallCady{
           }
         }
         default{
-            Write-Host "Volviendo al menú"
+            Write-Host "Volviendo al menï¿½"
         }
   }
   
@@ -271,7 +271,7 @@ function compilenginx{
 }
     
    Start-Process -FilePath ("C:\nginx\nginx-" + $version + "\nginx.exe") -WindowStyle Hidden
-#Ya jala nomas falta iniciar el servicio mañana le das al ftp primero y luego vuelves acá
+#Ya jala nomas falta iniciar el servicio maï¿½ana le das al ftp primero y luego vuelves acï¿½
     #& "C:\nginx\nginx-$version\nginx.exe"
      cd C:\Users\Administrador
 
@@ -410,7 +410,7 @@ function InstallNginx{
         $opc = Read-Host "Opcion:"
         switch($opc){
               '1'{
-                $bersion = "nginx.zip" #La unica deiferencia con caddy es que aqui como al descomprimirlo te dará una carpeta con el nombre dela version
+                $bersion = "nginx.zip" #La unica deiferencia con caddy es que aqui como al descomprimirlo te darï¿½ una carpeta con el nombre dela version
                 $version = "1.26.3"    #Asigno variables que contienen el nombre del archivo zip y de la version a la que corresponden
                 DownloadNginxftp
               }
@@ -432,7 +432,7 @@ function InstallNginx{
           }
         }
         default{
-            Write-Host "Volviendo al menú"
+            Write-Host "Volviendo al menï¿½"
         }
     }
       cd C:\Users\Administrador
@@ -531,16 +531,16 @@ function InstallNginx{
         switch($opc){
             '1'{
                 if(Test-Path "C:\caddy\caddy.exe"){
-                    Write-Host "Caddy ya está instalado en el equipo"
+                    Write-Host "Caddy ya estï¿½ instalado en el equipo"
                 }else{
                     while (-not $puertovalido){
-                        $newPort = Read-Host "Introduce el puerto donde correrá el servicio"
+                        $newPort = Read-Host "Introduce el puerto donde correrï¿½ el servicio"
                         if(Comprobarpuerto -newPort $newPort){
                             $puertovalido = $true
-                            Write-Host "Puerto Valido, se procederá a la instalacion"
+                            Write-Host "Puerto Valido, se procederï¿½ a la instalacion"
                         }else{
                             $puertovalido = $false
-                            Write-Host "Puerto invalido o está en uso ingresa otro dato"
+                            Write-Host "Puerto invalido o estï¿½ en uso ingresa otro dato"
                         }
                     }
             
@@ -551,16 +551,16 @@ function InstallNginx{
             '2'{
              
                 if(Test-Path "C:\nginx\nginx-*\nginx.exe"){
-                    Write-Host "Nginx ya está instalado en el equipo"
+                    Write-Host "Nginx ya estï¿½ instalado en el equipo"
                 }else{
                     while (-not $puertovalido){
-                        $newPort = Read-Host "Introduce el puerto donde correrá el servicio"
+                        $newPort = Read-Host "Introduce el puerto donde correrï¿½ el servicio"
                         if(Comprobarpuerto -newPort $newPort){
                             $puertovalido = $true
-                            Write-Host "Puerto Valido, se procederá a la instalacion"
+                            Write-Host "Puerto Valido, se procederï¿½ a la instalacion"
                         }else{
                             $puertovalido = $false
-                            Write-Host "Puerto invalido o está en uso ingresa otro dato"
+                            Write-Host "Puerto invalido o estï¿½ en uso ingresa otro dato"
                         }
                     }
                         InstallNginx -ftp $false
@@ -608,16 +608,16 @@ function InstallNginx{
      switch($opc){
         '1'{
             if(Test-Path "C:\caddy\caddy.exe"){
-                    Write-Host "Caddy ya está instalado en el equipo"
+                    Write-Host "Caddy ya estï¿½ instalado en el equipo"
                 }else{
                     while (-not $puertovalido){
-                        $newPort = Read-Host "Introduce el puerto donde correrá el servicio"
+                        $newPort = Read-Host "Introduce el puerto donde correrï¿½ el servicio"
                         if(Comprobarpuerto -newPort $newPort){
                             $puertovalido = $true
-                            Write-Host "Puerto Valido, se procederá a la instalacion"
+                            Write-Host "Puerto Valido, se procederï¿½ a la instalacion"
                         }else{
                             $puertovalido = $false
-                            Write-Host "Puerto invalido o está en uso ingresa otro dato"
+                            Write-Host "Puerto invalido o estï¿½ en uso ingresa otro dato"
                         }
                     }
             
@@ -627,16 +627,16 @@ function InstallNginx{
         }
         '2'{
             if(Test-Path "C:\nginx\nginx-*\nginx.exe"){
-                    Write-Host "Nginx ya está instalado en el equipo"
+                    Write-Host "Nginx ya estï¿½ instalado en el equipo"
                 }else{
                     while (-not $puertovalido){
-                        $newPort = Read-Host "Introduce el puerto donde correrá el servicio"
+                        $newPort = Read-Host "Introduce el puerto donde correrï¿½ el servicio"
                         if(Comprobarpuerto -newPort $newPort){
                             $puertovalido = $true
-                            Write-Host "Puerto Valido, se procederá a la instalacion"
+                            Write-Host "Puerto Valido, se procederï¿½ a la instalacion"
                         }else{
                             $puertovalido = $false
-                            Write-Host "Puerto invalido o está en uso ingresa otro dato"
+                            Write-Host "Puerto invalido o estï¿½ en uso ingresa otro dato"
                         }
                     }
                         InstallNginx -ftp $true

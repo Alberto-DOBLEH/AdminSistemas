@@ -1,8 +1,8 @@
 ﻿function InstallFtp{
-    #Install-WindowsFeature Web-Basic-Auth
-    #Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature
-    #Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
-    #Import-Module WebAdministration
+    Install-WindowsFeature Web-Basic-Auth
+    Install-WindowsFeature Web-FTP-Server -IncludeAllSubFeature
+    Install-WindowsFeature Web-Server -IncludeAllSubFeature -IncludeManagementTools
+    Import-Module WebAdministration
 
    
     $sitename = "PruebaFTP"
