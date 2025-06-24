@@ -79,34 +79,49 @@ function listarDirectoriosFtp {
         [string]$servidorFtp
     )
 
-    $request = [System.Net.FtpWebRequest]::Create($servidorFtp)
-    $request.Method = [System.Net.WebRequestMethods+FTP]::ListDirectory
-    $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
-    $request.EnableSsl = $true
-    $request.UsePassive = $false
-    $request.UseBinary = $true
-    $request.KeepAlive = $false
+    
+    try {
+        Write-Host "Inicializando conexión a: $servidorFtp"
 
-    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
+        # Aceptar cualquier certificado SSL (no usar en producción)
+        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
             param ($sender, $certificate, $chain, $sslPolicyErrors)
+            Write-Host "Validando certificado: $sslPolicyErrors"
             return $true
         }
 
-    try{
+        $request = [System.Net.FtpWebRequest]::Create($servidorFtp)
+        $request.Method = [System.Net.WebRequestMethods+FTP]::ListDirectory
+        $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
+        $request.EnableSsl = $true
+        $request.UsePassive = $true
+        $request.UseBinary = $true
+        $request.KeepAlive = $false
+
+        Write-Host "Enviando solicitud FTP..."
         $response = $request.GetResponse()
-        $reader = New-Object System.IO.StreamReader $response.GetResponseStream()
-        $directories = $reader.ReadToEnd()
+
+        Write-Host "Respuesta recibida del servidor"
+        $reader = New-Object IO.StreamReader $response.GetResponseStream()
+        $contenido = $reader.ReadToEnd()
         $reader.Close()
         $response.Close()
-        $directories -split "`n"
-    }catch{
-        Write-Host "Error: $_"
+
+        Write-Host "Contenido recibido:"
+        $contenido -split "`n" | ForEach-Object { $_.Trim() }
+    }
+    catch {
+        Write-Error "Error detectado: $_"
+        if ($_.Exception.Response -ne $null) {
+            $resp = $_.Exception.Response
+            Write-Host "Código de estado FTP: $($resp.StatusCode)"
+            Write-Host "Descripción del estado: $($resp.StatusDescription)"
+        }
     }
     finally {
-        # Restaurar validación de certificado a valor por defecto
+        # Restaurar el validador de certificados al original
         [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null
     }
-
 }
 
 function Es-ArchivoExistente($rutaDirectorio, $archivoABuscar){
