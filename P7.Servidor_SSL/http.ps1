@@ -3,7 +3,7 @@ $ProgressPreference = 'SilentlyContinue'
 # Script de windows server 100% funcional
 # Cualquier cosa puedo volver a este commit
 # Cuando cambie de red tengo que editar la ip que ingreso en el Caddyfile <- importante
-new-item -Path "C:\descargas" -ItemType Directory -Force
+new-item -Path "C:\descargas" -ItemType Directory -Force | Out-Null
 $opcDescarga = Read-Host "Desde donde quieres realizar la instalacion de los servicios? (web/ftp)"
 
 $servidorFtp = "ftp://127.0.0.1/"
