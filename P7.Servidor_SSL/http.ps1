@@ -6,7 +6,7 @@ $ProgressPreference = 'SilentlyContinue'
 new-item -Path "C:\descargas" -ItemType Directory -Force
 $opcDescarga = Read-Host "Desde donde quieres realizar la instalacion de los servicios? (web/ftp)"
 
-$servidorFtp = "ftps://127.0.0.1:990/"
+$servidorFtp = "ftp://127.0.0.1/"
 
 function Es-PuertoValido([int]$puerto) {
     $puertosReservados = @{
