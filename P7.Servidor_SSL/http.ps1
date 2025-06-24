@@ -181,9 +181,9 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 echo $versionSinV
                                 echo "Instalando version LTS $versionLTSCaddy"
                                 curl.exe "$servidorFtp/Caddy/caddy-$versionLTSCaddy.zip" --ftp-ssl -k -o "C:\descargas\caddy-$versionLTSCaddy.zip"
-                                Expand-Archive C:\descargas\caddy-$versionLTSCaddy.zip C:\descargas -Force
+                                Expand-Archive -Path "C:\descargas\caddy-$versionLTSCaddy.zip" -DestinationPath "C:\descargas" -Force
                                 cd C:\descargas
-                                New-Item c:\descargas\Caddyfile -type file -Force
+                                New-Item -Path "c:\descargas\Caddyfile" -ItemType File -Force
 
                                 if($opcCaddySsl.ToLower() -eq "si"){
                                     echo "Habilitando SSL..."
@@ -254,9 +254,9 @@ https://10.0.0.254:$puerto {
                                     echo $versionSinV
                                     echo "Instalando version LTS $versionDesarrolloCaddy"
                                     curl.exe "$servidorFtp/Caddy/caddy-$versionDesarrolloCaddy.zip" --ftp-ssl -k -o "C:\descargas\caddy-$versionDesarrolloCaddy.zip"
-                                    Expand-Archive C:\descargas\caddy-$versionDesarrolloCaddy.zip C:\descargas -Force
+                                    Expand-Archive -Path "C:\descargas\caddy-$versionDesarrolloCaddy.zip" -DestinationPath "C:\descargas" -Force
                                     cd C:\descargas
-                                    New-Item c:\descargas\Caddyfile -type file -Force
+                                    New-Item -Path "c:\descargas\Caddyfile" -ItemType File -Force
                                     Set-Content -Path "C:\descargas\Caddyfile" -Value @"
 {
     auto_https disable_redirects
@@ -282,9 +282,9 @@ https://10.0.0.254:$puerto {
                                     echo $versionSinV
                                     echo "Instalando version LTS $versionDesarrolloCaddy"
                                     curl.exe "$servidorFtp/Caddy/caddy-$versionDesarrolloCaddy.zip" --ftp-ssl -k -o "C:\descargas\caddy-$versionDesarrolloCaddy.zip"
-                                    Expand-Archive C:\descargas\caddy-$versionDesarrolloCaddy.zip C:\descargas -Force
+                                    Expand-Archive -Path "C:\descargas\caddy-$versionDesarrolloCaddy.zip" -DestinationPath "C:\descargas" -Force
                                     cd C:\descargas
-                                    New-Item c:\descargas\Caddyfile -type file -Force
+                                    New-Item -Path "c:\descargas\Caddyfile" -ItemType File -Force
                                     Set-Content -Path "C:\descargas\Caddyfile" -Value @"
 :$puerto {
     root * "C:\MiSitio"
