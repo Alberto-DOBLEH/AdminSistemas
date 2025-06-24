@@ -121,10 +121,18 @@ function Deshabilitar-SSL(){
 
 function Habilitar-SSL(){
 
-    #New-SelfSignedCertificate -DnsName "ftp.PruebaFTP.com" -CertStoreLocation "Cert:\LocalMachine\My"
-    $cert = Get-Item "Cert:\LocalMachine\My\6C379824E9A93C4D11DB05E9ED31B67C9D37657D" #Selecciona el certificado, si generaste otro cambia la ultima parte de la ruta por el nuevo
-    echo $cert
-    Set-ItemProperty "IIS:\Sites\FTP2" -Name "ftpServer.security.ssl.serverCertHash" -Value 6C379824E9A93C4D11DB05E9ED31B67C9D37657D
+    # Crear un nuevo certificado autofirmado si no existe
+    $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
+
+    if (-not $cert) {
+        Write-Host "Certificado no encontrado, generando uno nuevo..."
+        $cert = New-SelfSignedCertificate -DnsName "ftp.PruebaFTP.com" -CertStoreLocation "Cert:\LocalMachine\My"
+        Write-Host "Certificado generado: $($cert.Thumbprint)"
+    } else {
+        Write-Host "Certificado existente encontrado: $($cert.Thumbprint)"
+    }
+
+    Set-ItemProperty "IIS:\Sites\FTP2" -Name "ftpServer.security.ssl.serverCertHash" -Value $cert.Thumbprint
     Set-ItemProperty "IIS:\Sites\FTP2" -Name "ftpServer.security.ssl.serverCertStoreName" -Value "My"
     #Lo de arriba signa el certificado ssl al servicio ftp
 
