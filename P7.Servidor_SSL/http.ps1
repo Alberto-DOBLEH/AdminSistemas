@@ -84,6 +84,9 @@ function listarDirectoriosFtp {
     $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
     $request.EnableSsl = $true
     $request.UsePassive = $true
+    $request.UseBinary = $true
+    $request.KeepAlive = $false
+
     [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
             param ($sender, $certificate, $chain, $sslPolicyErrors)
             return $true
@@ -98,6 +101,10 @@ function listarDirectoriosFtp {
         $directories -split "`n"
     }catch{
         Write-Host "Error: $_"
+    }
+    finally {
+        # Restaurar validación de certificado a valor por defecto
+        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null
     }
 
 }
