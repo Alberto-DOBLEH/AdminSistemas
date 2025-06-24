@@ -190,7 +190,7 @@ $opcSsl = Read-Host "Desea activar SSL?"
 
 if($opcSsl.ToLower() -eq "si"){
     echo "Habilitando SSL..."
-    # Habilitar-SSL
+    Habilitar-SSL
     Reiniciar-Sitio
 }
 elseif($opcSsl.ToLower() -eq "no"){
