@@ -86,7 +86,6 @@ function listarDirectoriosFtp {
         # Aceptar cualquier certificado SSL (no usar en producción)
         [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
             param ($sender, $certificate, $chain, $sslPolicyErrors)
-            Write-Host "Validando certificado: $sslPolicyErrors"
             return $true
         }
 
@@ -98,16 +97,13 @@ function listarDirectoriosFtp {
         $request.UseBinary = $true
         $request.KeepAlive = $false
 
-        Write-Host "Enviando solicitud FTP..."
         $response = $request.GetResponse()
 
-        Write-Host "Respuesta recibida del servidor"
         $reader = New-Object IO.StreamReader $response.GetResponseStream()
         $contenido = $reader.ReadToEnd()
         $reader.Close()
         $response.Close()
 
-        Write-Host "Contenido recibido:"
         $contenido -split "`n" | ForEach-Object { $_.Trim() }
     }
     catch {
