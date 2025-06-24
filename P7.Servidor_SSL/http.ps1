@@ -95,8 +95,20 @@ function listarDirectoriosFtp {
             $peticion.UsePassive = $false
 
             if ($usarSsl) {
-                [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
-            }
+                [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
+                        param($sender, $certificate, $chain, $sslPolicyErrors)
+                        if ($sslPolicyErrors -ne 'None') {
+                            Write-Warning "Error de validación de certificado SSL: $sslPolicyErrors"
+                            Write-Warning "Certificado: $($certificate.Subject)"
+                            Write-Warning "Cadena: $($chain.ChainStatus | Select-Object Status, StatusInformation | Format-List | Out-String)"
+                        } else {
+                            Write-Host "Validación de certificado SSL exitosa."
+                        }
+                        # Esto es crucial: devuelve $true para ignorar los errores de validación.
+                        # Si quieres que la validación sea estricta, devuelve $false aquí si $sslPolicyErrors -ne 'None'.
+                        return $true
+                    }
+                }
 
             $respuesta = $peticion.GetResponse()
             $respuestaStream = $respuesta.GetResponseStream()
