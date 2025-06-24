@@ -79,6 +79,8 @@ function listarDirectoriosFtp {
         [string]$servidorFtp
     )
 
+    Write-Host $servidorFtp
+
     $request = [System.Net.FtpWebRequest]::Create($servidorFtp)
     $request.Method = [System.Net.WebRequestMethods+FTP]::ListDirectory
     $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
