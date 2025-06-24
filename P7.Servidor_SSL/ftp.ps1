@@ -120,14 +120,23 @@ function Deshabilitar-SSL(){
 }
 
 function Habilitar-SSL(){
-    $numeroCert = "96D9BFD93676F3BC2E9F54D9138C4C92801EB6DD"
-    Set-ItemProperty "IIS:\Sites\FTP2" -Name ftpServer.security.ssl.controlChannelPolicy -Value "SslAllow"
-    Set-ItemProperty "IIS:\Sites\FTP2" -Name ftpServer.security.ssl.dataChannelPolicy -Value "SslAllow"
-    Set-ItemProperty "IIS:\Sites\FTP2" -Name ftpServer.security.ssl.serverCertHash -Value $numeroCert
-    Set-ItemProperty "IIS:\Sites\FTP2" -Name ftpServer.security.ssl.controlChannelPolicy -Value "SslRequire"
-    Set-ItemProperty "IIS:\Sites\FTP2" -Name ftpServer.security.ssl.dataChannelPolicy -Value "SslRequire"
-}
 
+    #New-SelfSignedCertificate -DnsName "ftp.PruebaFTP.com" -CertStoreLocation "Cert:\LocalMachine\My"
+    $cert = Get-Item "Cert:\LocalMachine\My\6C379824E9A93C4D11DB05E9ED31B67C9D37657D" #Selecciona el certificado, si generaste otro cambia la ultima parte de la ruta por el nuevo
+    echo $cert
+    Set-ItemProperty "IIS:\Sites\FTP2" -Name "ftpServer.security.ssl.serverCertHash" -Value 6C379824E9A93C4D11DB05E9ED31B67C9D37657D
+    Set-ItemProperty "IIS:\Sites\FTP2" -Name "ftpServer.security.ssl.serverCertStoreName" -Value "My"
+    #Lo de arriba signa el certificado ssl al servicio ftp
+
+    #Lo de abajo cambia las politicas ssl del fpt para habilitar ssl
+    $SSLPolicy = @(
+       'ftpServer.security.ssl.controlChannelPolicy',
+       'ftpServer.security.ssl.dataChannelPolicy'
+    )
+    Set-ItemProperty "IIS:\Sites\FTP2" -Name $SSLPolicy[0] -Value 1
+    Set-ItemProperty "IIS:\Sites\FTP2" -Name $SSLPolicy[1] -Value 1
+    Restart-Service ftpsvc
+}
 function Reiniciar-Sitio(){
     Restart-WebItem "IIS:\Sites\FTP2"
 }
