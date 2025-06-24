@@ -158,8 +158,10 @@ function Habilitar-AccesoAnonimo(){
 # Primera versión funcional del script, si ocurre cualquier error puedo volver a este commit
 $rutaRaiz = "C:\FTP"
 $rutaFisica = "C:\FTP"
+$rutaGeneral = "C:\FTP\LocalUser\Public"
 
 Crear-Ruta $rutaRaiz
+Crear-Ruta $rutaGeneral
 Crear-SitioFTP -nombreSitio "FTP2" -puerto 21 -rutaFisica $rutaFisica
 
 Set-ItemProperty "IIS:\Sites\FTP2" -Name ftpServer.userIsolation.mode -Value 3
@@ -193,6 +195,10 @@ Add-WebConfiguration @param3
 icacls "C:\FTP" /grant "IIS_IUSR:(OI)(CI)F"
 icacls "C:\FTP" /grant "IUSR:(OI)(CI)F" 
 icacls "C:\FTP" /grant "Todos:(OI)(CI)F"
+
+icacls "C:\FTP\LocalUser\Public" /grant "IIS_IUSR:(OI)(CI)F"
+icacls "C:\FTP\LocalUser\Public" /grant "IUSR:(OI)(CI)F"
+icacls "C:\FTP\LocalUser\Public" /grant "Todos:(OI)(CI)F"
 
 
 $opcSsl = Read-Host "Desea activar SSL?"
