@@ -152,6 +152,7 @@ function Reiniciar-Sitio(){
 
 function Habilitar-AccesoAnonimo(){
     Set-ItemProperty "IIS:\Sites\FTP2" -Name ftpServer.security.authentication.anonymousAuthentication.enabled -Value $true
+    Add-WebConfigurationProperty -Filter "/system.ftpServer/security/authentication/anonymousAuthentication" -name enabled -Value true -PSPath "IIS:\Sites\FTP2"
 }
 
 # Primera versión funcional del script, si ocurre cualquier error puedo volver a este commit
@@ -176,23 +177,22 @@ Habilitar-Autenticacion
 Habilitar-AccesoAnonimo
 
 # Esta línea es lo que hace que funcione bien lol
-$sitioFTP = "FTP2"
 $param3 =@{
     Filter = "/system.ftpServer/security/authorization"
     value = @{
-            accessType = "Allow"
-            roles = "*"
-            permision = "Read, Write"
-        }
-        PSPath = 'IIS:\'
-        Location = $sitioFTP
+        accessType = "Allow"
+        roles = "*"
+        permision = "Read, Write"
     }
+    PSPath = 'IIS:\'
+    Location = "FTP2"
+}
 
 Add-WebConfiguration @param3
 
-icacls "C:\FTP" /grant "IIS_IUSR:(OI)(CI)F" /inheritance:r
-icacls "C:\FTP" /grant "IUSR:(OI)(CI)F" /inheritance:r
-icacls "C:\FTP" /grant "Todos:(OI)(CI)F" /inheritance:r
+icacls "C:\FTP" /grant "IIS_IUSR:(OI)(CI)F"
+icacls "C:\FTP" /grant "IUSR:(OI)(CI)F" 
+icacls "C:\FTP" /grant "Todos:(OI)(CI)F"
 
 
 $opcSsl = Read-Host "Desea activar SSL?"
