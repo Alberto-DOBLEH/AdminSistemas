@@ -184,7 +184,7 @@ $param3 =@{
     Value = @{
         accessType = "Allow"
         roles = "*"
-        permisions = "Read, Write"
+        permision = "Read, Write"
     }
     PSPath = 'IIS:\'
     Location = "FTP2"
@@ -195,6 +195,7 @@ Add-WebConfiguration @param3
 icacls "C:\FTP" /grant "IIS_IUSR:(OI)(CI)F" /inheritance:r
 icacls "C:\FTP" /grant "IUSR:(OI)(CI)F" /inheritance:r
 icacls "C:\FTP" /grant "Todos:(OI)(CI)F" /inheritance:r
+
 
 $opcSsl = Read-Host "Desea activar SSL?"
 
