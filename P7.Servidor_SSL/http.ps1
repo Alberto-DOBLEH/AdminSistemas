@@ -84,8 +84,10 @@ function listarDirectoriosFtp {
     $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
     $request.EnableSsl = $true
     $request.UsePassive = $true
-    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {return $true}
-    
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
+        param($sender, $certificate, $chain, $sslPolicyErrors)
+    }
+
     try{
         $response = $request.GetResponse()
         $reader = New-Object System.IO.StreamReader $response.GetResponseStream()
