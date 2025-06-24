@@ -6,7 +6,7 @@ $ProgressPreference = 'SilentlyContinue'
 new-item -Path "C:\descargas" -ItemType Directory -Force | Out-Null
 $opcDescarga = Read-Host "Desde donde quieres realizar la instalacion de los servicios? (web/ftp)"
 
-$servidorFtp = "ftp://localhost"
+$servidorFtp = "ftp://127.0.0.1"
 
 function Es-PuertoValido([int]$puerto) {
     $puertosReservados = @{
@@ -92,7 +92,7 @@ function listarDirectoriosFtp {
 
         $request = [System.Net.FtpWebRequest]::Create($servidorFtp)
         $request.Method = [System.Net.WebRequestMethods+FTP]::ListDirectory
-        $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
+        $request.Credentials = New-Object System.Net.NetworkCredential("prueba", "Hola9080@")
         $request.EnableSsl = $true
         $request.UsePassive = $true
         $request.UseBinary = $true
