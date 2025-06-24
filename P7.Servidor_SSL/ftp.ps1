@@ -144,6 +144,7 @@ function Habilitar-SSL(){
     Set-ItemProperty "IIS:\Sites\FTP2" -Name $SSLPolicy[0] -Value 1
     Set-ItemProperty "IIS:\Sites\FTP2" -Name $SSLPolicy[1] -Value 1
     Restart-Service ftpsvc
+    Reiniciar-Sitio
 }
 function Reiniciar-Sitio(){
     Restart-WebItem "IIS:\Sites\FTP2"
