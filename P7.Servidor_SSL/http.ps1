@@ -352,6 +352,9 @@ https://10.0.0.254:$puerto {
                                     cd C:\descargas\nginx-$versionLTSNginx
                                     Clear-Content -Path "C:\descargas\nginx-$versionLTSNginx\conf\nginx.conf"
                                     Start-Process nginx.exe
+
+
+
                                     Get-Process | Where-Object { $_.ProcessName -like "*nginx*" }
                                     cd ..
                                     $contenido = @"
@@ -367,17 +370,6 @@ http {
 
     sendfile        on;
     keepalive_timeout  65;
-
-    # Configuración del servidor HTTP (redirige a HTTPS)
-    server {
-        listen 81;
-        server_name localhost;
-
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-    }
 
     # Configuración del servidor HTTPS
     server {
