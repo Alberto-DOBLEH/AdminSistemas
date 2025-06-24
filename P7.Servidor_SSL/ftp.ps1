@@ -178,17 +178,17 @@ Habilitar-Autenticacion
 Habilitar-AccesoAnonimo
 
 # Esta línea es lo que hace que funcione bien lol
-
+$sitioFTP = "FTP2"
 $param3 =@{
     Filter = "/system.ftpServer/security/authorization"
-    Value = @{
-        accessType = "Allow"
-        roles = "*"
-        permision = "Read, Write"
+    value = @{
+            accessType = "Allow"
+            roles = "*"
+            permision = "Read, Write"
+        }
+        PSPath = 'IIS:\'
+        Location = $sitioFTP
     }
-    PSPath = 'IIS:\'
-    Location = "FTP2"
-}
 
 Add-WebConfiguration @param3
 
