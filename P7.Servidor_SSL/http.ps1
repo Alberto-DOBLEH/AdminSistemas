@@ -95,9 +95,12 @@ function listarDirectoriosFtp {
     }catch{
         Write-Host "Error: $_"
     }
-
-    while (-not $lector.EndOfStream) {
-        $linea = $lector.ReadLine()
+    $directories = New-Object System.IO.StringReader $directories
+    Write-Output "Directorios disponibles en el servidor FTP:"
+    Write-Output "----------------------------------------"
+    
+    while (-not $directories.EndOfStream) {
+        $linea = $directories.ReadLine()
         Write-Output $linea
     }
 }
