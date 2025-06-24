@@ -181,9 +181,9 @@ $param3 =@{
 
 Add-WebConfiguration @param3
 
-icacls "C:\FTP\" /grant "IUSR:(OI)(CI)F"
+icacls "C:\FTP\" /grant "IIS_IUSR:(OI)(CI)F"
 icacls "C:\FTP\" /grant "Todos:(OI)(CI)F"
-icacls "C:\FTP\LocalUser\Public\General" /grant "IUSR:(OI)(CI)F"
+icacls "C:\FTP\LocalUser\Public\General" /grant "IIS_IUSR:(OI)(CI)F"
 icacls "C:\FTP\LocalUser\Public\General" /grant "Todos:(OI)(CI)F"
 
 $opcSsl = Read-Host "Desea activar SSL?"
