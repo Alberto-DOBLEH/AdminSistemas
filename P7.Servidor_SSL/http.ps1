@@ -83,7 +83,7 @@ function listarDirectoriosFtp {
     $request.Method = [System.Net.WebRequestMethods+FTP]::ListDirectory
     $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
     $request.EnableSsl = $true
-    $request.UsePassive = $true
+    $request.UsePassive = $false
     $request.UseBinary = $true
     $request.KeepAlive = $false
 
