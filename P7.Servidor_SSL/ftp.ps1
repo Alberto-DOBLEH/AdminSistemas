@@ -142,7 +142,9 @@ function Reiniciar-Sitio(){
 }
 
 function Habilitar-AccesoAnonimo(){
-    Set-ItemProperty "IIS:\Sites\FTP2" -Name ftpServer.security.authentication.anonymousAuthentication.enabled -Value $true
+    Set-ItemProperty -Path "IIS:\Sites\FTP2" -Name ftpServer.security.authentication.anonymousAuthentication.enabled -Value $true
+    Set-ItemProperty -Path "IIS:\Sites\FTP2" -Name ftpServer.Security.authentication.anonymousAuthentication.userName -Value "IUSR"
+    Set-ItemProperty -Path "IIS:\Sites\FTP2" -Name ftpServer.Security.authentication.anonymousAuthentication.password -Value ""
 }
 
 # Primera versión funcional del script, si ocurre cualquier error puedo volver a este commit
