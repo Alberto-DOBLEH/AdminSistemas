@@ -192,6 +192,9 @@ $param3 =@{
 
 Add-WebConfiguration @param3
 
+Crear-Ruta "$rutaGeneral/Caddy"
+Crear-Ruta "$rutaGeneral/Nginx"
+
 icacls "C:\FTP" /grant "IIS_IUSR:(OI)(CI)F"
 icacls "C:\FTP" /grant "IUSR:(OI)(CI)F" 
 icacls "C:\FTP" /grant "Todos:(OI)(CI)F"
