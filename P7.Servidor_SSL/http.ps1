@@ -81,7 +81,7 @@ function listarDirectoriosFtp {
 
     $request = [System.Net.FtpWebRequest]::Create($servidorFtp)
     $request.Method = [System.Net.WebRequestMethods+FTP]::ListDirectory
-    $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
+    $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "")
     $request.EnableSsl = $true
     [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {return $true}
     
