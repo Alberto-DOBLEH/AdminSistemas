@@ -87,6 +87,7 @@ function listarDirectoriosFtp {
     
     try{
         $response = $request.GetResponse()
+        Write-Host $response.StatusDescription
         $lector = New-Object System.IO.StreamReader $response.GetResponseStream()
         $directories = $lector.ReadToEnd()
         $lector.Close()
