@@ -80,17 +80,16 @@ function listarDirectoriosFtp {
     )
 
     $request = [System.Net.FtpWebRequest]::Create($servidorFtp)
-    $request.Method = [System.Net.WebRequestMethods+FTP]::PrintWorkingDirectory
+    $request.Method = [System.Net.WebRequestMethods+FTP]::ListDirectory
     $request.Credentials = New-Object System.Net.NetworkCredential("anonymous", "anonymous@example.com")
     $request.EnableSsl = $true
     [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {return $true}
     
     try{
         $response = $request.GetResponse()
-        Write-Host $response.StatusDescription
-        $lector = New-Object System.IO.StreamReader $response.GetResponseStream()
-        $directories = $lector.ReadToEnd()
-        $lector.Close()
+        $reader = New-Object System.IO.StreamReader $response.GetResponseStream()
+        $directories = $reader.ReadToEnd()
+        $reader.Close()
         $response.Close()
         $directories -split "`n"
     }catch{
