@@ -85,8 +85,9 @@ function listarDirectoriosFtp {
     $request.EnableSsl = $true
     $request.UsePassive = $true
     [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {
-        param($sender, $certificate, $chain, $sslPolicyErrors)
-    }
+            param ($sender, $certificate, $chain, $sslPolicyErrors)
+            return $true
+        }
 
     try{
         $response = $request.GetResponse()
