@@ -95,7 +95,7 @@ function listarDirectoriosFtp {
             $peticion.UsePassive = $false
 
             if ($usarSsl) {
-                [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
+                [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { return $true }
             }
 
             $respuesta = $peticion.GetResponse()
