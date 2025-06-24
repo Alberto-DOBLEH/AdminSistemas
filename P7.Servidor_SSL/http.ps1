@@ -490,17 +490,6 @@ http {
     sendfile        on;
     keepalive_timeout  65;
 
-    # Configuración del servidor HTTP (redirige a HTTPS)
-    server {
-        listen 81;
-        server_name localhost;
-
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-    }
-
     # Configuración del servidor HTTPS
     server {
         listen $puerto ssl;
