@@ -473,6 +473,9 @@ http {
                                     Expand-Archive C:\descargas\nginx-$versionDevNginx.zip C:\descargas -Force
                                     cd C:\descargas\nginx-$versionDevNginx
                                     Clear-Content -Path "C:\descargas\nginx-$versionDevNginx\conf\nginx.conf"
+                                    $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
+                                    $certPath = $cert.PSPath
+                                    Copy-Item -Path $certPath -Destination "C:\descargas\certificate.crt" -Force
                                     Start-Process nginx.exe
                                     Get-Process | Where-Object { $_.ProcessName -like "*nginx*" }
                                     cd ..
