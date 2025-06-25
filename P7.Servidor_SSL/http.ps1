@@ -187,7 +187,7 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 Expand-Archive -Path "C:\descargas\caddy-$versionLTSCaddy.zip" -DestinationPath "C:\descargas" -Force
                                 cd C:\descargas
 
-                                Expand-Archive -Path "caddy.zip" -DestinationPath C:\caddy
+                                Expand-Archive -Path "C:\descargas\caddy-$versionLTSCaddy.zip" -DestinationPath C:\caddy
                                 New-Item -Path "C:\caddy\www\" -ItemType "Directory"
 
                                 #creo un archivo html que mostrara el servicio al conectarnos
