@@ -251,14 +251,14 @@ file_server
 "@
                                     #Añade añ final del caddyfile la seccion para https
                                     Add-Content -Path "C:\caddy\Caddyfile" -Value $httpsConfig
-C:\caddy\caddy.exe fmt --overwrite
+                                    C:\caddy\caddy.exe fmt --overwrite C:\caddy\Caddyfile
                                         
                                         $running = $false
                                     }elseif($opc.ToLower() -eq "no" -or $opc.ToLower() -eq "n"){
                                         $running = $false
                                     }else{
                                         Write-Host "Opcion Invalida"
-                                    }
+                                    }   
                                 }
 
                                 Write-Host "Iniciando Servicio..."
