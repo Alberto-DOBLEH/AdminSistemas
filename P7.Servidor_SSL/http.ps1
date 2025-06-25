@@ -250,8 +250,9 @@ file_server
 
 "@
                                     #Añade añ final del caddyfile la seccion para https
-                                    Add-Content -Path C:\caddy\Caddyfile -Value $httpsConfig
-                                    C:\caddy\caddy.exe fmt --overwrite
+                                    Add-Content -Path "C:\caddy\Caddyfile" -Value $httpsConfig
+C:\caddy\caddy.exe fmt --overwrite
+                                        
                                         $running = $false
                                     }elseif($opc.ToLower() -eq "no" -or $opc.ToLower() -eq "n"){
                                         $running = $false
