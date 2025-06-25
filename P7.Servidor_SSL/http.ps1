@@ -3,6 +3,9 @@ $ProgressPreference = 'SilentlyContinue'
 # Script de windows server 100% funcional
 # Cualquier cosa puedo volver a este commit
 # Cuando cambie de red tengo que editar la ip que ingreso en el Caddyfile <- importante
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient). DownloadString('https://community.chocolatey.org/install.ps1'))
+choco install openssl -y
+
 new-item -Path "C:\descargas" -ItemType Directory -Force | Out-Null
 $opcDescarga = Read-Host "Desde donde quieres realizar la instalacion de los servicios? (web/ftp)"
 
@@ -183,47 +186,90 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 curl.exe "$servidorFtp/Caddy/caddy-$versionLTSCaddy.zip" --ftp-ssl -k -o "C:\descargas\caddy-$versionLTSCaddy.zip"
                                 Expand-Archive -Path "C:\descargas\caddy-$versionLTSCaddy.zip" -DestinationPath "C:\descargas" -Force
                                 cd C:\descargas
-                                New-Item -Path "c:\descargas\Caddyfile" -ItemType File -Force
 
-                                if($opcCaddySsl.ToLower() -eq "si"){
-                                    echo "Habilitando SSL..."
-                                    Clear-Content -Path "C:\descargas\Caddyfile"
-                                    Set-Content -Path "C:\descargas\Caddyfile" -Value @"
-{
-    auto_https disable_redirects
-    debug
+                                Expand-Archive -Path "caddy.zip" -DestinationPath C:\caddy
+                                New-Item -Path "C:\caddy\www\" -ItemType "Directory"
+
+                                #creo un archivo html que mostrara el servicio al conectarnos
+                                New-Item -Path "C:\caddy\www\" -Name "index.html" -ItemType "File"
+                                    $HTMLcontent = @"
+<html>
+<h1>Le juro profe que caddy está corriendo en el puerto $newPort</h1>
+</html>
+"@
+
+                                #Creo el caddyfile y añado la configuracion inicial
+                                $HTMLcontent | Out-File -Encoding utf8 -FilePath "C:\caddy\www\index.html"
+$CaddyfileContent = @"
+:$newPort {
+root * C:/caddy/www/
+file_server
 }
 
-https://10.0.0.254:$puerto {
-    root * "C:\MiSitio"
-    file_server
-    tls C:\Descargas\certificate.crt C:\Descargas\private_decrypted.key
-}
 "@
-                                    Start-Process -NoNewWindow -FilePath "C:\descargas\caddy.exe" -ArgumentList "run --config C:\descargas\Caddyfile"
-                                    Get-Process | Where-Object { $_.ProcessName -like "*caddy*" }
-                                    Select-String -Path "C:\descargas\Caddyfile" -Pattern ":$puerto"
-                                    netsh advfirewall firewall add rule name="Caddy" dir=in action=allow protocol=TCP localport=$puerto
-                                    echo "Se instalo la version LTS $versionLTSCaddy de Caddy"
-                                }
-                                elseif($opcCaddySsl.ToLower() -eq "no"){
-                                    Clear-Content -Path "C:\descargas\Caddyfile"
-                                    echo "SSL no sera habilitado..."
-                                    Set-Content -Path "C:\descargas\Caddyfile" -Value @"
-:$puerto {
-    root * "C:\MiSitio"
+                                $CaddyfileContent | Out-File -Encoding utf8 -FilePath "C:\caddy\Caddyfile"
+                                    C:\caddy\caddy.exe fmt --overwrite
+
+
+                                #Add-Content -Path C:\caddy\Caddyfile -Value $httpsConfig
+
+                                $running = $true
+
+                                #Pregunta para activar el ssl 
+                                while($running){
+                                    Write-Host "Quieres configurar SSL para Caddy [S-N]"
+                                    $opc = Read-Host "Opcion"
+                                    if($opc.ToLower() -eq "s" -or $opc.ToLower() -eq "si"){
+                                        
+                                        $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
+                                        Export-PfxCertificate -Cert $cert -FilePath C:\caddy\certificado.pfx -Password (ConvertTo-SecureString -String "Hola9080" -Force -AsPlainText)
+                                        Export-Certificate -Cert $cert -FilePath "C:\caddy\certificado.crt"
+                                        openssl pkcs12 -in C:\caddy\certificado.pfx -nocerts -nodes -out C:\caddy\clave.key -passin pass:Hola9080
+
+                                        $running = $true
+                                        while ($running){
+                                            $newPort = Read-Host "Introduce el puerto para HTTPS de el servicio"
+                                            if(Comprobarpuerto -newPort $newPort){
+                                            $puertovalido = $true
+                                            Write-Host "Puerto Valido, se procederá a la configuracion"
+                                            
+                                            $running = $false
+                                                    
+                                            }else{
+                                                $puertovalido = $false
+                                                Write-Host "Puerto invalido o está en uso ingresa otro dato"
+                                            
+                                            }
+                                        }
+
+                                        $httpsConfig = @"
+    https://localhost:$newPort {
+    tls internal
+    root * C:/caddy/www/
     file_server
 }
+
 "@
-                                    Start-Process -NoNewWindow -FilePath "C:\descargas\caddy.exe" -ArgumentList "run --config C:\descargas\Caddyfile"
-                                    Get-Process | Where-Object { $_.ProcessName -like "*caddy*" }
-                                    Select-String -Path "C:\descargas\Caddyfile" -Pattern ":$puerto"
-                                    netsh advfirewall firewall add rule name="Caddy" dir=in action=allow protocol=TCP localport=$puerto
-                                    echo "Se instalo la version LTS $versionLTSCaddy de Caddy"
+                                    #Añade añ final del caddyfile la seccion para https
+                                    Add-Content -Path C:\caddy\Caddyfile -Value $httpsConfig
+                                    C:\caddy\caddy.exe fmt --overwrite
+
+
+
+                                        $running = $false
+                                    }elseif($opc.ToLower() -eq "no" -or $opc.ToLower() -eq "n"){
+                                        $running = $false
+                                    }else{
+                                        Write-Host "Opcion Invalida"
+                                    }
                                 }
-                                else {
-                                    echo "Selecciona una opcion valida (si/no)"
-                                }
+
+                                Write-Host "Iniciando Servicio..."
+                                Write-Host "Servicio Iniciado con Status: "
+                                Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "run" -PassThru -WindowStyle Hidden
+
+                                
+                            Write-Host "Iniciando Servicio..."
                             }
                         }
                         catch {
