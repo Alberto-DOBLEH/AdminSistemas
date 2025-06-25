@@ -229,12 +229,11 @@ file_server
                                         $running = $true
                                         while ($running){
                                             $newPort = Read-Host "Introduce el puerto para HTTPS de el servicio"
-                                            if(Comprobarpuerto -newPort $newPort){
+                                            if(Es-PuertoValido $newPort){
                                             $puertovalido = $true
                                             Write-Host "Puerto Valido, se procederá a la configuracion"
                                             
-                                            $running = $false
-                                                    
+                                            $running = $false       
                                             }else{
                                                 $puertovalido = $false
                                                 Write-Host "Puerto invalido o está en uso ingresa otro dato"
@@ -253,9 +252,6 @@ file_server
                                     #Añade añ final del caddyfile la seccion para https
                                     Add-Content -Path C:\caddy\Caddyfile -Value $httpsConfig
                                     C:\caddy\caddy.exe fmt --overwrite
-
-
-
                                         $running = $false
                                     }elseif($opc.ToLower() -eq "no" -or $opc.ToLower() -eq "n"){
                                         $running = $false
