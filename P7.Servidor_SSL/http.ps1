@@ -194,7 +194,7 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 New-Item -Path "C:\caddy\www\" -Name "index.html" -ItemType "File"
                                     $HTMLcontent = @"
 <html>
-<h1>Le juro profe que caddy está corriendo en el puerto $newPort</h1>
+<h1>Caddy desde FTP</h1>
 </html>
 "@
 
