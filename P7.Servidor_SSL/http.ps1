@@ -201,7 +201,7 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 #Creo el caddyfile y añado la configuracion inicial
                                 $HTMLcontent | Out-File -Encoding utf8 -FilePath "C:\caddy\www\index.html"
 $CaddyfileContent = @"
-:$newPort {
+:$puerto {
 root * C:/caddy/www/
 file_server
 }
@@ -224,6 +224,12 @@ file_server
                                         $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
                                         Export-PfxCertificate -Cert $cert -FilePath C:\caddy\certificado.pfx -Password (ConvertTo-SecureString -String "Hola9080" -Force -AsPlainText)
                                         Export-Certificate -Cert $cert -FilePath "C:\caddy\certificado.crt"
+
+                                        if (-not (Get-Command "openssl.exe" -ErrorAction SilentlyContinue)) {
+                                            Write-Host "OpenSSL no está disponible. Debes instalarlo o agregarlo al PATH."
+                                            exit
+                                        }
+
                                         openssl pkcs12 -in C:\caddy\certificado.pfx -nocerts -nodes -out C:\caddy\clave.key -passin pass:Hola9080
 
                                         $running = $true
@@ -263,6 +269,14 @@ file_server
 
                                 Write-Host "Iniciando Servicio..."
                                 Write-Host "Servicio Iniciado con Status: "
+                                $proc = Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "run" -PassThru -WindowStyle Hidden
+                                Start-Sleep -Seconds 2
+                                Get-Process caddy -ErrorAction SilentlyContinue
+                                if ($?) {
+                                    Write-Host "Caddy se está ejecutando correctamente."
+                                } else {
+                                    Write-Host "Error al iniciar Caddy."
+                                }
                                 Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "run" -PassThru -WindowStyle Hidden
 
                                 
