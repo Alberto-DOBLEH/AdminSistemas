@@ -444,7 +444,7 @@ file_server
                             $nginxconfig = "C:\nginx\nginx-$versionLTSNginx\conf\nginx.conf"
                             $configcontent = Get-Content $nginxconfig
                             #Configuramos el archivo de configuracion para cambiar el puerto
-                            $configcontent = $configcontent -replace 'listen       80;', "listen       $newPort;"
+                            $configcontent = $configcontent -replace 'listen       80;', "listen       8080;"
                             Set-Content -Path $nginxconfig -Value $configcontent
                             $running = $true
                             
@@ -479,7 +479,7 @@ file_server
                                     }
                                 }
 
-                                 $nginxconfig = "C:\nginx\nginx-$versionLTSNginx\conf\nginx.conf"
+                                $nginxconfig = "C:\nginx\nginx-$versionLTSNginx\conf\nginx.conf"
 
                                 # Lee el contenido del archivo
 
