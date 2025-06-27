@@ -430,7 +430,7 @@ file_server
                             #Configuramos el archivo de configuracion para cambiar el puerto
                             $configcontent = $configcontent -replace 'listen       80;', "listen       $newPort;"
                             Set-Content -Path $nginxconfig -Value $configcontent
-
+                            $running = $true
                             
                             
                             #Preguntamos si queremos ssl
