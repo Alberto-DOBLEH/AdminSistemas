@@ -194,24 +194,21 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 New-Item -Path "C:\caddy\www\" -Name "index.html" -ItemType "File"
                                     $HTMLcontent = @"
 <html>
-<h1>Caddy desde FTP</h1>
+    <h1>Caddy desde FTP</h1>
 </html>
 "@
 
                                 #Creo el caddyfile y añado la configuracion inicial
                                 $HTMLcontent | Out-File -Encoding utf8 -FilePath "C:\caddy\www\index.html"
-$CaddyfileContent = @"
+                                $CaddyfileContent = @"
 :$puerto {
-root * C:/caddy/www/
-file_server
+    root * C:/caddy/www/
+    file_server
 }
 
 "@
                                 $CaddyfileContent | Out-File -Encoding utf8 -FilePath "C:\caddy\Caddyfile"
-                                    C:\caddy\caddy.exe fmt --overwrite
-
-
-                                #Add-Content -Path C:\caddy\Caddyfile -Value $httpsConfig
+                                C:\caddy\caddy.exe fmt --overwrite
 
                                 $running = $true
 
@@ -269,15 +266,15 @@ file_server
 
                                 Write-Host "Iniciando Servicio..."
                                 Write-Host "Servicio Iniciado con Status: "
-                                $proc = Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "run" -PassThru -WindowStyle Hidden
+                                $proc = Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
                                 Start-Sleep -Seconds 2
-                                Get-Process caddy -ErrorAction SilentlyContinue
-                                if ($?) {
+                                
+                                if (Get-Process caddy -ErrorAction SilentlyContinue) {
                                     Write-Host "Caddy se está ejecutando correctamente."
                                 } else {
                                     Write-Host "Error al iniciar Caddy."
                                 }
-                                Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "run" -PassThru -WindowStyle Hidden
+                                Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
 
                                 
                             Write-Host "Iniciando Servicio..."
@@ -303,7 +300,6 @@ file_server
                                 echo "Error"
                             }
                             else{
-                                echo "Habilitando SSL..." 
                                 Stop-Process -Name caddy -ErrorAction SilentlyContinue
                                 $versionSinV = quitarPrimerCaracter -string $versionDesarrolloCaddy
                                 echo $versionSinV
@@ -327,7 +323,7 @@ file_server
                                 #Creo el caddyfile y añado la configuracion inicial
                                 $HTMLcontent | Out-File -Encoding utf8 -FilePath "C:\caddy\www\index.html"
 $CaddyfileContent = @"
-:$newPort {
+:$puerto {
 root * C:/caddy/www/
 file_server
 }
@@ -435,106 +431,97 @@ file_server
                                 echo "Error"
                             }
                             else{
-                                $opcSsl = Read-Host "Quieres habilitar SSL (si/no)"
-                                if($opcSsl.ToLower() -eq "si"){
-                                    echo "Habilitando SSL..."
-                                    Stop-Process -Name nginx -ErrorAction SilentlyContinue
-                                    echo "Instalando version LTS $versionLTSNginx"
-                                    curl.exe "$servidorFtp/Nginx/nginx-$versionLTSNginx.zip" --ftp-ssl -k -o "C:\descargas\nginx-$versionLTSNginx.zip"
-                                    Expand-Archive C:\descargas\nginx-$versionLTSNginx.zip C:\descargas -Force
-                                    cd C:\descargas\nginx-$versionLTSNginx
-                                    Clear-Content -Path "C:\descargas\nginx-$versionLTSNginx\conf\nginx.conf"
-                                    Start-Process nginx.exe
+                                Stop-Process -Name nginx -ErrorAction SilentlyContinue
+                                echo "Instalando version LTS $versionLTSNginx"
+                                curl.exe "$servidorFtp/Nginx/nginx-$versionLTSNginx.zip" --ftp-ssl -k -o "C:\descargas\nginx-$versionLTSNginx.zip"
+                                New-Item -Path "C:\nginx\nginx-$versionLTSNginx" -ItemType Directory -Force | Out-Null
+                                
+                                Expand-Archive -Path "C:\descargas\nginx-$versionLTSNginx.zip" -DestinationPath C:\nginx
+                                cd C:\nginx\nginx-$versionLTSNginx\
 
+                                $nginxconfig = "C:\nginx\nginx-$versionLTSNginx\conf\nginx.conf"
+                                $configcontent = Get-Content $nginxconfig
+                                #Configuramos el archivo de configuracion para cambiar el puerto
+                                $configcontent = $configcontent -replace 'listen       80;', "listen       $newPort;"
+                                Set-Content -Path $nginxconfig -Value $configcontent
 
+                                
+                                
+                                #Preguntamos si queremos ssl
+                                while($running){
+                                Write-Host "Quieres configurar SSL para Nginx [S-N]"
+                                $opc = Read-Host "Opcion"
+                                if($opc.ToLower() -eq "s" -or $opc.ToLower() -eq "si"){
+                                    
+                                    $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
+                                    Export-PfxCertificate -Cert $cert -FilePath C:\caddy\certificado.pfx -Password (ConvertTo-SecureString -String "Hola9080" -Force -AsPlainText)
+                                    Export-Certificate -Cert $cert -FilePath "C:\nginx\certificado.crt"
+                                    #Crea los archivos que necesita nginx a partir del certificado
+                                    openssl pkcs12 -in C:\nginx\certificado.pfx -clcerts -nokeys -out C:\nginx\clave.pem -passin pass:Hola9080
+                                    openssl pkcs12 -in C:\nginx\certificado.pfx -nocerts -nodes -out C:\nginx\clave.key -passin pass:Hola9080
 
-                                    Get-Process | Where-Object { $_.ProcessName -like "*nginx*" }
-                                    cd ..
-                                    $contenido = @"
-worker_processes  1;
+                                    $running = $true
+                                    while ($running){
+                                        #Pide un puerto para https
+                                        $newPort = Read-Host "Introduce el puerto para HTTPS de el servicio"
+                                        if(Es-PuertoValido -newPort $newPort){
+                                        $puertovalido = $true
+                                        Write-Host "Puerto Valido, se procederá a la configuracion"
+                                        
+                                        $running = $false
+                                                
+                                        }else{
+                                            $puertovalido = $false
+                                            Write-Host "Puerto invalido o está en uso ingresa otro dato"
+                                        
+                                        }
+                                    }
 
-events {
-    worker_connections  1024;
-}
+                                    $nginxconfig = "C:\nginx\nginx-$version\conf\nginx.conf"
 
-http {
-    include       mime.types;
-    default_type  application/octet-stream;
+                                    # Lee el contenido del archivo
 
-    sendfile        on;
-    keepalive_timeout  65;
+                                    $config = Get-Content $nginxConfig -Raw
 
-    # Configuración del servidor HTTPS
+                                # Definir la nueva configuración HTTPS
+                                    $newHttpsConfig = @"
     server {
-        listen $puerto ssl;
+        listen $newPort ssl;
         server_name localhost;
 
-        ssl_certificate c:\descargas\certificate.crt;
-        ssl_certificate_key c:\descargas\private.key;
+        ssl_certificate C:\\nginx\clave.pem;
+        ssl_certificate_key C:\\nginx\clave.key;
 
-        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_session_cache shared:SSL:1m;
+        ssl_session_timeout 5m;
+
         ssl_ciphers HIGH:!aNULL:!MD5;
+        ssl_prefer_server_ciphers on;
 
         location / {
-            root   html;
-            index  index.html index.htm;
-        }
-
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   html;
+            root html;
+            index index.html index.htm;
         }
     }
-}
 "@
-                                    Set-Content -Path "C:\descargas\nginx-$versionLTSNginx\conf\nginx.conf" -Value $contenido
-                                    netsh advfirewall firewall add rule name="Nginx" dir=in action=allow protocol=TCP localport=$puerto
-                                    echo "Se instalo la version LTS $versionLTSNginx de Nginx"
+
+                                # Edita el arhivo de configuracion para descomentar la seccion de httos y añadir el puerto y la ruta de los certificados
+                                    $config = $config -replace '(?s)# HTTPS server.*?}', "# HTTPS server`r`n$newHttpsConfig"
+                                    $config | Set-Content -Path $nginxconfig
+
+                                    $running = $false
+                                }elseif($opc.ToLower() -eq "no" -or $opc.ToLower() -eq "n"){
+                                    $running = $false
+                                }else{
+                                    Write-Host "Opcion Invalida"
                                 }
-                                elseif($opcSsl.ToLower() -eq "no"){
-                                    echo "SSL no se habilitara"
-                                    Stop-Process -Name nginx -ErrorAction SilentlyContinue
-                                    echo "Instalando version LTS $versionLTSNginx"
-                                    curl.exe "$servidorFtp/Nginx/nginx-$versionLTSNginx.zip" --ftp-ssl -k -o "C:\descargas\nginx-$versionLTSNginx.zip"
-                                    Expand-Archive C:\descargas\nginx-$versionLTSNginx.zip C:\descargas -Force
-                                    cd C:\descargas\nginx-$versionLTSNginx
-                                    Clear-Content -Path "C:\descargas\nginx-$versionLTSNginx\conf\nginx.conf"
-                                    Start-Process nginx.exe
-                                    Get-Process | Where-Object { $_.ProcessName -like "*nginx*" }
-                                    cd ..
-                                    $contenido = @"
-worker_processes  1;
+                            }
+                                
+                            Start-Process -FilePath ("C:\nginx\nginx-" + $versionLTSNginx + "\nginx.exe") -WindowStyle Hidden
+                            #Ya jala nomas falta iniciar el servicio mañana le das al ftp primero y luego vuelves acá
+                            #& "C:\nginx\nginx-$version\nginx.exe"
+                            cd C:\Users\Administrador
 
-events {
-    worker_connections  1024;
-}
-
-http {
-    include       mime.types;
-    default_type  application/octet-stream;
-
-    sendfile        on;
-    keepalive_timeout  65;
-
-    # Configuración del servidor HTTP (redirige a HTTPS)
-    server {
-        listen $puerto;
-        server_name localhost;
-
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-    }
-}
-"@
-                                    Set-Content -Path "C:\descargas\nginx-$versionLTSNginx\conf\nginx.conf" -Value $contenido
-                                    netsh advfirewall firewall add rule name="Nginx" dir=in action=allow protocol=TCP localport=$puerto
-                                    echo "Se instalo la version LTS $versionLTSNginx de Nginx"
-                                }
-                                else{
-                                    echo "Selecciona una opcion valida (si/no)"
-                                }
                             }
                         }
                         catch {
@@ -557,108 +544,21 @@ http {
                                 echo "Error"
                             }
                             else{
-                                $opcSsl = Read-Host "Quieres activar SSL? (si/no)"
-                                if($opcSsl.ToLower() -eq "si"){
-                                    echo "Habilitando SSL..."
-                                    Stop-Process -Name nginx -ErrorAction SilentlyContinue
-                                    echo "Instalando version LTS $versionDevNginx"
-                                    curl.exe "$servidorFtp/Nginx/nginx-$versionDevNginx.zip" --ftp-ssl -k -o "C:\descargas\nginx-$versionDevNginx.zip"
-                                    Expand-Archive C:\descargas\nginx-$versionDevNginx.zip C:\descargas -Force
-                                    cd C:\descargas\nginx-$versionDevNginx
-                                    Clear-Content -Path "C:\descargas\nginx-$versionDevNginx\conf\nginx.conf"
-                                    $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
-                                    $certPath = $cert.PSPath
-                                    Copy-Item -Path $certPath -Destination "C:\descargas\certificate.crt" -Force
-                                    Start-Process nginx.exe
-                                    Get-Process | Where-Object { $_.ProcessName -like "*nginx*" }
-                                    cd ..
-                                    $contenido = @"
-worker_processes  1;
-
-events {
-    worker_connections  1024;
-}
-
-http {
-    include       mime.types;
-    default_type  application/octet-stream;
-
-    sendfile        on;
-    keepalive_timeout  65;
-
-    # Configuración del servidor HTTPS
-    server {
-        listen $puerto ssl;
-        server_name localhost;
-
-        ssl_certificate c:\descargas\certificate.crt;
-        ssl_certificate_key c:\descargas\private.key;
-
-        ssl_protocols TLSv1.2 TLSv1.3;
-        ssl_ciphers HIGH:!aNULL:!MD5;
-
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-
-        error_page   500 502 503 504  /50x.html;
-        location = /50x.html {
-            root   html;
-        }
-    }
-}
-"@
-                                    Set-Content -Path "C:\descargas\nginx-$versionDevNginx\conf\nginx.conf" -Value $contenido
-                                    netsh advfirewall firewall add rule name="Nginx" dir=in action=allow protocol=TCP localport=$puerto
-                                    echo "Se instalo la version LTS $versionDevNginx de Nginx"
-
-                                }
-                                elseif($opcSsl.ToLower() -eq "no"){
-                                    echo "SSL no se habilitara"
-                                    Stop-Process -Name nginx -ErrorAction SilentlyContinue
-                                    echo "Instalando version LTS $versionDevNginx"
-                                    curl.exe "$servidorFtp/Nginx/nginx-$versionDevNginx.zip" --ftp-ssl -k -o "C:\descargas\nginx-$versionDevNginx.zip"
-                                    Expand-Archive C:\descargas\nginx-$versionDevNginx.zip C:\descargas -Force
-                                    cd C:\descargas\nginx-$versionDevNginx
-                                    Clear-Content -Path "C:\descargas\nginx-$versionDevNginx\conf\nginx.conf"
-                                    Start-Process nginx.exe
-                                    Get-Process | Where-Object { $_.ProcessName -like "*nginx*" }
-                                    cd ..
-                                    $contenido = @"
-worker_processes  1;
-
-events {
-    worker_connections  1024;
-}
-
-http {
-    include       mime.types;
-    default_type  application/octet-stream;
-
-    sendfile        on;
-    keepalive_timeout  65;
-
-    # Configuración del servidor HTTP (redirige a HTTPS)
-    server {
-        listen $puerto;
-        server_name localhost;
-
-        location / {
-            root   html;
-            index  index.html index.htm;
-        }
-    }
-}
-"@
-                                    Set-Content -Path "C:\descargas\nginx-$versionDevNginx\conf\nginx.conf" -Value $contenido
-                                    netsh advfirewall firewall add rule name="Nginx" dir=in action=allow protocol=TCP localport=$puerto
-                                    echo "Se instalo la version LTS $versionDevNginx de Nginx"
-                                }
-                                else{
-                                    echo "Selecciona una opcion valida (si/no)"
-                                }
+                            
+                                echo "Habilitando SSL..."
+                                Stop-Process -Name nginx -ErrorAction SilentlyContinue
+                                echo "Instalando version LTS $versionDevNginx"
+                                curl.exe "$servidorFtp/Nginx/nginx-$versionDevNginx.zip" --ftp-ssl -k -o "C:\descargas\nginx-$versionDevNginx.zip"
+                                Expand-Archive C:\descargas\nginx-$versionDevNginx.zip C:\descargas -Force
+                                cd C:\descargas\nginx-$versionDevNginx
+                                Clear-Content -Path "C:\descargas\nginx-$versionDevNginx\conf\nginx.conf"
+                                $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
+                                $certPath = $cert.PSPath
+                                Copy-Item -Path $certPath -Destination "C:\descargas\certificate.crt" -Force
+                                Start-Process nginx.exe
+                                    
                             }
+
                         }
                         catch {
                             echo $Error[0].ToString()
