@@ -213,6 +213,10 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 #Creo el caddyfile y añado la configuracion inicial
                                 $HTMLcontent | Out-File -Encoding utf8 -FilePath "C:\caddy\www\index.html"
                                 $CaddyfileContent = @"
+{
+    auto_https off
+}
+
 :$puerto {
     root * C:/caddy/www/
     file_server
