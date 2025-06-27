@@ -282,7 +282,7 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                     Write-Host "Error al iniciar Caddy."
                                 }
                                 }catch {
-                                    echo $Error[0].ToString()
+                                    Write-Host "Error al iniciar el servicio Caddy: $($_.Exception.Message)"
                                 }
                                 
                             }
