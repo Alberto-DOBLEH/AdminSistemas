@@ -290,6 +290,7 @@ if($opcDescarga.ToLower() -eq "ftp"){
                         catch {
                             echo $Error[0].ToString()
                         }
+                        cd C:\Users\Administrador
                     }
                     "2"{
                         try{
