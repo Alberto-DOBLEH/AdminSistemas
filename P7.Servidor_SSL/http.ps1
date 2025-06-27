@@ -255,8 +255,8 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                         }
 
                                         $httpsConfig = @"
-    https://10.0.0.254:$newPort {
-    tls internal
+:$newPort {
+    tls C:/caddy/certificado.crt C:/caddy/clave.key
     root * C:/caddy/www/
     file_server
 }
