@@ -194,13 +194,9 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 echo "Error"
                             }
                             else {
-                                Stop-Process -Name caddy -ErrorAction SilentlyContinue
                                 $versionSinV = quitarPrimerCaracter -string $versionLTSCaddy
-                                echo $versionSinV
                                 echo "Instalando version LTS $versionLTSCaddy"
                                 curl.exe "$servidorFtp/Caddy/caddy-$versionLTSCaddy.zip" --ftp-ssl -k -o "C:\descargas\caddy-$versionLTSCaddy.zip"
-                                Expand-Archive -Path "C:\descargas\caddy-$versionLTSCaddy.zip" -DestinationPath "C:\descargas" -Force
-                                cd C:\descargas
 
                                 Expand-Archive -Path "C:\descargas\caddy-$versionLTSCaddy.zip" -DestinationPath C:\caddy
                                 cd C:\caddy
@@ -208,7 +204,7 @@ if($opcDescarga.ToLower() -eq "ftp"){
 
                                 #creo un archivo html que mostrara el servicio al conectarnos
                                 New-Item -Path "C:\caddy\www\" -Name "index.html" -ItemType "File"
-                                    $HTMLcontent = @"
+                                $HTMLcontent = @"
 <html>
     <h1>Caddy desde FTP</h1>
 </html>
@@ -237,12 +233,6 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                         $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
                                         Export-PfxCertificate -Cert $cert -FilePath C:\caddy\certificado.pfx -Password (ConvertTo-SecureString -String "Hola9080" -Force -AsPlainText)
                                         Export-Certificate -Cert $cert -FilePath "C:\caddy\certificado.crt"
-
-                                        if (-not (Get-Command "openssl.exe" -ErrorAction SilentlyContinue)) {
-                                            Write-Host "OpenSSL no está disponible. Debes instalarlo o agregarlo al PATH."
-                                            exit
-                                        }
-
                                         openssl pkcs12 -in C:\caddy\certificado.pfx -nocerts -nodes -out C:\caddy\clave.key -passin pass:Hola9080
 
                                         $running = $true
@@ -261,7 +251,7 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                         }
 
                                         $httpsConfig = @"
-    https://localhost:$newPort {
+    https://10.0.0.254:$newPort {
     tls internal
     root * C:/caddy/www/
     file_server
@@ -281,8 +271,8 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 }
 
                                 Write-Host "Iniciando Servicio..."
+                                Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
                                 Write-Host "Servicio Iniciado con Status: "
-                                $proc = Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
                                 Start-Sleep -Seconds 2
                                 
                                 if (Get-Process caddy -ErrorAction SilentlyContinue) {
@@ -290,10 +280,6 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 } else {
                                     Write-Host "Error al iniciar Caddy."
                                 }
-                                Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
-
-                                
-                            Write-Host "Iniciando Servicio..."
                             }
                         }
                         catch {
