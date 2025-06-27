@@ -272,7 +272,8 @@ if($opcDescarga.ToLower() -eq "ftp"){
 
                                 Write-Host "Iniciando Servicio..."
                                 try{
-                                    Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
+                                    #Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
+                                    & "C:\caddy\caddy.exe" run --config C:\caddy\Caddyfile
                                     Write-Host "Servicio Iniciado con Status: "
                                     Start-Sleep -Seconds 2
                                 
