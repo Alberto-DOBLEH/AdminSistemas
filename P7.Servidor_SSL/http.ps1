@@ -271,15 +271,20 @@ if($opcDescarga.ToLower() -eq "ftp"){
                                 }
 
                                 Write-Host "Iniciando Servicio..."
-                                Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
-                                Write-Host "Servicio Iniciado con Status: "
-                                Start-Sleep -Seconds 2
+                                try{
+                                    Start-Process -FilePath "C:\caddy\caddy.exe" -ArgumentList "caddy run" -PassThru -WindowStyle Hidden
+                                    Write-Host "Servicio Iniciado con Status: "
+                                    Start-Sleep -Seconds 2
                                 
                                 if (Get-Process caddy -ErrorAction SilentlyContinue) {
                                     Write-Host "Caddy se está ejecutando correctamente."
                                 } else {
                                     Write-Host "Error al iniciar Caddy."
                                 }
+                                }catch {
+                                    echo $Error[0].ToString()
+                                }
+                                
                             }
                         }
                         catch {
