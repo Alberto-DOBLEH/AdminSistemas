@@ -416,113 +416,98 @@ file_server
                 $opcNginx = Read-Host "Selecciona una version"
                 switch($opcNginx){
                     "1"{
-                            try {
-                            $puerto = Read-Host "Ingresa el puerto donde se realizara la instalacion"
-                            if(-not(Es-Numerico -string $puerto)){
-                                echo "Ingresa un valor numerico entero"
-                            }
-                            elseif(-not(Es-RangoValido $puerto)){
-                                echo "Ingresa un puerto dentro del rango (0-65535)"
-                            }
-                            elseif(Es-PuertoEnUso $puerto){
-                                echo "El puerto se encuentra en uso"
-                            }
-                            elseif(-not(Es-PuertoValido $puerto)){
-                                echo "Error"
-                            }
-                            else{
-                                Stop-Process -Name nginx -ErrorAction SilentlyContinue
-                                echo "Instalando version LTS $versionLTSNginx"
-                                curl.exe "$servidorFtp/Nginx/nginx-$versionLTSNginx.zip" --ftp-ssl -k -o "C:\descargas\nginx-$versionLTSNginx.zip"
-                                New-Item -Path "C:\nginx\nginx-$versionLTSNginx" -ItemType Directory -Force | Out-Null
-                                
-                                Expand-Archive -Path "C:\descargas\nginx-$versionLTSNginx.zip" -DestinationPath C:\nginx
-                                cd C:\nginx\nginx-$versionLTSNginx\
+                        try {
+                            
+                            echo "Instalando version LTS $versionLTSNginx"
+                            curl.exe "$servidorFtp/Nginx/nginx-$versionLTSNginx.zip" --ftp-ssl -k -o "C:\descargas\nginx-$versionLTSNginx.zip"
+                            New-Item -Path "C:\nginx\nginx-$versionLTSNginx" -ItemType Directory -Force | Out-Null
+                            
+                            Expand-Archive -Path "C:\descargas\nginx-$versionLTSNginx.zip" -DestinationPath C:\nginx
+                            cd C:\nginx\nginx-$versionLTSNginx\
 
-                                $nginxconfig = "C:\nginx\nginx-$versionLTSNginx\conf\nginx.conf"
-                                $configcontent = Get-Content $nginxconfig
-                                #Configuramos el archivo de configuracion para cambiar el puerto
-                                $configcontent = $configcontent -replace 'listen       80;', "listen       $newPort;"
-                                Set-Content -Path $nginxconfig -Value $configcontent
+                            $nginxconfig = "C:\nginx\nginx-$versionLTSNginx\conf\nginx.conf"
+                            $configcontent = Get-Content $nginxconfig
+                            #Configuramos el archivo de configuracion para cambiar el puerto
+                            $configcontent = $configcontent -replace 'listen       80;', "listen       $newPort;"
+                            Set-Content -Path $nginxconfig -Value $configcontent
 
+                            
+                            
+                            #Preguntamos si queremos ssl
+                            while($running){
+                            Write-Host "Quieres configurar SSL para Nginx [S-N]"
+                            $opc = Read-Host "Opcion"
+                            if($opc.ToLower() -eq "s" -or $opc.ToLower() -eq "si"){
                                 
-                                
-                                #Preguntamos si queremos ssl
-                                while($running){
-                                Write-Host "Quieres configurar SSL para Nginx [S-N]"
-                                $opc = Read-Host "Opcion"
-                                if($opc.ToLower() -eq "s" -or $opc.ToLower() -eq "si"){
+                                $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
+                                Export-PfxCertificate -Cert $cert -FilePath C:\caddy\certificado.pfx -Password (ConvertTo-SecureString -String "Hola9080" -Force -AsPlainText)
+                                Export-Certificate -Cert $cert -FilePath "C:\nginx\certificado.crt"
+                                #Crea los archivos que necesita nginx a partir del certificado
+                                openssl pkcs12 -in C:\nginx\certificado.pfx -clcerts -nokeys -out C:\nginx\clave.pem -passin pass:Hola9080
+                                openssl pkcs12 -in C:\nginx\certificado.pfx -nocerts -nodes -out C:\nginx\clave.key -passin pass:Hola9080
+
+                                $running = $true
+                                while ($running){
+                                    #Pide un puerto para https
+                                    $newPort = Read-Host "Introduce el puerto para HTTPS de el servicio"
+                                    if(Es-PuertoValido -newPort $newPort){
+                                    $puertovalido = $true
+                                    Write-Host "Puerto Valido, se procederá a la configuracion"
                                     
-                                    $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
-                                    Export-PfxCertificate -Cert $cert -FilePath C:\caddy\certificado.pfx -Password (ConvertTo-SecureString -String "Hola9080" -Force -AsPlainText)
-                                    Export-Certificate -Cert $cert -FilePath "C:\nginx\certificado.crt"
-                                    #Crea los archivos que necesita nginx a partir del certificado
-                                    openssl pkcs12 -in C:\nginx\certificado.pfx -clcerts -nokeys -out C:\nginx\clave.pem -passin pass:Hola9080
-                                    openssl pkcs12 -in C:\nginx\certificado.pfx -nocerts -nodes -out C:\nginx\clave.key -passin pass:Hola9080
-
-                                    $running = $true
-                                    while ($running){
-                                        #Pide un puerto para https
-                                        $newPort = Read-Host "Introduce el puerto para HTTPS de el servicio"
-                                        if(Es-PuertoValido -newPort $newPort){
-                                        $puertovalido = $true
-                                        Write-Host "Puerto Valido, se procederá a la configuracion"
-                                        
-                                        $running = $false
-                                                
-                                        }else{
-                                            $puertovalido = $false
-                                            Write-Host "Puerto invalido o está en uso ingresa otro dato"
-                                        
-                                        }
+                                    $running = $false
+                                            
+                                    }else{
+                                        $puertovalido = $false
+                                        Write-Host "Puerto invalido o está en uso ingresa otro dato"
+                                    
                                     }
+                                }
 
-                                    $nginxconfig = "C:\nginx\nginx-$version\conf\nginx.conf"
+                                $nginxconfig = "C:\nginx\nginx-$version\conf\nginx.conf"
 
-                                    # Lee el contenido del archivo
+                                # Lee el contenido del archivo
 
-                                    $config = Get-Content $nginxConfig -Raw
+                                $config = Get-Content $nginxConfig -Raw
 
-                                # Definir la nueva configuración HTTPS
-                                    $newHttpsConfig = @"
-    server {
-        listen $newPort ssl;
-        server_name localhost;
+                            # Definir la nueva configuración HTTPS
+                                $newHttpsConfig = @"
+server {
+    listen $newPort ssl;
+    server_name localhost;
 
-        ssl_certificate C:\\nginx\clave.pem;
-        ssl_certificate_key C:\\nginx\clave.key;
+    ssl_certificate C:\\nginx\clave.pem;
+    ssl_certificate_key C:\\nginx\clave.key;
 
-        ssl_session_cache shared:SSL:1m;
-        ssl_session_timeout 5m;
+    ssl_session_cache shared:SSL:1m;
+    ssl_session_timeout 5m;
 
-        ssl_ciphers HIGH:!aNULL:!MD5;
-        ssl_prefer_server_ciphers on;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
 
-        location / {
-            root html;
-            index index.html index.htm;
-        }
+    location / {
+        root html;
+        index index.html index.htm;
     }
+}
 "@
 
-                                # Edita el arhivo de configuracion para descomentar la seccion de httos y añadir el puerto y la ruta de los certificados
-                                    $config = $config -replace '(?s)# HTTPS server.*?}', "# HTTPS server`r`n$newHttpsConfig"
-                                    $config | Set-Content -Path $nginxconfig
+                            # Edita el arhivo de configuracion para descomentar la seccion de httos y añadir el puerto y la ruta de los certificados
+                                $config = $config -replace '(?s)# HTTPS server.*?}', "# HTTPS server`r`n$newHttpsConfig"
+                                $config | Set-Content -Path $nginxconfig
 
-                                    $running = $false
-                                }elseif($opc.ToLower() -eq "no" -or $opc.ToLower() -eq "n"){
-                                    $running = $false
-                                }else{
-                                    Write-Host "Opcion Invalida"
-                                }
+                                $running = $false
+                            }elseif($opc.ToLower() -eq "no" -or $opc.ToLower() -eq "n"){
+                                $running = $false
+                            }else{
+                                Write-Host "Opcion Invalida"
                             }
-                                
-                            Start-Process -FilePath ("C:\nginx\nginx-" + $versionLTSNginx + "\nginx.exe") -WindowStyle Hidden
-                            #Ya jala nomas falta iniciar el servicio mañana le das al ftp primero y luego vuelves acá
-                            #& "C:\nginx\nginx-$version\nginx.exe"
-                            cd C:\Users\Administrador
+                        }
+                            
+                        Start-Process -FilePath ("C:\nginx\nginx-" + $versionLTSNginx + "\nginx.exe") -WindowStyle Hidden
+                        #Ya jala nomas falta iniciar el servicio mañana le das al ftp primero y luego vuelves acá
+                        #& "C:\nginx\nginx-$version\nginx.exe"
+                        cd C:\Users\Administrador
 
-                            }
                         }
                         catch {
                             Echo $Error[0].ToString()
