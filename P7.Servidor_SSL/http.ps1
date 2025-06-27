@@ -13,7 +13,7 @@ if (-not (Get-Command choco.exe -ErrorAction SilentlyContinue)) {
 }
 
 # Verificar si OpenSSL está instalado (revisa el paquete de Chocolatey)
-$opensslInstalado = choco list --local-only openssl | Select-String '^openssl'
+$opensslInstalado = choco list openssl | Select-String '^openssl'
 
 if (-not $opensslInstalado) {
     Write-Host "OpenSSL no está instalado. Instalando..."
