@@ -3,8 +3,24 @@ $ProgressPreference = 'SilentlyContinue'
 # Script de windows server 100% funcional
 # Cualquier cosa puedo volver a este commit
 # Cuando cambie de red tengo que editar la ip que ingreso en el Caddyfile <- importante
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient). DownloadString('https://community.chocolatey.org/install.ps1'))
-choco install openssl -y
+
+# Verificar si Chocolatey está instalado
+if (-not (Get-Command choco.exe -ErrorAction SilentlyContinue)) {
+    Write-Host "Chocolatey no está instalado. Instalando..."
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+} else {
+    Write-Host "Chocolatey ya está instalado."
+}
+
+# Verificar si OpenSSL está instalado (revisa el paquete de Chocolatey)
+$opensslInstalado = choco list --local-only openssl | Select-String '^openssl'
+
+if (-not $opensslInstalado) {
+    Write-Host "OpenSSL no está instalado. Instalando..."
+    choco install openssl -y
+} else {
+    Write-Host "OpenSSL ya está instalado."
+}
 
 new-item -Path "C:\descargas" -ItemType Directory -Force | Out-Null
 $opcDescarga = Read-Host "Desde donde quieres realizar la instalacion de los servicios? (web/ftp)"
@@ -440,7 +456,7 @@ file_server
                             if($opc.ToLower() -eq "s" -or $opc.ToLower() -eq "si"){
                                 
                                 $cert = Get-ChildItem "Cert:\LocalMachine\My" | Where-Object { $_.Subject -like "*CN=ftp.PruebaFTP.com*" } | Sort-Object NotAfter -Descending | Select-Object -First 1
-                                Export-PfxCertificate -Cert $cert -FilePath C:\caddy\certificado.pfx -Password (ConvertTo-SecureString -String "Hola9080" -Force -AsPlainText)
+                                Export-PfxCertificate -Cert $cert -FilePath C:\nginx\certificado.pfx -Password (ConvertTo-SecureString -String "Hola9080" -Force -AsPlainText)
                                 Export-Certificate -Cert $cert -FilePath "C:\nginx\certificado.crt"
                                 #Crea los archivos que necesita nginx a partir del certificado
                                 openssl pkcs12 -in C:\nginx\certificado.pfx -clcerts -nokeys -out C:\nginx\clave.pem -passin pass:Hola9080
