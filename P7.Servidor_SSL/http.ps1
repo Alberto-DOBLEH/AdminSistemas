@@ -479,7 +479,7 @@ file_server
                                     }
                                 }
 
-                                $nginxconfig = "C:\nginx\nginx-$version\conf\nginx.conf"
+                                 $nginxconfig = "C:\nginx\nginx-$versionLTSNginx\conf\nginx.conf"
 
                                 # Lee el contenido del archivo
 
