@@ -195,6 +195,16 @@ Add-WebConfiguration @param3
 Crear-Ruta "$rutaGeneral/Caddy"
 Crear-Ruta "$rutaGeneral/Nginx"
 
+# Descargar Caddy y Nginx de prueba
+# Caddy
+Invoke-WebRequest -UseBasicParsing "https://github.com/caddyserver/caddy/releases/download/v2.10.0/caddy_2.10.0_windows_amd64.zip" -Outfile "$rutaGeneral/Caddy/caddy-v2.10.0.zip"
+Invoke-WebRequest -UseBasicParsing "https://github.com/caddyserver/caddy/releases/download/v2.9.0/caddy_2.9.0_windows_amd64.zip" -Outfile "$rutaGeneral/Caddy/caddy-v2.9.0.zip"
+
+# Nginx
+Invoke-WebRequest -UseBasicParsing "https://nginx.org/download/nginx-1.29.0.zip" -Outfile "$rutaGeneral/Nginx/nginx-1.29.0.zip"
+Invoke-WebRequest -UseBasicParsing "https://nginx.org/download/nginx-1.28.0.zip" -Outfile "$rutaGeneral/Nginx/nginx-1.28.0.zip"
+
+
 icacls "C:\FTP" /grant "IIS_IUSR:(OI)(CI)F"
 icacls "C:\FTP" /grant "IUSR:(OI)(CI)F" 
 icacls "C:\FTP" /grant "Todos:(OI)(CI)F"
