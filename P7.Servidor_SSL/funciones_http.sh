@@ -517,7 +517,7 @@ instalar_tomcat() {
 
     # Configurar puerto en server.xml
     if [[ "$ssl" == "true" ]]; then
-    sudo $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore /opt/tomcat/conf/tomcat.keystore -storepass changeit -keypass changeit -dname "CN=localhost, OU=IT, O=zapien, L=Mochis, S=Ahome, C=ES"
+    sudo $JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA -keystore /opt/tomcat/conf/tomcat.keystore -storepass changeit -keypass changeit -dname "CN=localhost, OU=IT, O=hernandez, L=Mochis, S=Ahome, C=ES"
     	
     	
     	sudo bash -c "cat > /opt/tomcat/conf/server.xml" <<EOF

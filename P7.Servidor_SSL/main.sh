@@ -3,7 +3,9 @@
 #   - Configurar el servidor FTP (ejecuta ftp.sh)
 #   - Instalar servicios HTTP de forma local (usando las URL oficiales, http.sh)
 #   - Instalar servicios HTTP descargando los archivos .tar.gz desde el FTP
-
+sudo apt install lftp
+sudo apt install openjdk-17-jdk
+sudo apt install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev -y
 
 cd "$(dirname "$0")"
 
@@ -17,6 +19,8 @@ configurar_ftp() {
         bash ftp.sh
     fi
 }
+
+
 
 # Función para instalar servicios HTTP de forma local (online)
 instalar_http_local() {
