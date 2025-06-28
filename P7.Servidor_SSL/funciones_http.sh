@@ -952,7 +952,12 @@ instalar_lighttpd() {
     if [[ "$ssl" == "true" ]]; then
     local https_port
         https_port=$((puerto+1))
-        echo "Configurando HTTPS en el puerto ${https_port} y redirigiendo HTTP a HTTPS..."
+        sudo mkdir -p /etc/lighttpd/certs
+
+        sudo openssl req -new -x509 -days 365 -nodes \
+        -out /etc/lighttpd/certs/lighttpd.pem \
+        -keyout /etc/lighttpd/certs/lighttpd.pem \
+        -subj "/CN=localhost"
         
         # Reescribir el archivo de configuración completo para incluir HTTPS y redirección
     	sudo bash -c "cat > /etc/lighttpd/lighttpd.conf" <<EOF
@@ -1385,7 +1390,7 @@ include conf_dir + "/conf.d/dirlisting.conf"
 ## To enable SSL for the whole server you have to provide a valid
 ## certificate and have to enable the SSL engine.::
 ##
-##   server.modules += ( "mod_openssl" )
+server.modules += ( "mod_openssl" )
 ##
 ##   ssl.privkey = "/path/to/privkey.pem"
 ##   ssl.pemfile = "/path/to/fullchain.pem"
