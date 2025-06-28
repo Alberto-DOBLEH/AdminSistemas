@@ -884,6 +884,14 @@ instalar_lighttpd() {
     local versionLIGHTTPD=""
     local home_dir=$(eval echo ~$USER) # Get the home directory
     
+    sudo groupadd -r lighttpd
+    sudo useradd -r -g lighttpd -d /var/lib/lighttpd -s /usr/sbin/nologin lighttpd
+
+    sudo mkdir -p /var/log/lighttpd
+    sudo chown lighttpd:lighttpd /var/log/lighttpd
+    sudo chmod 755 /var/log/lighttpd
+
+
     sudo pkill lighttpd
 
     if [ "$opcion_version" -eq 1 ]; then
