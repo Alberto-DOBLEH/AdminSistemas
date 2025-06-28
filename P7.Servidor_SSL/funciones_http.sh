@@ -884,12 +884,30 @@ instalar_lighttpd() {
     local versionLIGHTTPD=""
     local home_dir=$(eval echo ~$USER) # Get the home directory
     
-    sudo groupadd -r lighttpd
-    sudo useradd -r -g lighttpd -d /var/lib/lighttpd -s /usr/sbin/nologin lighttpd
+    # Crear grupo 'lighttpd' solo si no existe
+    if ! getent group lighttpd >/dev/null; then
+        sudo groupadd -r lighttpd
+        echo "Grupo 'lighttpd' creado."
+    else
+        echo "ℹEl grupo 'lighttpd' ya existe."
+    fi
 
-    sudo mkdir -p /var/log/lighttpd
-    sudo chown lighttpd:lighttpd /var/log/lighttpd
-    sudo chmod 755 /var/log/lighttpd
+    # Crear usuario 'lighttpd' solo si no existe
+    if ! id -u lighttpd >/dev/null 2>&1; then
+        sudo useradd -r -g lighttpd -d /var/lib/lighttpd -s /usr/sbin/nologin lighttpd
+        echo "Usuario 'lighttpd' creado."
+    else
+        echo "ℹEl usuario 'lighttpd' ya existe."
+    fi
+
+    # Crear directorio /var/log/lighttpd solo si no existe
+    if [ ! -d /var/log/lighttpd ]; then
+        sudo mkdir -p /var/log/lighttpd
+        echo "Carpeta /var/log/lighttpd creada."
+    else
+        echo "ℹLa carpeta /var/log/lighttpd ya existe."
+    fi
+
 
 
     sudo pkill lighttpd

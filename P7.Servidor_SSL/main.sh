@@ -3,9 +3,8 @@
 #   - Configurar el servidor FTP (ejecuta ftp.sh)
 #   - Instalar servicios HTTP de forma local (usando las URL oficiales, http.sh)
 #   - Instalar servicios HTTP descargando los archivos .tar.gz desde el FTP
-sudo apt install lftp
-sudo apt install openjdk-17-jdk
-sudo apt install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev -y
+
+instalar_dependencias
 
 cd "$(dirname "$0")"
 
@@ -17,6 +16,37 @@ configurar_ftp() {
         ./ftp.sh
     else
         bash ftp.sh
+    fi
+}
+
+instalar_dependencias() {
+    local dependencias=(
+        lftp
+        openjdk-17-jdk
+        build-essential
+        libpcre3
+        libpcre3-dev
+        zlib1g
+        zlib1g-dev
+        libssl-dev
+        libpcre2-dev
+        pkg-config
+        autoconf
+        automake
+        libtool
+    )
+
+    local faltantes=()
+
+    for paquete in "${dependencias[@]}"; do
+        dpkg -s "$paquete" &>/dev/null || faltantes+=("$paquete")
+    done
+
+    if [ ${#faltantes[@]} -eq 0 ]; then
+        echo "Todas las dependencias ya están instaladas."
+    else
+        echo "Instalando dependencias faltantes: ${faltantes[*]}"
+        sudo apt install -y "${faltantes[@]}"
     fi
 }
 
