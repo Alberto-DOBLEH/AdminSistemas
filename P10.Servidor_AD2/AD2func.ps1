@@ -9,12 +9,12 @@
 }
 
 function ConfigurarDominioAD(){
-    if((Get-WmiObject Win32_ComputerSystem).Domain -eq "botafogo.com"){
+    if((Get-WmiObject Win32_ComputerSystem).Domain -eq "planpapasar.com"){
         Write-Host "El dominio ya se encuentra configurado" -ForegroundColor Yellow
     }
     else{
         Import-Module ADDSDeployment
-        Install-ADDSForest -DomainName "botafogo.com" -DomainNetbiosName "BOTAFOGO" -InstallDNS
+        Install-ADDSForest -DomainName "planpapasar.com" -DomainNetbiosName "PLANPAPASAR" -InstallDNS
         New-ADOrganizationalUnit -Name "cuates"
         New-ADOrganizationalUnit -Name "nocuates"
         Write-Host "Organizaciones creadas correctamente" -ForegroundColor Green
@@ -34,8 +34,8 @@ function CrearUsuario(){
         }
 
         New-ADUser -Name $usuario -GivenName $usuario -Surname $usuario -SamAccountName $usuario `
-            -UserPrincipalName "$usuario@botafogo.com" `
-            -Path "OU=$organizacion,DC=botafogo,DC=com" `
+            -UserPrincipalName "$usuario@planpapasar.com" `
+            -Path "OU=$organizacion,DC=planpapasar,DC=com" `
             -AccountPassword (ConvertTo-SecureString $password -AsPlainText -Force) `
             -Enabled $true
 
@@ -60,14 +60,14 @@ function CrearUsuario(){
 function CrearGruposAD() {
     try {
         if (-not (Get-ADGroup -Filter "Name -eq 'cuates'" -ErrorAction SilentlyContinue)) {
-            New-ADGroup -Name "cuates" -GroupScope Global -Path "OU=cuates,DC=botafogo,DC=com"
+            New-ADGroup -Name "cuates" -GroupScope Global -Path "OU=cuates,DC=planpapasar,DC=com"
             Write-Host "cuates creado exitosamente" -ForegroundColor Green
         } else {
             Write-Host "cuates ya existe" -ForegroundColor Yellow
         }
 
         if (-not (Get-ADGroup -Filter "Name -eq 'nocuates'" -ErrorAction SilentlyContinue)) {
-            New-ADGroup -Name "nocuates" -GroupScope Global -Path "OU=nocuates,DC=botafogo,DC=com"
+            New-ADGroup -Name "nocuates" -GroupScope Global -Path "OU=nocuates,DC=planpapasar,DC=com"
             Write-Host "nocuates creado exitosamente" -ForegroundColor Green
         } else {
             Write-Host "nocuates ya existe" -ForegroundColor Yellow
@@ -206,9 +206,9 @@ function ConfigurarPermisosdeGruposAD() {
         Set-GPRegistryValue -Name $gpo2 -Key "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" -ValueName "ProfileQuotaMessage" -Type String -Value "Has superado tu límite de 10 MB de perfil. Libera espacio inmediatamente."
 
         # Vincular las GPOs a sus respectivas OUs
-        New-GPLink -Name "CuotaGrupo1" -Target "OU=cuates,DC=botafogo,DC=com" -Enforced "Yes"
+        New-GPLink -Name "CuotaGrupo1" -Target "OU=cuates,DC=planpapasar,DC=com" -Enforced "Yes"
 
-        New-GPLink -Name "CuotaGrupo2" -Target "OU=nocuates,DC=botafogo,DC=com" -Enforced "Yes"
+        New-GPLink -Name "CuotaGrupo2" -Target "OU=nocuates,DC=planpapasar,DC=com" -Enforced "Yes"
 
 
         Write-Host "Límites de perfil aplicados correctamente" -ForegroundColor Green
@@ -246,9 +246,9 @@ function ConfigurarPermisosdeGruposAD() {
             -ValueName "1" -Type String -Value "notepad.exe"
 
         # Vincular las GPOs a sus respectivas OUs
-        New-GPLink -Name "SoloNotepadGrupo1" -Target "OU=cuates,DC=botafogo,DC=com" -Enforced "Yes"
+        New-GPLink -Name "SoloNotepadGrupo1" -Target "OU=cuates,DC=planpapasar,DC=com" -Enforced "Yes"
 
-        New-GPLink -Name "BloquearNotepadGrupo2" -Target "OU=nocuates,DC=botafogo,DC=com" -Enforced "Yes"
+        New-GPLink -Name "BloquearNotepadGrupo2" -Target "OU=nocuates,DC=planpapasar,DC=com" -Enforced "Yes"
     }catch{
         Write-Host "Error al aplicar las restricciones para notepad: $($_.Exception.Message)" -ForegroundColor Red
     }
@@ -256,7 +256,7 @@ function ConfigurarPermisosdeGruposAD() {
 
 function ConfigurarPoliticaContraseñaAD {
     param (
-        [string]$Dominio = "botafogo.com"
+        [string]$Dominio = "planpapasar.com"
     )
      
     Import-Module ActiveDirectory
@@ -337,7 +337,7 @@ function ConfigurarMFAAD {
         Write-Host "MultiOTP ya fue configurado en este servidor o existe una carpeta con ese nombre" -ForegroundColor Yellow
     }else{
         # -----VARIABLES DE CONFIGURACION-----
-        $dnsName = "WIN-PSSPP1GGG9F.botafogo.com" # HOSTNAME.DOMINIO
+        $dnsName = "WIN-PSSPP1GGG9F.planpapasar.com" # HOSTNAME.DOMINIO
         $subject = "CN=$dnsName"
         $storeMy = "Cert:\LocalMachine\My"
         $storeRoot = "Cert:\LocalMachine\Root"
