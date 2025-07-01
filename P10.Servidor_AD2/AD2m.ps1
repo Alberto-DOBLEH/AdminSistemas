@@ -1,4 +1,4 @@
-﻿. C:\Users\Administrator\Documents\AD2func.ps1
+﻿Import-Module .\AD2func.ps1
 
 while($true){
     Write-Host "========================================" -ForegroundColor Cyan
