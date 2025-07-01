@@ -337,7 +337,7 @@ function ConfigurarMFAAD {
         Write-Host "MultiOTP ya fue configurado en este servidor o existe una carpeta con ese nombre" -ForegroundColor Yellow
     }else{
         # -----VARIABLES DE CONFIGURACION-----
-        $dnsName = "WIN-PSSPP1GGG9F.planpapasar.com" # HOSTNAME.DOMINIO
+        $dnsName = "WIN-JMOCQSKVB53.planpapasar.com" # HOSTNAME.DOMINIO
         $subject = "CN=$dnsName"
         $storeMy = "Cert:\LocalMachine\My"
         $storeRoot = "Cert:\LocalMachine\Root"
