@@ -4,7 +4,7 @@ class Database {
     private $host = 'localhost';
     private $db_name = 'rrhh_system';
     private $username = 'root';
-    private $password = 'root';
+    private $password = '';
     public $conn;
 
     public function getConnection() {

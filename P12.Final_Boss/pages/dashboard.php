@@ -10,8 +10,8 @@ $message = '';
 $error = '';
 
 // Configuración SSH para Docker
-$sshUser = "ruben";
-$sshHost = "192.168.1.25";
+$sshUser = "Admitrador";
+$sshHost = "10.0.0.253";
 $sshKey = "C:\\Users\\Administrator\\.ssh\\id_ed25519";
 
 // Función para ejecutar comandos remotos por SSH
